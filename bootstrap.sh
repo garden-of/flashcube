@@ -40,6 +40,7 @@ psql -c "ALTER ROLE $PROJECT SET client_encoding TO 'utf8';"
 psql -c "ALTER ROLE $PROJECT SET default_transaction_isolation TO 'read committed';"
 psql -c "ALTER ROLE $PROJECT SET timezone TO 'UTC';"
 psql -c "GRANT ALL PRIVILEGES ON DATABASE $PROJECT TO $PROJECT;"
+exit
 
 # install python deps for API
 cd $DIR/flashcube/flashcube
