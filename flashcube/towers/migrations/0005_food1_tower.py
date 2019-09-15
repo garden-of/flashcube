@@ -91,7 +91,7 @@ def create_tower(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('towers', '0003_auto_20190729_2134'),
+        ('towers', '0004_sports_tower'),
     ]
 
     operations = [
