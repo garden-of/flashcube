@@ -79,7 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'flashcube',
         'USER': 'flashcube',
-        'PASSWORD': 'root',
+        'PASSWORD': 'flashcube',
         'HOST': 'localhost',
         'PORT': '',
     }
