@@ -31,6 +31,7 @@ ssh-add ~/.ssh/id_rsa
 # clone git repo
 cd $DIR
 git clone $REPO
+chown -R vagrant:vagrant $DIR
 
 # create pg database for django
 su - postgres
