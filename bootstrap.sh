@@ -21,6 +21,10 @@ if ! [ -d "$DIR" ]; then
   mkdir $DIR
 fi
 
+# setup ssh agent
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_rsa
+
 # clone git repo
 cd $DIR
 git clone $REPO
