@@ -68,8 +68,9 @@ Vagrant.configure("2") do |config|
   #   apt-get install -y apache2
   # SHELL
 
-  # Copy git config over from
+  # Copy config over from host
   config.vm.provision "file", source: "~/.gitconfig", destination: ".gitconfig"
+  config.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "~/.ssh/id_rsa.pub"
 
   # Run setup script
   config.vm.provision :shell, path: "bootstrap.sh"
