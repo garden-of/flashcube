@@ -32,14 +32,6 @@ ssh-add /home/vagrant/.ssh/id_rsa
 cd $DIR
 git clone $REPO
 
-# create pg database for django
-su postgres -c "psql -c \"CREATE DATABASE $PROJECT;\""
-su postgres -c "psql -c \"CREATE USER $PROJECT WITH PASSWORD '$PROJECT';\""
-su postgres -c "psql -c \"ALTER ROLE $PROJECT SET client_encoding TO 'utf8';\""
-su postgres -c "psql -c \"ALTER ROLE $PROJECT SET default_transaction_isolation TO 'read committed';\""
-su postgres -c "psql -c \"ALTER ROLE $PROJECT SET timezone TO 'UTC';\""
-su postgres -c "psql -c \"GRANT ALL PRIVILEGES ON DATABASE $PROJECT TO $PROJECT;\""
-
 # install python deps for API
 cd $DIR/flashcube/flashcube
 pip3 install -r requirements.txt
