@@ -38,9 +38,6 @@ cd $DIR
 git clone $REPO
 chown -R vagrant:vagrant $DIR
 
-# set directory ownership correctly
-sudo chown -R vagrant:vagrant /home/vagrant
-
 # create pg database for django
 su postgres -c "psql -c \"CREATE DATABASE $PROJECT;\""
 su postgres -c "psql -c \"CREATE USER $PROJECT WITH PASSWORD '$PROJECT';\""
