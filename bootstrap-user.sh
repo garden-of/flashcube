@@ -5,14 +5,6 @@ LOG_DIR="/var/log/flashcube"
 REPO="https://github.com/hostdp6/flashcube.git"
 PROJECT="flashcube"
 
-apt-get -y update
-apt-get -y install git-core
-apt-get -y install python3-pip
-apt-get -y install postgresql postgresql-contrib libpq-dev
-
-# switch to vagrant user
-su vagrant -
-
 # create Python virtual environment
 pip3 install virtualenvwrapper
 export WORKON_HOME=/home/vagrant/.virtualenvs
@@ -39,7 +31,6 @@ ssh-add /home/vagrant/.ssh/id_rsa
 # clone git repo
 cd $DIR
 git clone $REPO
-chown -R vagrant:vagrant $DIR
 
 # create pg database for django
 su postgres -c "psql -c \"CREATE DATABASE $PROJECT;\""

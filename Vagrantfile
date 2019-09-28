@@ -73,6 +73,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "/home/vagrant/.ssh/id_rsa.pub"
 
   # Run setup script
-  config.vm.provision :shell, path: "bootstrap.sh"
+  config.vm.provision :shell, path: "bootstrap-root.sh"
+  config.vm.provision :shell, path: "bootstrap-root.sh", privileged: false
 
 end
