@@ -10,6 +10,9 @@ apt-get -y install git-core
 apt-get -y install python3-pip
 apt-get -y install postgresql postgresql-contrib libpq-dev
 
+# switch to vagrant user
+su vagrant -
+
 # create Python virtual environment
 pip3 install virtualenvwrapper
 export WORKON_HOME=/home/vagrant/.virtualenvs
