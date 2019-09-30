@@ -1,15 +1,13 @@
 from django.db import models
 
-class Tower(models.Model):
-    name = models.CharField(max_length=200)
-    categories = models.ManyToManyField('Category', related_name='categories')
-    primary_category = models.ForeignKey('Category', on_delete=models.CASCADE)
+class Category(models.Model):
+    category = models.CharField(max_length=200)
 
     class Meta:
-        ordering = ('name',)
+        ordering = ('category', )
 
     def __str__(self):
-        return self.name
+        return self.category
 
 class Cube(models.Model):
     name = models.CharField(max_length=200)
@@ -32,11 +30,13 @@ class Face(models.Model):
     def __str__(self):
         return self.value
 
-class Category(models.Model):
-    category = models.CharField(max_length=200)
+class Tower(models.Model):
+    name = models.CharField(max_length=200)
+    categories = models.ManyToManyField('Category', related_name='categories')
+    primary_category = models.ForeignKey('Category', on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ('category', )
+        ordering = ('name',)
 
     def __str__(self):
-        return self.category
+        return self.name
