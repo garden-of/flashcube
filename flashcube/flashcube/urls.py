@@ -27,5 +27,6 @@ router.register(r'tower', views.TowerViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('auth/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path('api/', include(router.urls))
 ]
