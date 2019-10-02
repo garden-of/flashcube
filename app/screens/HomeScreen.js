@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 
 import { MonoText } from '../components/StyledText';
+import TowerList from '../components/TowerList';
 
 export default function HomeScreen() {
   return (
@@ -18,38 +19,17 @@ export default function HomeScreen() {
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}>
-        <View style={styles.welcomeContainer}>
-          <Image
-            source={
-              __DEV__
-                ? require('../assets/images/robot-dev.png')
-                : require('../assets/images/robot-prod.png')
-            }
-            style={styles.welcomeImage}
-          />
-        </View>
-
-        <View style={styles.getStartedContainer}>
-          <DevelopmentModeNotice />
-
-          <Text style={styles.getStartedText}>Get started by opening</Text>
-
-          <View
-            style={[styles.codeHighlightContainer, styles.homeScreenFilename]}>
-            <MonoText>screens/HomeScreen.js</MonoText>
-          </View>
-
-          <Text style={styles.getStartedText}>
-            Change this text and your app will automatically reload.
+        <View style={styles.topBarContainer}>
+          <Text>
+          welcome
           </Text>
         </View>
 
-        <View style={styles.helpContainer}>
-          <TouchableOpacity onPress={handleHelpPress} style={styles.helpLink}>
-            <Text style={styles.helpLinkText}>
-              Help, it didn’t automatically reload!
-            </Text>
-          </TouchableOpacity>
+        <View style={styles.homeViewContainer}>
+          <View style={styles.towerListContainer}>
+            <Text>Your Towers</Text>
+            <TowerList />
+          </View>
         </View>
       </ScrollView>
 
@@ -122,39 +102,23 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingTop: 30,
+    backgroundColor: '#54adcc'
   },
-  welcomeContainer: {
+  topBarContainer: {
     alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
+    marginTop: 30,
+    marginBottom: 10
   },
-  welcomeImage: {
-    width: 100,
-    height: 80,
+  topBarImage: {
+    width: 50,
+    height: 50,
     resizeMode: 'contain',
     marginTop: 3,
-    marginLeft: -10,
+    marginLeft: 3
   },
-  getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
+  homeViewContainer: {
+    backgroundColor: '#fff',
+    padding: 10
   },
   tabBarInfoContainer: {
     position: 'absolute',

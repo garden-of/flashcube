@@ -39,7 +39,6 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = state => {
-    console.log(state)
     let storedTowers = state.towers.map(tower => ({ key: String(tower.id), ...tower}))
     return {
         towers: storedTowers

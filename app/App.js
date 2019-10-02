@@ -1,18 +1,24 @@
-import { AppLoading } from 'expo';
-import { Asset } from 'expo-asset';
-import * as Font from 'expo-font';
-import React, { useState } from 'react';
-import { createStore, applyMiddleware } from 'redux';
-import { Provider, connect } from 'react-redux';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+// Middleware
 import axios from 'axios';
 import axiosMiddleware from 'redux-axios-middleware';
 
+// React/Redux
+import React, { useState } from 'react';
+import { createStore, applyMiddleware } from 'redux';
+import { Provider, connect } from 'react-redux';
 import reducer from './reducers'
 
-import TowerList from './components/TowerList'
-import AppNavigator from './navigation/AppNavigator';
+// Components
+import { Platform, StatusBar, StyleSheet, View } from 'react-native';
+import HomeScreen from './screens/HomeScreen'
+
+
+
+// Style
+import { AppLoading } from 'expo';
+import { Asset } from 'expo-asset';
+import * as Font from 'expo-font';
+import { Ionicons } from '@expo/vector-icons';
 
 const client = axios.create({
   baseURL: 'http://127.0.0.1:8000/',
@@ -37,7 +43,7 @@ export default function App(props) {
       <Provider store={store}>
         <View style={styles.container}>
           {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-          <TowerList />
+          <HomeScreen />
         </View>
       </Provider>
     );
@@ -73,6 +79,6 @@ function handleFinishLoading(setLoadingComplete) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#54adcc',
   },
 });
