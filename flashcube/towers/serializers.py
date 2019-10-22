@@ -20,4 +20,4 @@ class FaceSerializer(serializers.ModelSerializer):
 class TowerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tower
-        fields = '__all__'
+        fields = ['id', 'name', 'categories', 'primary_category', 'num_cubes']

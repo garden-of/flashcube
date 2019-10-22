@@ -1,23 +1,33 @@
-import React from 'react';
-import { Platform } from 'react-native';
-import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import React from 'react'
+import { Platform } from 'react-native'
+import { createStackNavigator, createBottomTabNavigator, createSwitchNavigator } from 'react-navigation'
 
-import TabBarIcon from '../components/TabBarIcon';
-import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import TabBarIcon from '../components/TabBarIcon'
+import Colors from '../constants/Colors'
+import Styles from '../constants/Styles'
+import AuthLoading from '../screens/AuthLoading'
+import HomeScreen from '../screens/HomeScreen'
+import LoginScreen from '../screens/LoginScreen'
+import TowerScreen from '../screens/TowerScreen'
+import TowerDetailScreen from '../screens/TowerDetailScreen'
 
-const config = Platform.select({
+const config = {
   web: { headerMode: 'screen' },
   default: {},
-});
+  defaultNavigationOptions: {
+    headerStyle: Styles.headerStyle,
+    headerTitleStyle: Styles.headerTitleStyle,
+    headerTintColor: Colors.white
+  }
+}
 
 const HomeStack = createStackNavigator(
   {
     Home: HomeScreen,
+    TowerDetailScreen: TowerDetailScreen
   },
   config
-);
+)
 
 HomeStack.navigationOptions = {
   tabBarLabel: 'Home',
@@ -26,53 +36,60 @@ HomeStack.navigationOptions = {
       focused={focused}
       name={
         Platform.OS === 'ios'
-          ? `ios-information-circle${focused ? '' : '-outline'}`
-          : 'md-information-circle'
+          ? `ios-home`
+          : 'md-home'
       }
     />
   ),
-};
+}
 
 HomeStack.path = '';
 
-const LinksStack = createStackNavigator(
+const TowerStack = createStackNavigator(
   {
-    Links: LinksScreen,
+    Towers: TowerScreen,
+    TowerDetailScreen: TowerDetailScreen
   },
   config
-);
+)
 
-LinksStack.navigationOptions = {
-  tabBarLabel: 'Links',
+TowerStack.navigationOptions = {
+  tabBarLabel: 'Towers',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'} />
+    <TabBarIcon focused={focused} name={'logo-buffer'} />
   ),
-};
+}
 
-LinksStack.path = '';
+TowerStack.path = '';
 
-const SettingsStack = createStackNavigator(
+const tabNavigator = createBottomTabNavigator(
   {
-    Settings: SettingsScreen,
+    HomeStack,
+    TowerStack
   },
-  config
-);
+  {
+    tabBarOptions: {
+      activeBackgroundColor: Colors.primary,
+      activeTintColor: Colors.white,
+      inactiveBackgroundColor: Colors.primary,
+      inactiveTintColor: Colors.tintColor,
+      style: {
+        backgroundColor: Colors.primary
+      }
+    }
+  }
+)
+tabNavigator.path = ''
 
-SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'} />
-  ),
-};
+const switchNavigator = createSwitchNavigator(
+  {
+    AuthLoading: AuthLoading,
+    App: tabNavigator,
+    Auth: LoginScreen
+  },
+  {
+    initialRouteName: 'AuthLoading',
+  }
+)
 
-SettingsStack.path = '';
-
-const tabNavigator = createBottomTabNavigator({
-  HomeStack,
-  LinksStack,
-  SettingsStack,
-});
-
-tabNavigator.path = '';
-
-export default tabNavigator;
+export default switchNavigator
