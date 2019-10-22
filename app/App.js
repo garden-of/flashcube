@@ -6,13 +6,16 @@ import axiosMiddleware from 'redux-axios-middleware';
 import React, { useState } from 'react';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider, connect } from 'react-redux';
+import logger from 'redux-logger'
 import reducer from './reducers'
+
+// Navigation
+import { createAppContainer } from 'react-navigation';
+import tabNavigator from './navigation/MainTabNavigator'
 
 // Components
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import HomeScreen from './screens/HomeScreen'
-
-
 
 // Style
 import { AppLoading } from 'expo';
@@ -25,7 +28,9 @@ const client = axios.create({
   responseType: 'json'
 });
 
-const store = createStore(reducer, applyMiddleware(axiosMiddleware(client)));
+const store = createStore(reducer, applyMiddleware(axiosMiddleware(client), logger));
+
+const AppContainer = createAppContainer(tabNavigator)
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
@@ -43,7 +48,7 @@ export default function App(props) {
       <Provider store={store}>
         <View style={styles.container}>
           {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-          <HomeScreen />
+          <AppContainer />
         </View>
       </Provider>
     );

@@ -35,6 +35,10 @@ class Tower(models.Model):
     categories = models.ManyToManyField('Category', related_name='categories')
     primary_category = models.ForeignKey('Category', on_delete=models.CASCADE)
 
+    @property
+    def num_cubes(self):
+        return len(Cube.objects.filter(tower__exact=self.pk))
+
     class Meta:
         ordering = ('name',)
 

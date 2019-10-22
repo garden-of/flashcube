@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
-import { connect } from 'react-redux';
+import { FlatList, StyleSheet } from 'react-native';
+import { withNavigation } from 'react-navigation';
+import { ListItem } from 'react-native-elements'
 
-import { listTowers } from '../reducers.js'
+import Colors from '../constants/Colors'
 
 class TowerList extends Component {
     componentDidMount() {
@@ -10,9 +11,14 @@ class TowerList extends Component {
     }
 
     renderItem = ({ item }) => (
-        <View style={styles.item}>
-            <Text>{item.name}</Text>
-        </View>
+        <ListItem 
+            key={item.key}
+            title={item.name}
+            badge={{ value: item.num_cubes, badgeStyle: styles.badgeStyle}}
+            bottomDivider
+            chevron
+            onPress={() => this.props.navigation.navigate('TowerDetailScreen', { towerId: item.key, towerName: item.name })}
+        />
     )
 
     render() {
@@ -31,6 +37,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1
     },
+    badgeStyle: {
+        backgroundColor: Colors.primary
+    },
     item: {
         padding: 16,
         borderBottomWidth: 1,
@@ -38,15 +47,4 @@ const styles = StyleSheet.create({
     }
 })
 
-const mapStateToProps = state => {
-    let storedTowers = state.towers.map(tower => ({ key: String(tower.id), ...tower}))
-    return {
-        towers: storedTowers
-    }
-}
-
-const mapDispatchToProps = {
-    listTowers
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(TowerList)
+export default withNavigation(TowerList)

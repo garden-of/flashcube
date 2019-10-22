@@ -5,15 +5,13 @@
     "privacy": "public",
     "sdkVersion": "35.0.0",
     "platforms": [
-      "ios",
-      "android",
-      "web"
+      "ios"
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/flashcube-icon.png",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/ios-splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
