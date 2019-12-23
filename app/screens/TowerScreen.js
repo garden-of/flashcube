@@ -1,12 +1,9 @@
-import React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
-
-import TowerListContainer from '../containers/TowerListContainer';
+import React from 'react'
+import { ScrollView, StyleSheet } from 'react-native'
 
 export default function TowerScreen() {
   return (
     <ScrollView style={styles.container}>
-      <TowerListContainer />
     </ScrollView>
   );
 }
