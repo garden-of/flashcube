@@ -1,11 +1,5 @@
 import React from 'react'
-import {
-    ActivityIndicator,
-    AsyncStorage,
-    StatusBar,
-    StyleSheet,
-    View,
-  } from 'react-native';
+import { AsyncStorage, StyleSheet, View } from 'react-native'
 
 import Colors from '../constants/Colors'
 
@@ -22,7 +16,8 @@ export default class AuthLoading extends React.Component {
 
     render() {
         return (
-            <View style={styles.container}></View>
+            <View style={styles.container}>
+            </View>
         )
     }
 }

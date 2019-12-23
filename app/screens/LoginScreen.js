@@ -3,42 +3,11 @@ import { Image, View, StyleSheet } from 'react-native'
 import { Button, Divider, Input, Icon } from 'react-native-elements'
 
 import Colors from '../constants/Colors'
-import Styles from '../constants/Styles'
-
-import FBLoginButton from '../components/FBLoginButton'
-import GoogleLoginButton from '../components/GoogleLoginButton'
+import StorybookUIRoot from '../storybook'
 
 export default function LoginScreen() {
   return (
-    <View style={styles.container}>
-        <View style={styles.titleContainer}>
-            <Image style={{width: 60, height: 60}} source={require('../assets/images/logo.png')}/>
-        </View>
-        <View style={styles.socialContainer}>
-            <FBLoginButton />
-            <GoogleLoginButton />
-        </View>
-        <View style={styles.formContainer}>
-            <Divider style={styles.dividerStyle}/>
-            <Input 
-                placeholder='enter your email address'
-                label='email'
-                labelStyle={Styles.inputLabelStyle}
-                inputContainerStyle={Styles.inputInputContainerStyles}
-                inputStyle={Styles.inputInputStyles}
-                containerStyle={styles.textInputStyle}
-            />
-            <Input 
-                placeholder='enter your password'
-                label='password'
-                labelStyle={Styles.inputLabelStyle}
-                inputContainerStyle={Styles.inputInputContainerStyles}
-                inputStyle={Styles.inputInputStyles}
-                containerStyle={styles.textInputStyle}
-            />
-            <Button buttonStyle={Styles.outlineButtonStyle} titleStyle={Styles.outlineButtonTextStyle} containerStyle={styles.formButtonContainer} type="outline" title="Login" />
-        </View>
-    </View>
+    <StorybookUIRoot />
   )
 }
 

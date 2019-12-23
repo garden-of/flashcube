@@ -3,8 +3,8 @@ import { View, StyleSheet } from 'react-native'
 import { Button, Icon } from 'react-native-elements'
 import { AuthSession } from 'expo'
 
-import Colors from '../constants/Colors'
-import Styles from '../constants/Styles'
+import Colors from '../../constants/Colors'
+import Styles from '../../constants/Styles'
 
 const FB_APP_ID = '468157980709865';
 

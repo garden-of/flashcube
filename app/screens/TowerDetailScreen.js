@@ -1,7 +1,5 @@
-import React from 'react';
-import { ScrollView, StyleSheet} from 'react-native';
-
-import TowerDetailContainer from '../containers/TowerDetailContainer'
+import React from 'react'
+import { ScrollView, StyleSheet} from 'react-native'
 
 export default class DetailsScreen extends React.Component {
   
@@ -19,9 +17,7 @@ export default class DetailsScreen extends React.Component {
 
     return (
       <ScrollView contentContainerStyle={styles.container}>
-          <TowerDetailContainer 
-            towerId={navigation.getParam("towerId", "")}
-          />
+        
       </ScrollView>
     );
   }

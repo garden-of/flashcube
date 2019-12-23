@@ -2,8 +2,8 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native'
 import { Button, Icon } from 'react-native-elements';
 
-import Colors from '../constants/Colors'
-import Styles from '../constants/Styles'
+import Colors from '../../constants/Colors'
+import Styles from '../../constants/Styles'
 
 export default class FBLoginButton extends React.Component {
 

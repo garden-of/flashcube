@@ -2,7 +2,7 @@ import React from 'react'
 import { Platform } from 'react-native'
 import { createStackNavigator, createBottomTabNavigator, createSwitchNavigator } from 'react-navigation'
 
-import TabBarIcon from '../components/TabBarIcon'
+import TabBarIcon from '../components/TabBarIcon/TabBarIcon'
 import Colors from '../constants/Colors'
 import Styles from '../constants/Styles'
 import AuthLoading from '../screens/AuthLoading'
