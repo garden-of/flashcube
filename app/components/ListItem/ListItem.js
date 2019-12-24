@@ -19,7 +19,7 @@ class ListItemTitle extends React.Component {
 
 class Chip extends React.Component {
     render() {
-        return <View style={styles.chipContainer}>
+        return <View {...this.props} style={styles.chipContainer}>
             <Text style={styles.chip}>{this.props.text}</Text>
         </View>
     }
@@ -33,7 +33,7 @@ class ListItem extends React.Component {
             case 'chevron':
                 return null
             case 'chip':
-                return <Chip text={this.props.rightItem.text} />
+                return <Chip text={this.props.rightItem.text} onPress={this.props.rightItem.onPress}/>
             case 'progress':
                 return <ProgressCircle
                     percent={this.props.rightItem.progress}
@@ -46,8 +46,8 @@ class ListItem extends React.Component {
                     <Text style={{ fontSize: 13 }}>{`${this.props.rightItem.progress}%`}</Text>
                 </ProgressCircle>
             case 'icon':
-                if (this.props.rightItem.checked) return <Icon name='ios-checkmark' type='ionicon' color={Colors.primary} size={35}/>
-                else return <Icon name='ios-add' type='ionicon' color={Colors.gray1} size={35}/>   
+                if (this.props.rightItem.checked) return <Icon name='ios-checkmark' type='ionicon' color={Colors.primary} size={35} onPress={this.props.rightItem.onPress}/>
+                else return <Icon name='ios-add' type='ionicon' color={Colors.gray1} size={35} onPress={this.props.rightItem.onPress}/>   
             default:
                 return null
         }
@@ -69,6 +69,7 @@ class ListItem extends React.Component {
             bottomDivider
             chevron={this.props.rightItem.type === 'chevron'}
             rightTitle={this.getRightItem()}
+            onPress={this.props.onTap}
         />
     }
 }
@@ -78,6 +79,7 @@ ListItem.proptypes = {
     title: PropTypes.string,
     subtitle: PropTypes.string,
     image: PropTypes.uri,
+    onTap: PropTypes.func
 }
 
 const styles = StyleSheet.create({

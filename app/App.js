@@ -1,39 +1,38 @@
 // Middleware
-import axios from 'axios';
-import axiosMiddleware from 'redux-axios-middleware';
+import axios from 'axios'
+import axiosMiddleware from 'redux-axios-middleware'
 
 // React/Redux
-import React, { useState } from 'react';
-import { createStore, applyMiddleware } from 'redux';
-import { Provider, connect } from 'react-redux';
+import React, { useState } from 'react'
+import { createStore, applyMiddleware } from 'redux'
+import { Provider } from 'react-redux'
 import logger from 'redux-logger'
-import reducer from './reducers'
+import reducer from './reducers/index'
 
 // Navigation
-import { createAppContainer } from 'react-navigation';
+import { createAppContainer } from 'react-navigation'
 import tabNavigator from './navigation/MainTabNavigator'
 
 // Components
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
-import HomeScreen from './screens/HomeScreen'
+import { Platform, StatusBar, StyleSheet, View } from 'react-native'
 
 // Style
-import { AppLoading } from 'expo';
-import { Asset } from 'expo-asset';
-import * as Font from 'expo-font';
-import { Ionicons } from '@expo/vector-icons';
+import { AppLoading } from 'expo'
+import { Asset } from 'expo-asset'
+import * as Font from 'expo-font'
+import { Ionicons } from '@expo/vector-icons'
 
 const client = axios.create({
   baseURL: 'http://127.0.0.1:8000/',
   responseType: 'json'
 });
 
-const store = createStore(reducer, applyMiddleware(axiosMiddleware(client), logger));
+const store = createStore(reducer, applyMiddleware(axiosMiddleware(client), logger))
 
 const AppContainer = createAppContainer(tabNavigator)
 
 export default function App(props) {
-  const [isLoadingComplete, setLoadingComplete] = useState(false);
+  const [isLoadingComplete, setLoadingComplete] = useState(false)
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
@@ -74,11 +73,11 @@ async function loadResourcesAsync() {
 function handleLoadingError(error) {
   // In this case, you might want to report the error to your error reporting
   // service, for example Sentry
-  console.warn(error);
+  console.warn(error)
 }
 
 function handleFinishLoading(setLoadingComplete) {
-  setLoadingComplete(true);
+  setLoadingComplete(true)
 }
 
 const styles = StyleSheet.create({

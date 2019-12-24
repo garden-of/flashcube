@@ -8,10 +8,20 @@ import Styles from '../../constants/Styles'
 export default class FBLoginButton extends React.Component {
 
     render() {
-        return <View style={styles.socialButton}>
-        <Icon name='logo-google' type='ionicon' color={Colors.white} size={35} containerStyle={styles.socialIconContainer}/>
-        <Button buttonStyle={Styles.outlineButtonStyle} titleStyle={Styles.outlineButtonTextStyle} containerStyle={styles.buttonContainer} type="outline" title="Login with Google" />
-    </View>
+        return <Button 
+            icon={
+                <Icon
+                name='logo-google'
+                type='ionicon'
+                size={20}
+                color='white'
+                />
+            }
+            buttonStyle={Styles.outlineButtonStyle} 
+            titleStyle={Styles.outlineButtonTextStyle} 
+            containerStyle={styles.buttonContainer} 
+            title="Google" 
+        />
     }
 }
 
@@ -22,10 +32,7 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     socialIconContainer:{
-        padding: 5,
-        paddingRight: 15
     },
     buttonContainer: {
-        width: 250
     },
 })

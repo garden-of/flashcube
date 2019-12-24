@@ -10,6 +10,7 @@ import HomeScreen from '../screens/HomeScreen'
 import LoginScreen from '../screens/LoginScreen'
 import TowerScreen from '../screens/TowerScreen'
 import TowerDetailScreen from '../screens/TowerDetailScreen'
+import StorybookScreen from '../screens/StorybookScreen'
 
 const config = {
   web: { headerMode: 'screen' },
@@ -60,12 +61,22 @@ TowerStack.navigationOptions = {
   ),
 }
 
-TowerStack.path = '';
+TowerStack.path = ''
+
+const StorybookStack = createStackNavigator(
+  { 
+    Storybooks: StorybookScreen 
+  },
+  config
+)
+
+StorybookStack.path = ''
 
 const tabNavigator = createBottomTabNavigator(
   {
     HomeStack,
-    TowerStack
+    TowerStack,
+    StorybookStack
   },
   {
     tabBarOptions: {
