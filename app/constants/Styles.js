@@ -15,19 +15,39 @@ export default StyleSheet.create({
     headerRightStyle: {
         color: Colors.white
     },
-    buttonStyle: {
-        backgroundColor: Colors.primary
+    transparentButtonStyle: {
+        backgroundColor: 'rgba(256, 256, 256, 0.35)',
+        borderRadius: 3,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     outlineButtonStyle: {
-        backgroundColor: Colors.white,
-        borderColor: Colors.primary
+        backgroundColor: 'transparent',
+        borderRadius: 10,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     outlineButtonTextStyle: {
-        color: Colors.primary
+        color: Colors.white,
+        fontSize: 14,
+        fontWeight: '600',
+        paddingLeft: 10
     },
     buttonContainerStyle: {
-        padding: 5,
-        justifyContent: "center"
+    },
+    linkButton: {
+        margin: 0,
+        padding: 0
+    },
+    linkButtonTitle: {
+        color: Colors.gray3,
+        fontSize: 14,
+        fontWeight: '600',
+        textDecorationLine: 'underline'
     },
     inputInputContainerStyles: {
         borderColor: Colors.white,
