@@ -155,8 +155,14 @@ class LoginScreen extends React.Component {
 
   render() {
     const loginButtons = [
-      { element: () => <GoogleLoginButton /> },
-      { element: () => <FBLoginButton /> }
+      { element: () => <GoogleLoginButton 
+          onLoginSuccess={(r) => this.props.convertToken('google', r)}
+          onLoginFail={() => console.log('login failed')}
+        /> },
+      { element: () => <FBLoginButton 
+          onLoginSuccess={(r) => this.props.convertToken('facebook', r)}
+          onLoginFail={() => console.log('login failed')}
+        /> }
     ]
   
     return (

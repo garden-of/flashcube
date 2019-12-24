@@ -2,37 +2,28 @@ import React from 'react'
 import { StyleSheet } from 'react-native'
 import { Button, Icon } from 'react-native-elements'
 import * as Facebook from 'expo-facebook'
+import PropTypes from 'prop-types'
 
-import Colors from '../../constants/Colors'
 import Styles from '../../constants/Styles'
 
 export default class FBLoginButton extends React.Component {
 
     _handlePressAsync = async () => {
         try {
-            const {
-                type,
-                token,
-                expires,
-                permissions,
-                declinedPermissions,
-              } = await Facebook.logInWithReadPermissionsAsync(
-                '468157980709865',
-                { permissions: ['public_profile'] }
-            )
-            if (type === 'success') {
-                console.log('logged in!')
+            await Facebook.initializeAsync()
+            const response = await Facebook.logInWithReadPermissionsAsync({ permissions: ['public_profile'] })
+            if (response.type === 'success') {
+                this.props.onLoginSuccess(response)
             } else {
-                console.error('login failed')
+                this.props.onLoginFail(response)
             }
         }
         catch({ message }) {
-            console.error(message)
+            this.props.onLoginFail(message)
         }
     }
 
     render() {
-        console.log(Facebook)
         return <Button 
             icon={
                 <Icon
@@ -49,6 +40,11 @@ export default class FBLoginButton extends React.Component {
             onPress={this._handlePressAsync}
         />
     }
+}
+
+FBLoginButton.proptypes = {
+    onLoginSuccess: PropTypes.func.isRequired,
+    onLoginFail: PropTypes.func.isRequired
 }
 
 const styles = StyleSheet.create({

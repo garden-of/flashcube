@@ -1,15 +1,31 @@
-import React from 'react';
-import { Ionicons } from '@expo/vector-icons';
+import React from 'react'
 
-import Colors from '../../constants/Colors';
+import * as Font from 'expo-font'
+import { Ionicons } from '@expo/vector-icons'
 
-export default function TabBarIcon(props) {
-  return (
-    <Ionicons
-      name={props.name}
-      size={26}
-      style={{ marginBottom: -3 }}
-      color={props.focused ? Colors.tabIconSelected : Colors.tabIconDefault}
-    />
-  );
+import Colors from '../../constants/Colors'
+
+export default class TabBarIcon extends React.Component {
+  
+  constructor(props) {
+    super(props)
+    console.log(Font.isLoaded('ionicons'))
+  }
+
+  componentDidMount() {
+    Font.loadAsync({
+      'ionicons': require('../../assets/fonts/ionicons.ttf')
+    })
+  }
+
+  render() {
+    return (
+      <Ionicons
+        name={this.props.name}
+        size={26}
+        style={{ marginBottom: -3 }}
+        color={this.props.focused ? Colors.tabIconSelected : Colors.tabIconDefault}
+      />
+    )
+  }
 }
