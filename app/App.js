@@ -1,13 +1,7 @@
-// Middleware
-import axios from 'axios'
-import axiosMiddleware from 'redux-axios-middleware'
-
 // React/Redux
 import React, { useState } from 'react'
-import { createStore, applyMiddleware } from 'redux'
 import { Provider } from 'react-redux'
-import logger from 'redux-logger'
-import reducer from './reducers/index'
+import { store } from './store/index'
 
 // Navigation
 import { createAppContainer } from 'react-navigation'
@@ -21,13 +15,6 @@ import { AppLoading } from 'expo'
 import { Asset } from 'expo-asset'
 import * as Font from 'expo-font'
 import { Ionicons } from '@expo/vector-icons'
-
-const client = axios.create({
-  baseURL: 'http://127.0.0.1:8000/',
-  responseType: 'json'
-});
-
-const store = createStore(reducer, applyMiddleware(axiosMiddleware(client), logger))
 
 const AppContainer = createAppContainer(tabNavigator)
 

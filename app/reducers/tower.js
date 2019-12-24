@@ -1,12 +1,14 @@
+import * as actions from '../actions/tower'
+
 export default function reducer(state = { towers: [] }, action) {
     switch (action.type) {
 
         // get all categories
-        case GET_CATEGORIES:
+        case actions.GET_CATEGORIES:
             return { ...state, loading: true };
-        case GET_CATEGORIES_SUCCESS:
+        case actions.GET_CATEGORIES_SUCCESS:
             return { ...state, loading: false, categories: action.payload.data.results };
-        case GET_CATEGORIES_FAIL:
+        case actions.GET_CATEGORIES_FAIL:
             return {
                 ...state,
                 loading: false,
@@ -14,11 +16,11 @@ export default function reducer(state = { towers: [] }, action) {
             };
 
         // get all towers
-        case GET_TOWERS:
+        case actions.GET_TOWERS:
             return { ...state, loading: true };
-        case GET_TOWERS_SUCCESS:
+        case actions.GET_TOWERS_SUCCESS:
             return { ...state, loading: false, towers: action.payload.data.results };
-        case GET_TOWERS_FAIL:
+        case actions.GET_TOWERS_FAIL:
             return {
                 ...state,
                 loading: false,
@@ -26,11 +28,11 @@ export default function reducer(state = { towers: [] }, action) {
             };
 
         // get a specific tower
-        case GET_TOWER:
+        case actions.GET_TOWER:
             return { ...state, loading: true };
-        case GET_TOWER_SUCCESS:
+        case actions.GET_TOWER_SUCCESS:
             return { ...state, loading: false, currentTower: action.payload.data };
-        case GET_TOWER_FAIL:
+        case actions.GET_TOWER_FAIL:
             return {
                 ...state,
                 loading: false,

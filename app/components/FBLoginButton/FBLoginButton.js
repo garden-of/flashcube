@@ -1,36 +1,38 @@
 import React from 'react'
-import { View, StyleSheet } from 'react-native'
+import { StyleSheet } from 'react-native'
 import { Button, Icon } from 'react-native-elements'
-import { AuthSession } from 'expo'
+import * as Facebook from 'expo-facebook'
 
 import Colors from '../../constants/Colors'
 import Styles from '../../constants/Styles'
 
-const FB_APP_ID = '468157980709865';
-
 export default class FBLoginButton extends React.Component {
 
     _handlePressAsync = async () => {
-        let redirectUrl = AuthSession.getRedirectUrl()
-
-        let result = await AuthSession.startAsync({
-            authUrl:
-                `https://www.facebook.com/v2.8/dialog/oauth?response_type=token` +
-                `&client_id=${FB_APP_ID}` +
-                `&redirect_uri=${encodeURIComponent(redirectUrl)}`,
-
-        })
-
-        if (result.type != 'success') {
-            console.error('something went wrong')
-            return
+        try {
+            const {
+                type,
+                token,
+                expires,
+                permissions,
+                declinedPermissions,
+              } = await Facebook.logInWithReadPermissionsAsync(
+                '468157980709865',
+                { permissions: ['public_profile'] }
+            )
+            if (type === 'success') {
+                console.log('logged in!')
+            } else {
+                console.error('login failed')
+            }
         }
-
-        let accessToken = result.params.access_token
-        console.log(result.params)
+        catch({ message }) {
+            console.error(message)
+        }
     }
 
     render() {
+        console.log(Facebook)
         return <Button 
             icon={
                 <Icon
