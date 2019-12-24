@@ -23,6 +23,136 @@ const mapDispatchToProps = dispatch => {
 
 class LoginScreen extends React.Component {
 
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      email: {},
+      password: {}
+    }
+
+    this.handleCreateAccount = this.handleCreateAccount.bind(this)
+    this.handleEmailFieldUpdate = this.handleEmailFieldUpdate.bind(this)
+    this.handlePasswordFieldUpdate = this.handlePasswordFieldUpdate.bind(this)
+  }
+
+  emailIsValid(email) {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  }
+
+  handleEmailFieldUpdate(e) {
+    this.setState({ email: {
+      ...this.state.email,
+      value: e.nativeEvent.text
+    } })
+  }
+
+  handlePasswordFieldUpdate(e) {
+    this.setState({ password: {
+      ...this.state.password,
+      value: e.nativeEvent.text
+    } })
+  }
+
+  handleCreateAccount() {
+    let emailValid = true
+    let passwordValid = true
+
+    if (!this.state.email.value || !this.state.email.value.length > 0) {
+      emailValid = false
+      this.setState({
+        email: {
+          ...this.state.email,
+          error: true,
+          errorMessage: 'email address is required'
+        }
+      })
+    }
+
+    else if (!this.emailIsValid(this.state.email.value)) {
+      emailValid = false
+      this.setState({
+        email: {
+          ...this.state.email,
+          error: true,
+          errorMessage: 'please enter a valid email address'
+        }
+      })
+    }
+
+    if (emailValid) {
+      this.setState({
+        email: {
+          value: this.state.email.value
+        }
+      })
+    }
+
+    if (!this.state.password.value || !this.state.password.value.length > 0) {
+      passwordValid = false
+      this.setState({
+        password: {
+          ...this.state.password,
+          error: true,
+          errorMessage: 'password is required'
+        }
+      })
+    }
+
+    else if (!this.passwordIsValid(this.state.password.value)) {
+      passwordValid = false
+      this.setState({
+        password: {
+          ...this.state.password,
+          error: true,
+          errorMessage: 'passwords must be 8 characters or longer'
+        }
+      })
+    }
+
+    if (passwordValid) {
+      this.setState({
+        password: {
+          value: this.state.password.value
+        }
+      })
+    }
+
+    if (emailValid && passwordValid) {
+      this.props.registerUser(this.state.email.value, this.state.password.value).then(() => {
+        const { user }  = this.props.login
+        if (user.isRegistered) this.props.loginUser(user.username, user.password)
+      }).catch((response) => {console.log(response)})
+    }
+
+  }
+
+  passwordIsValid(password) {
+    return password.length > 8
+  }
+
+  renderEmailErrorMessage() {
+    const { user } = this.props.login
+
+    // if we are currently registering, return no error
+    if (user.isRegistering) return null
+
+    // UI errors take priority
+    if (this.state.email.error) return this.state.email.errorMessage
+
+    // if no UI errors, render API errors
+    if (user.error) {
+      if (Object.keys(user.errors).includes('username') || Object.keys(user.errors).includes('email')) {
+        return 'hmm, looks like that email is already registered.  Try signing in instead.'
+      }
+    }
+
+    // if no errors, return null
+    return null
+
+  }
+
   render() {
     const loginButtons = [
       { element: () => <GoogleLoginButton /> },
@@ -69,10 +199,13 @@ class LoginScreen extends React.Component {
                     />
                   }
                   placeholder='email'
+                  placeholderTextColor={Colors.gray2}
                   containerStyle={styles.textInputContainer}
                   inputContainerStyle={styles.textInputContainerContainer}
                   inputStyle={styles.textInput}
-                  placeholderTextColor={Colors.gray2}
+                  autoCapitalize='none'
+                  onChange={this.handleEmailFieldUpdate}
+                  errorMessage={this.renderEmailErrorMessage()}
                 />
                 <Input
                   leftIcon={
@@ -87,7 +220,10 @@ class LoginScreen extends React.Component {
                   containerStyle={styles.textInputContainer}
                   inputContainerStyle={styles.textInputContainerContainer}
                   inputStyle={styles.textInput}
+                  autoCapitalize='none'
                   placeholderTextColor={Colors.gray2}
+                  onChange={this.handlePasswordFieldUpdate}
+                  errorMessage={this.state.password.error ? this.state.password.errorMessage : null}
                   secureTextEntry
                 />
                 <Button 
@@ -95,6 +231,7 @@ class LoginScreen extends React.Component {
                   buttonStyle={Styles.transparentButtonStyle} 
                   titleStyle={Styles.outlineButtonTextStyle} 
                   containerStyle={styles.buttonContainer}
+                  onPress={this.handleCreateAccount}
                 />
             </View>
             <View style={styles.footer}>
@@ -170,12 +307,12 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 8,
     paddingHorizontal: 0,
-    marginHorizontal: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    borderRadius: 3,
+    marginHorizontal: 0
   },
   textInputContainerContainer: {
-    borderBottomWidth: 0
+    borderBottomWidth: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 3,
   },
   textInput: {
     width: '100%',
