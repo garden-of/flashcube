@@ -17,6 +17,11 @@ const persistConfig = {
     storage: createSecureStore()
 }
 
+UNAUTHED_URLS = [
+    '/auth/token/',
+    '/auth/convert-token/',
+    '/register/',
+]
 const axiosMiddlewareConfig = {
     interceptors: {
         request: [{
@@ -25,7 +30,7 @@ const axiosMiddlewareConfig = {
             const token = getState().user.auth.access_token
             
             // special case for when we are refreshing token:
-            if (req.url === '/auth/token/' || req.url === '/auth/convert-token/') {
+            if (UNAUTHED_URLS.includes(req.url)) {
                 return req
             } else {
                 return {
