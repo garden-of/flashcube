@@ -1,7 +1,8 @@
 // React/Redux
 import React, { useState } from 'react'
 import { Provider } from 'react-redux'
-import { store } from './store/index'
+import { store, persistor } from './store/index'
+import { PersistGate } from 'redux-persist/integration/react'
 
 // Navigation
 import { createAppContainer } from 'react-navigation'
@@ -65,10 +66,12 @@ export default class App extends React.Component {
       const AppContainer = createAppContainer(switchNavigator)
       return (
         <Provider store={store}>
-          <View style={styles.container}>
-            {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-            <AppContainer />
-          </View>
+          <PersistGate loading={null} persistor={persistor}>
+            <View style={styles.container}>
+              {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+              <AppContainer />
+            </View>
+          </PersistGate>
         </Provider>
       )
     }
