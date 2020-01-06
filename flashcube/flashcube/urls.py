@@ -24,9 +24,12 @@ router.register(r'category', views.CategoryViewSet)
 router.register(r'cube', views.CubeViewSet)
 router.register(r'face', views.FaceViewSet)
 router.register(r'tower', views.TowerViewSet)
+router.register(r'user_preferences', views.UserPreferencesViewSet, 'UserPreferences')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('rest_framework_social_oauth2.urls')),
-    path('api/', include(router.urls))
+    path('register/', views.CreateUser.as_view()),
+    path('api/', include(router.urls)),
+    path('api/user/', views.GetUser.as_view())
 ]
