@@ -82,7 +82,6 @@ WSGI_APPLICATION = 'flashcube.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 if 'RDS_DB_NAME' in os.environ:
     DATABASES = {
         'default': {
