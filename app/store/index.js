@@ -7,6 +7,8 @@ import logger from 'redux-logger'
 import axios from 'axios'
 import axiosMiddleware from 'redux-axios-middleware'
 
+import getEnvVars from '../environment/environment'
+
 import createRootReducer from '../reducers/index'
 
 const persistConfig = {
@@ -37,15 +39,15 @@ const axiosMiddlewareConfig = {
           },
           error: function ({getState, dispatch, getSourceAction}, error) {
             //...
-            //console.log(error)
             return error
           }
         }]
     }
 }
 
+const { apiUrl } = getEnvVars()
 const client = axios.create({
-    baseURL: 'http://127.0.0.1:8000/',
+    baseURL: apiUrl,
     responseType: 'json'
 })
 

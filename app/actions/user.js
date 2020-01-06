@@ -1,3 +1,7 @@
+import getEnvVars from '../environment/environment'
+
+const envVars = getEnvVars()
+
 export const GET_USER = 'GET_USER'
 export const GET_USER_SUCCESS = 'GET_USER_SUCCESS'
 export const GET_USER_FAIL = 'GET_USER_FAIL'
@@ -18,8 +22,8 @@ export const UPDATE_USER_PREFERENCES = 'UPDATE_USER_PREFERENCES'
 export const UPDATE_USER_PREFERENCES_SUCCESS = 'UPDATE_USER_PREFERENCES_SUCCESS'
 export const UPDATE_USER_PREFERENCES_FAIL = 'UPDATE_USER_PREFERENCES_FAIL'
 
-const INTERNAL_CLIENT_ID = 'xY3XF1gjEsNXLtz63MDtljNB2sXASqFl1tVI8D2s'
-const INTERNAL_CLIENT_SECRET = 'qBgnejmCZbHrX7pOfhFbkubuBzNpzmv0Bpjfnv34tb3Z6ZX3e9CQmC7lDcOqQtnE1I3JipCkm2zdTbr972V3SQrmt2PTBgqwSmYxXqRyOJDhEqH8uu1zlQPPcbujEdZs'
+const INTERNAL_CLIENT_ID = envVars.internalClientId
+const INTERNAL_CLIENT_SECRET = envVars.internalClientSecret
 
 export function convertToken(provider, response) {
     

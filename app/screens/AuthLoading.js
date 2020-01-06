@@ -23,7 +23,6 @@ class AuthLoading extends React.Component {
     }
     
     _bootstrapAsync = async () => {
-        console.log(this.props)
         let userToken = false
         this.props.navigation.navigate(userToken ? 'App' : 'Signup');
     }
