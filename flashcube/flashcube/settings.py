@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'oauth2_provider',
     'social_django',
     'rest_framework_social_oauth2',
+    'guardian',
     'flashcube'
 ]
 
@@ -138,8 +139,9 @@ REST_FRAMEWORK = {
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
         'rest_framework_social_oauth2.authentication.SocialAuthentication',
     ),
+    'DEFAULT_FILTERING_BACKEND': 'flashcube.filters.AllDjangoFilterBackend',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 25
 }
 
 AUTHENTICATION_BACKENDS = (
@@ -147,9 +149,13 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.facebook.FacebookAppOAuth2',
     'social_core.backends.facebook.FacebookOAuth2',
     
+    # Google OAuth2
+    'social_core.backends.google.GoogleOAuth2',
+
     # OAuth2 Core
     'rest_framework_social_oauth2.backends.DjangoOAuth2',
     'django.contrib.auth.backends.ModelBackend',
+    'guardian.backends.ObjectPermissionBackend',
 )
 
 # Social Auth Settings
@@ -161,6 +167,14 @@ SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
   'fields': 'id, name, email, age_range'
 }
 SOCIAL_AUTH_FACEBOOK_API_VERSION = '2.10'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '498982492232-14fjiq7gc2rjaq4668q8jnnqncpqht98.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'vLALpmtKcH0HN91aMD9c3HLj'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+]
+
 OAUTH2_PROVIDER = {
     'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore',
 }

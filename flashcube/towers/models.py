@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Category(models.Model):
     category = models.CharField(max_length=200)
@@ -8,6 +9,18 @@ class Category(models.Model):
 
     def __str__(self):
         return self.category
+
+class CategoryStatus(models.Model):
+    CHOICES = (
+        ('DL', 'Don\'t Learn'),
+        ('LN', 'Learn Now'),
+        ('AL', 'Already Learned')
+    )
+
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    category = models.ForeignKey(to='Category', on_delete=models.CASCADE)
+    status = models.CharField(max_length=2, choices=CHOICES, default='DL')
+
 
 class Cube(models.Model):
     name = models.CharField(max_length=200)
@@ -32,7 +45,7 @@ class Face(models.Model):
 
 class Tower(models.Model):
     name = models.CharField(max_length=200)
-    categories = models.ManyToManyField('Category', related_name='categories')
+    categories = models.ManyToManyField('Category', related_name='tower_categories')
     primary_category = models.ForeignKey('Category', on_delete=models.CASCADE)
 
     @property
@@ -44,3 +57,14 @@ class Tower(models.Model):
 
     def __str__(self):
         return self.name
+
+class UserPreferences(models.Model):
+    
+    user = models.OneToOneField(to=User, on_delete=models.CASCADE)
+
+    onboarded = models.BooleanField(default=False)
+    onboardingSkipped = models.BooleanField(default=False)
+
+    baseCategory = models.ForeignKey(to='Category', on_delete=models.CASCADE, blank=True, null=True, related_name='base_category')
+    learningCategories = models.ManyToManyField(to='Category', related_name='learning_categories', blank=True)
+    fluentCategories = models.ManyToManyField(to='Category', related_name='fluent_categories', blank=True)
