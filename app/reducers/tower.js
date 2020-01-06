@@ -1,41 +1,61 @@
 import * as actions from '../actions/tower'
 
-export default function reducer(state = { towers: [] }, action) {
+const defaultState = {
+    towers: {},
+    categories: {}
+}
+
+export default function reducer(state = defaultState, action) {
     switch (action.type) {
 
         // get all categories
         case actions.GET_CATEGORIES:
-            return { ...state, loading: true };
+            return { 
+                ...state, 
+                categories: {
+                    fetching: true,
+                    fetched: false
+                }
+            }
         case actions.GET_CATEGORIES_SUCCESS:
-            return { ...state, loading: false, categories: action.payload.data.results };
+            return {
+                ...state,
+                categories: {
+                    fetched: true,
+                    fetching: false,
+                    categories: action.payload.data.results
+                }
+            }
         case actions.GET_CATEGORIES_FAIL:
             return {
                 ...state,
-                loading: false,
-                error: 'Error while fetching categories'
-            };
+                categories: {
+                    fetched: false,
+                    loadign: false
+                }
+            }
 
         // get all towers
         case actions.GET_TOWERS:
-            return { ...state, loading: true };
+            return { ...state, fetching: true };
         case actions.GET_TOWERS_SUCCESS:
-            return { ...state, loading: false, towers: action.payload.data.results };
+            return { ...state, fetching: false, towers: action.payload.data.results };
         case actions.GET_TOWERS_FAIL:
             return {
                 ...state,
-                loading: false,
+                fetching: false,
                 error: 'Error while fetching towers'
             };
 
         // get a specific tower
         case actions.GET_TOWER:
-            return { ...state, loading: true };
+            return { ...state, fetching: true };
         case actions.GET_TOWER_SUCCESS:
-            return { ...state, loading: false, currentTower: action.payload.data };
+            return { ...state, fetching: false, currentTower: action.payload.data };
         case actions.GET_TOWER_FAIL:
             return {
                 ...state,
-                loading: false,
+                fetching: false,
                 error: 'Error while fetching tower'
             };
 

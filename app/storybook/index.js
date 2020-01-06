@@ -3,9 +3,12 @@ import { getStorybookUI, configure } from '@storybook/react-native'
 
 import './rn-addons'
 
-const loaderFn = () => {
-    require('../components/ListItem/ListItem.stories.js')
-}
+const loaderFn = () => {[
+    require('../components/ListItem/ListItem.stories.js'),
+    require('../components/LanguagePicker/LanguagePicker.stories.js'),
+    require('../components/Loader/Loader.stories.js'),
+    require('../components/PreferenceSelector/PreferenceSelector.stories.js'),
+]}
 
 configure(loaderFn, module)
 

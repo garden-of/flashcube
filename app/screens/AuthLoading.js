@@ -1,17 +1,31 @@
 import React from 'react'
-import { AsyncStorage, StyleSheet, View } from 'react-native'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+
+import * as actions from '../actions/user'
+
+import { StyleSheet, View } from 'react-native'
 
 import Colors from '../constants/Colors'
 
-export default class AuthLoading extends React.Component {
+const mapStateToProps = state => ({
+  ...state
+})
+
+const mapDispatchToProps = dispatch => {
+  return bindActionCreators(actions, dispatch)
+}
+
+class AuthLoading extends React.Component {
     
     componentDidMount() {
         this._bootstrapAsync()
     }
     
     _bootstrapAsync = async () => {
-        const userToken = await AsyncStorage.getItem('userToken')
-        this.props.navigation.navigate(userToken ? 'App' : 'Auth');
+        console.log(this.props)
+        let userToken = false
+        this.props.navigation.navigate(userToken ? 'App' : 'Signup');
     }
 
     render() {
@@ -33,3 +47,5 @@ const styles = StyleSheet.create({
     maxHeight: 100
   }
 })
+
+export default connect(mapStateToProps, mapDispatchToProps)(AuthLoading)

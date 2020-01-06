@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
-import * as actions from '../actions/login'
+import * as actions from '../actions/user'
 
 import { View, StyleSheet, ImageBackground, Text } from 'react-native'
 import { Input, Button, ButtonGroup, Icon } from 'react-native-elements'
@@ -31,9 +31,10 @@ class LoginScreen extends React.Component {
       password: {}
     }
 
-    this.handleCreateAccount = this.handleCreateAccount.bind(this)
+    this.handleCreateAccount = this.handleLogin.bind(this)
     this.handleEmailFieldUpdate = this.handleEmailFieldUpdate.bind(this)
     this.handlePasswordFieldUpdate = this.handlePasswordFieldUpdate.bind(this)
+    this.navigateTo = this.navigateTo.bind(this)
   }
 
   emailIsValid(email) {
@@ -55,7 +56,7 @@ class LoginScreen extends React.Component {
     } })
   }
 
-  handleCreateAccount() {
+  handleLogin() {
     let emailValid = true
     let passwordValid = true
 
@@ -100,17 +101,6 @@ class LoginScreen extends React.Component {
       })
     }
 
-    else if (!this.passwordIsValid(this.state.password.value)) {
-      passwordValid = false
-      this.setState({
-        password: {
-          ...this.state.password,
-          error: true,
-          errorMessage: 'passwords must be 8 characters or longer'
-        }
-      })
-    }
-
     if (passwordValid) {
       this.setState({
         password: {
@@ -120,10 +110,10 @@ class LoginScreen extends React.Component {
     }
 
     if (emailValid && passwordValid) {
-      this.props.registerUser(this.state.email.value, this.state.password.value).then(() => {
-        const { user }  = this.props.login
-        if (user.isRegistered) this.props.loginUser(user.username, user.password)
-      }).catch((response) => {console.log(response)})
+      this.props.loginUser(this.state.email.value, this.state.password.value)
+      .then(() => this.props.getUserPreferences(this.props.user.profile))
+      .then(() => this.navigateTo('Home'))
+      .catch((response) => {console.log(response)})
     }
 
   }
@@ -133,19 +123,17 @@ class LoginScreen extends React.Component {
   }
 
   renderEmailErrorMessage() {
-    const { user } = this.props.login
+    const { auth } = this.props.user
 
     // if we are currently registering, return no error
-    if (user.isRegistering) return null
+    if (auth.isLoggingIn) return null
 
     // UI errors take priority
     if (this.state.email.error) return this.state.email.errorMessage
 
     // if no UI errors, render API errors
-    if (user.error) {
-      if (Object.keys(user.errors).includes('username') || Object.keys(user.errors).includes('email')) {
-        return 'hmm, looks like that email is already registered.  Try signing in instead.'
-      }
+    if (auth.error) {
+      return 'hmm, that email or password is invalid'
     }
 
     // if no errors, return null
@@ -153,15 +141,21 @@ class LoginScreen extends React.Component {
 
   }
 
+  navigateTo(destination='Home') {
+    if (!this.props.user.auth.isLoggedIn) return
+    this.props.navigation.navigate(destination)
+  }
+
   render() {
+
     const loginButtons = [
       { element: () => <GoogleLoginButton 
-          onLoginSuccess={(r) => this.props.convertToken('google', r)}
-          onLoginFail={() => console.log('login failed')}
+          onLoginSuccess={(r) => this.props.convertToken('google-oauth2', r).then(() => this.navigateTo('Home'))}
+          onLoginFail={(response) => console.log(response)}
         /> },
       { element: () => <FBLoginButton 
-          onLoginSuccess={(r) => this.props.convertToken('facebook', r)}
-          onLoginFail={() => console.log('login failed')}
+          onLoginSuccess={(r) => this.props.convertToken('facebook', r).then(() => this.navigateTo('Home'))}
+          onLoginFail={(response) => console.log(response)}
         /> }
     ]
   
@@ -177,11 +171,12 @@ class LoginScreen extends React.Component {
             </View>
             <View style={styles.socialButtons}>
               <View style={styles.login}>
-                <Text>Already have an account?</Text>
+                <Text>New to Flashcube?</Text>
                 <Button 
                   type='clear'
-                  title='Login'
+                  title='Create Account'
                   titleStyle={Styles.linkButtonTitle}
+                  onPress={() => this.props.navigation.navigate('Signup')}
                 />
               </View>
               <ButtonGroup 
@@ -194,7 +189,7 @@ class LoginScreen extends React.Component {
                 }}
               />
             </View>
-            <View style={styles.signUpForm}>
+            <View style={styles.LoginForm}>
                 <Input
                   leftIcon={
                     <Icon
@@ -233,11 +228,11 @@ class LoginScreen extends React.Component {
                   secureTextEntry
                 />
                 <Button 
-                  title='Create Account'
+                  title='Login'
                   buttonStyle={Styles.transparentButtonStyle} 
                   titleStyle={Styles.outlineButtonTextStyle} 
                   containerStyle={styles.buttonContainer}
-                  onPress={this.handleCreateAccount}
+                  onPress={this.handleLogin}
                 />
             </View>
             <View style={styles.footer}>
@@ -304,7 +299,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(256, 256, 256, 0.35)',
     borderColor: 'rgba(0, 0, 0, 0.1)',
   },
-  signUpForm: {
+  LoginForm: {
     marginTop: 20,
     width: '100%',
     flexBasis: '35%'

@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux'
 
-import loginReducer from './login'
+import userReducer from './user'
 import towerReducer from './tower'
 
 const createRootReducer = (history) => combineReducers({
-    login: loginReducer,
+    user: userReducer,
     tower: towerReducer,
 })
 
