@@ -38,3 +38,8 @@ LOGGING = {
 SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+STATICFILES_STORAGE = 'flashcube.storage.StaticStorage'
+STATICFILES_LOCATION = 'static'
+DEFAULT_FILE_STORAGE = 'flashcube.storage.StaticStorage'
+MEDIAFILES_LOCATION = 'media'
