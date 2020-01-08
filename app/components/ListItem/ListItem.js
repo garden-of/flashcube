@@ -68,7 +68,7 @@ class ListItem extends React.Component {
                 subtitle={this.abbreviateString(this.props.subtitle)}
             />}
             leftAvatar={{ 
-                source: { uri: this.props.image },
+                source: { uri: this.props.image !== null ? this.props.image : 'https://user-images.githubusercontent.com/101482/29592647-40da86ca-875a-11e7-8bc3-941700b0a323.png' },
                 rounded: false,
                 size: 'medium'
             }}
