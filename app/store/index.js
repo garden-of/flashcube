@@ -1,6 +1,5 @@
 import { createStore, applyMiddleware } from 'redux'
-import { persistStore, persistReducer } from 'redux-persist'
-import createSecureStore from "redux-persist-expo-securestore"
+import { persistStore } from 'redux-persist'
 
 // MIDDLEWARE
 import logger from 'redux-logger'
@@ -10,12 +9,6 @@ import axiosMiddleware from 'redux-axios-middleware'
 import getEnvVars from '../environment/environment'
 
 import createRootReducer from '../reducers/index'
-
-const persistConfig = {
-    key: 'root',
-    whitelist: ['login'],
-    storage: createSecureStore()
-}
 
 UNAUTHED_URLS = [
     '/auth/token/',
@@ -56,7 +49,5 @@ const client = axios.create({
     responseType: 'json'
 })
 
-const persistedReducer = persistReducer(persistConfig, createRootReducer())
-
-export const store = createStore(persistedReducer, applyMiddleware(axiosMiddleware(client, axiosMiddlewareConfig), logger))
+export const store = createStore(createRootReducer(), applyMiddleware(axiosMiddleware(client, axiosMiddlewareConfig), logger))
 export const persistor = persistStore(store)

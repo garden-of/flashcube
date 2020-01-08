@@ -21,7 +21,6 @@ class CategoryStatus(models.Model):
     category = models.ForeignKey(to='Category', on_delete=models.CASCADE)
     status = models.CharField(max_length=2, choices=CHOICES, default='DL')
 
-
 class Cube(models.Model):
     name = models.CharField(max_length=200)
     tower = models.ForeignKey('Tower', on_delete=models.CASCADE)
@@ -44,9 +43,16 @@ class Face(models.Model):
         return self.value
 
 class Tower(models.Model):
+    CHOICES = (
+        ('B', 'Beginner'),
+        ('I', 'Intermediate'),
+        ('E', 'Expert'),
+    )
     name = models.CharField(max_length=200)
     categories = models.ManyToManyField('Category', related_name='tower_categories')
+    image = models.ImageField(blank=True, null=True)
     primary_category = models.ForeignKey('Category', on_delete=models.CASCADE)
+    difficulty = models.CharField(max_length=1, choices=CHOICES, default='B')
 
     @property
     def num_cubes(self):
@@ -62,9 +68,20 @@ class UserPreferences(models.Model):
     
     user = models.OneToOneField(to=User, on_delete=models.CASCADE)
 
-    onboarded = models.BooleanField(default=False)
+    categoriesOnboarded = models.BooleanField(default=False)
+    setsOnboarded = models.BooleanField(default=False)
     onboardingSkipped = models.BooleanField(default=False)
 
     baseCategory = models.ForeignKey(to='Category', on_delete=models.CASCADE, blank=True, null=True, related_name='base_category')
     learningCategories = models.ManyToManyField(to='Category', related_name='learning_categories', blank=True)
     fluentCategories = models.ManyToManyField(to='Category', related_name='fluent_categories', blank=True)
+
+class UserSubscription(models.Model):
+
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    tower = models.ForeignKey(to=Tower, on_delete=models.CASCADE)
+
+    categories = models.ManyToManyField(to=Category)
+
+    class Meta:
+        unique_together = ['user', 'tower']

@@ -2,6 +2,15 @@ import getEnvVars from '../environment/environment'
 
 const envVars = getEnvVars()
 
+
+export const CREATE_USER_SUBSCRIPTION = 'CREATE_USER_SUBSCRIPTION'
+export const CREATE_USER_SUBSCRIPTION_SUCCESS = 'CREATE_USER_SUBSCRIPTION_SUCCESS'
+export const CREATE_USER_SUBSCRIPTION_FAIL = 'CREATE_USER_SUBSCRIPTION_FAIL'
+
+export const DELETE_USER_SUBSCRIPTION = 'DELETE_USER_SUBSCRIPTION'
+export const DELETE_USER_SUBSCRIPTION_SUCCESS = 'DELETE_USER_SUBSCRIPTION_SUCCESS'
+export const DELETE_USER_SUBSCRIPTION_FAIL = 'DELETE_USER_SUBSCRIPTION_FAIL'
+
 export const GET_USER = 'GET_USER'
 export const GET_USER_SUCCESS = 'GET_USER_SUCCESS'
 export const GET_USER_FAIL = 'GET_USER_FAIL'
@@ -10,6 +19,10 @@ export const GET_USER_PREFERENCES = 'GET_USER_PREFERENCES'
 export const GET_USER_PREFERENCES_SUCCESS = 'GET_USER_PREFERENCES_SUCCESS'
 export const GET_USER_PREFERENCES_FAIL = 'GET_USER_PREFERENCES_FAIL'
 
+export const GET_USER_SUBSCRIPTIONS = 'GET_USER_SUBSCRIPTIONS'
+export const GET_USER_SUBSCRIPTIONS_SUCCESS = 'GET_USER_SUBSCRIPTIONS_SUCCESS'
+export const GET_USER_SUBSCRIPTIONS_FAIL = 'GET_USER_SUBSCRIPTIONS_FAIL'
+
 export const LOGIN = 'LOGIN'
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
 export const LOGIN_FAIL = 'LOGIN_FAIL'
@@ -17,6 +30,8 @@ export const LOGIN_FAIL = 'LOGIN_FAIL'
 export const REGISTER_USER = 'REGISTER_USER'
 export const REGISTER_USER_SUCCESS = 'REGISTER_USER_SUCCESS'
 export const REGISTER_USER_FAIL = 'REGISTER_USER_FAIL'
+
+export const SIGN_OUT = 'SIGN_OUT'
 
 export const UPDATE_USER_PREFERENCES = 'UPDATE_USER_PREFERENCES'
 export const UPDATE_USER_PREFERENCES_SUCCESS = 'UPDATE_USER_PREFERENCES_SUCCESS'
@@ -53,6 +68,35 @@ export function convertToken(provider, response) {
     }
 }
 
+export function createUserSubscription(setId, userId, categories) {
+    return {
+        type: CREATE_USER_SUBSCRIPTION,
+        payload: {
+            request: {
+                url: `/api/user_subscription/`,
+                method: 'POST',
+                data: {
+                    user: userId,
+                    tower: setId,
+                    categories: categories
+                }
+            }
+        }
+    }
+}
+
+export function deleteUserSubscription(subscription) {
+    return {
+        type: DELETE_USER_SUBSCRIPTION,
+        payload: {
+            request: {
+                url: `/api/user_subscription/${subscription.id}/`,
+                method: 'DELETE'
+            }
+        }
+    }
+}
+
 export function getUser() {
     return {
         type: GET_USER,
@@ -70,6 +114,17 @@ export function getUserPreferences() {
         payload: {
             request: {
                 url: `/api/user_preferences/`
+            }
+        }
+    }
+}
+
+export function getUserSubscriptions() {
+    return {
+        type: GET_USER_SUBSCRIPTIONS,
+        payload: {
+            request: {
+                url: `/api/user_subscription/`
             }
         }
     }
@@ -112,18 +167,22 @@ export function registerUser(email, password) {
     }
 }
 
+export function signOut() {
+    return {
+        type: SIGN_OUT,
+        payload: {}
+    }
+}
+
 export function updateUserPreferences(preferences) {
     return {
         type: UPDATE_USER_PREFERENCES,
         payload: {
             request: {
-                url: `/api/user_preferences/`,
-                method: 'PUT',
+                url: `/api/user_preferences/${preferences.id}/`,
+                method: 'PATCH',
                 data: {
-                    id: preferences.id,
-                    baseCategory: preferences.baseCategory,
-                    learningCategories: preferences.learningCategories,
-                    fluentCategories: preferences.fluentCategories
+                    ...preferences
                 }
             }
         }

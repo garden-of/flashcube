@@ -4,13 +4,18 @@ import { Button, Icon } from 'react-native-elements'
 import * as Facebook from 'expo-facebook'
 import PropTypes from 'prop-types'
 
+import getEnvVars from '../../environment/environment'
+
 import Styles from '../../constants/Styles'
 
 export default class FBLoginButton extends React.Component {
 
     _handlePressAsync = async () => {
+        
+        const env = getEnvVars()
+
         try {
-            await Facebook.initializeAsync()
+            await Facebook.initializeAsync(env.fbAppId)
             const response = await Facebook.logInWithReadPermissionsAsync({ permissions: ['public_profile'] })
             if (response.type === 'success') {
                 this.props.onLoginSuccess(response)

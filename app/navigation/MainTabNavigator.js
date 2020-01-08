@@ -56,13 +56,7 @@ const AuthStack = createAnimatedSwitchNavigator(
 
 const HomeStack = createStackNavigator(
   {
-    Home: HomeScreen,
-    TowerDetailScreen: TowerDetailScreen,
-    OnboardingLanguages: {
-      screen: OnboardingLanguages,
-      mode: 'modal'
-    },
-    OnboardingSets: OnboardingSets
+    Home: HomeScreen
   },
   {
     ...config,
@@ -175,7 +169,7 @@ const tabNavigator = createBottomTabNavigator(
     }
   }
 )
-tabNavigator.path = ''
+tabNavigator.path = 'Home'
 
 const switchNavigator = createAnimatedSwitchNavigator(
   {

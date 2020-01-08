@@ -72,7 +72,9 @@ export default StyleSheet.create({
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
-        padding: 10
+        height: '100%',
+        marginTop: 40,
+        padding: 15
     },
     transparentButtonStyle: {
         backgroundColor: 'rgba(256, 256, 256, 0.35)',
@@ -91,9 +93,9 @@ export default StyleSheet.create({
         justifyContent: 'center'
     },
     outlineButtonTextStyle: {
+        ...small,
+        ...semibold,
         color: Colors.white,
-        fontSize: 14,
-        fontWeight: '600',
         paddingLeft: 10
     },
     buttonContainerStyle: {
@@ -114,6 +116,12 @@ export default StyleSheet.create({
         borderWidth: 1,
         marginBottom: 5
     },
+    shadow: {
+        shadowColor: Colors.black,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+    },  
     inputInputStyles: {
         color: Colors.primary,
         paddingLeft: 5

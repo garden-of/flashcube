@@ -25,6 +25,7 @@ router.register(r'cube', views.CubeViewSet)
 router.register(r'face', views.FaceViewSet)
 router.register(r'tower', views.TowerViewSet)
 router.register(r'user_preferences', views.UserPreferencesViewSet, 'UserPreferences')
+router.register(r'user_subscription', views.UserSubscriptionViewSet, 'UserSubscription')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

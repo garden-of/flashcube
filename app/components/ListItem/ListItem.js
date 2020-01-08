@@ -6,6 +6,7 @@ import { ListItem as RNListItem, Icon } from 'react-native-elements'
 import ProgressCircle from 'react-native-progress-circle'
 
 import Colors from '../../constants/Colors'
+import Styles from '../../constants/Styles'
 
 class ListItemTitle extends React.Component {
     render() {
@@ -53,12 +54,18 @@ class ListItem extends React.Component {
         }
     }
 
+    abbreviateString(title) {
+        const maxLength = 27
+        if (title.length < maxLength) return title
+        else return title.substring(0, maxLength-3) + ' ...'
+    }
+
     render() {
         return <RNListItem 
             title={<ListItemTitle 
-                title={this.props.title}
-                languages={this.props.languages.join(' / ')}
-                subtitle={this.props.subtitle}
+                title={this.abbreviateString(this.props.title)}
+                languages={this.abbreviateString(this.props.languages.join(' / '))}
+                subtitle={this.abbreviateString(this.props.subtitle)}
             />}
             leftAvatar={{ 
                 source: { uri: this.props.image },
@@ -79,7 +86,12 @@ ListItem.proptypes = {
     title: PropTypes.string,
     subtitle: PropTypes.string,
     image: PropTypes.uri,
-    onTap: PropTypes.func
+    onTap: PropTypes.func,
+    rightItem: PropTypes.objectOf({
+        type: PropTypes.oneOf([ 'icon', 'progress', 'chip', 'chevron' ]),
+        onPress: PropTypes.func,
+        checked: PropTypes.bool
+    })
 }
 
 const styles = StyleSheet.create({
@@ -103,22 +115,15 @@ const styles = StyleSheet.create({
         height: 80
     },
     listItemTitleLanguages: {
+        ...Styles.xsmallTagCaps,
         color: Colors.primary,
-        fontSize: 11,
-        fontWeight: '600',
-        lineHeight: 13,
-        textTransform: 'uppercase'
     },
     listItemTitleTitle: {
-        color: Colors.black,
-        fontSize: 15,
-        lineHeight: 20
+        ...Styles.regularText
     },
     listItemTitleDetail: {
+        ...Styles.xsmallTagCaps,
         color: Colors.gray1,
-        fontSize: 13,
-        lineHeight: 18,
-        letterSpacing: -0.08
     }
 })
 

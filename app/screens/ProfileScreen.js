@@ -3,8 +3,9 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
 import { View, StyleSheet, ImageBackground } from 'react-native'
+import { Button } from 'react-native-elements'
 
-import * as actions from '../actions/onboarding'
+import * as actions from '../actions/user'
 
 const mapStateToProps = state => ({
   ...state
@@ -16,13 +17,29 @@ const mapDispatchToProps = dispatch => {
 
 class ProfileScreen extends React.Component {
   
-    render() {
-        return <View>
-            <ImageBackground source={require('../assets/images/background.png')} style={styles.imgBackground}>
+  constructor(props) {
+    super(props)
 
-            </ImageBackground>
-        </View>
-    }
+    this.handleSignOut = this.handleSignOut.bind(this)
+  }
+
+  handleSignOut() {
+    this.props.signOut()
+    this.props.navigation.navigate('Auth')
+  }
+
+  render() {
+      return <View>
+          <ImageBackground source={require('../assets/images/background.png')} style={styles.imgBackground}>
+            <View style={styles.container}>
+              <Button 
+                title='Sign Out'
+                onPress={this.handleSignOut}
+              />
+            </View>
+          </ImageBackground>
+      </View>
+  }
 }
 
 const styles = StyleSheet.create({
@@ -31,7 +48,13 @@ const styles = StyleSheet.create({
     height: '100%'
   },
   container: {
-    flex: 1
+    display: 'flex',
+    width: '100%',
+    height: '100%',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center'
   }
 })
 
