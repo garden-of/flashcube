@@ -21,7 +21,7 @@ const ENV = {
 const getEnvVars = (env = Constants.manifest.releaseChannel) => {
 
     if(__DEV__) {
-        return ENV.local
+        return ENV.dev
     } else if (env === 'dev') {
         return ENV.dev
     }
