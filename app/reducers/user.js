@@ -3,11 +3,49 @@ import * as actions from '../actions/user'
 const defaultStore = {
     auth: {},
     registration: {},
-    profile: {}
+    profile: {},
+    subscriptions: {}
 }
 
 export default function reducer(state=defaultStore, action) {
     switch (action.type) {
+        case actions.CREATE_USER_SUBSCRIPTION: {
+
+            let newSubscriptions = []
+            if (state.subscriptions.subscriptions !== undefined){
+                newSubscriptions = state.subscriptions.subscriptions
+                    .filter(subscription => subscription.tower !== action.payload.request.data.setId)
+            }
+            newSubscriptions.push({
+                user: action.payload.request.data.user,
+                tower: action.payload.request.data.tower,
+                categories: action.payload.request.data.categories
+            })
+
+            return {
+                ...state,
+                subscriptions: {
+                    fetching: true,
+                    subscriptions: newSubscriptions
+                }
+            }
+        }
+        case actions.CREATE_USER_SUBSCRIPTION_SUCCESS: {
+            
+            const newSubscriptions = state.subscriptions.subscriptions
+                .filter(subscription => subscription.tower != action.payload.data.tower)
+                
+            newSubscriptions.push(action.payload.data)
+
+            return {
+                ...state,
+                subscriptions: {
+                    fetching: false,
+                    fetched: true,
+                    subscriptions: newSubscriptions
+                }
+            }
+        }
         case actions.GET_USER:
             return {
                 ...state,
@@ -71,6 +109,33 @@ export default function reducer(state=defaultStore, action) {
                         fetching: false,
                         fetched: false,
                     }
+                }
+            }
+        case actions.GET_USER_SUBSCRIPTIONS:
+            return {
+                ...state,
+                subscriptions: {
+                    ...state.subscriptions,
+                    fetching: true
+                }
+            }
+        case actions.GET_USER_SUBSCRIPTIONS_SUCCESS:
+            return {
+                ...state,
+                subscriptions: {
+                    ...state.subscriptions,
+                    fetched: true,
+                    fetching: false,
+                    subscriptions: action.payload.data.results
+                }
+            }
+        case actions.GET_USER_SUBSCRIPTIONS_FAIL:
+            return {
+                ...state,
+                subscriptions: {
+                    ...state.subscriptions,
+                    fetched: false,
+                    fetching: false
                 }
             }
         case actions.LOGIN:
@@ -155,6 +220,8 @@ export default function reducer(state=defaultStore, action) {
                     error: true
                 }
             }
+        case actions.SIGN_OUT:
+            return defaultStore
         case actions.UPDATE_USER_PREFERENCES:
             return {
                 ...state,
@@ -162,8 +229,8 @@ export default function reducer(state=defaultStore, action) {
                     ...state.profile,
                     preferences: {
                         ...state.profile.preferences,
+                        ...action.payload.request.data,
                         fetching: true,
-                        fetched: false
                     }
                 }
             }
@@ -174,7 +241,7 @@ export default function reducer(state=defaultStore, action) {
                     ...state.profile,
                     preferences: {
                         ...state.profile.preferences,
-                        ...action.payload.data.results[0],
+                        ...action.payload.data,
                         fetching: false,
                         fetched: true,
                     }

@@ -37,29 +37,45 @@ export default function reducer(state = defaultState, action) {
 
         // get all towers
         case actions.GET_TOWERS:
-            return { ...state, fetching: true };
+            return { 
+                ...state,
+                towers: {
+                    ...state.towers,
+                    fetching: true
+                }
+            }
         case actions.GET_TOWERS_SUCCESS:
-            return { ...state, fetching: false, towers: action.payload.data.results };
+            return { 
+                ...state,
+                towers: {
+                    fetching: false,
+                    fetched: true,
+                    towers: action.payload.data.results
+                }
+            }
         case actions.GET_TOWERS_FAIL:
             return {
                 ...state,
-                fetching: false,
-                error: 'Error while fetching towers'
-            };
+                towers: {
+                    fetching: false,
+                    fetched: false,
+                    error: 'Error while fetching towers'
+                }
+            }
 
         // get a specific tower
         case actions.GET_TOWER:
-            return { ...state, fetching: true };
+            return { ...state,}
         case actions.GET_TOWER_SUCCESS:
-            return { ...state, fetching: false, currentTower: action.payload.data };
+            return { ...state, fetching: false, currentTower: action.payload.data }
         case actions.GET_TOWER_FAIL:
             return {
                 ...state,
                 fetching: false,
                 error: 'Error while fetching tower'
-            };
+            }
 
         default:
-            return state;
+            return state
     }
 }

@@ -21,6 +21,9 @@ class LanguagePicker extends React.Component {
     }
 
     render(){
+
+        const defaultValue = this.props.options.find(element => element.category === 'English')
+
         return <View style={styles.container}>
             <View style={styles.textContainer}>
                 <Text style={Styles.mediumSemiBold}>
@@ -32,8 +35,8 @@ class LanguagePicker extends React.Component {
             </View>
             <View style={styles.pickerContainer}>
                 <Picker 
-                    selectedid={this.state.selectedLanguage}
-                    onidChange={(itemid, itemIndex) => this.setState({selectedLanguage: itemid})}
+                    selectedValue={this.props.selectedValue ? this.props.selectedValue : defaultValue.id}
+                    onValueChange={(itemValue, itemIndex) => this.props.onOptionChange(itemValue)}
                     itemStyle={styles.pickerItem}>
                     {this.renderPickerItems()}
                 </Picker>
@@ -43,7 +46,11 @@ class LanguagePicker extends React.Component {
 }
 
 LanguagePicker.proptypes = {
-
+    options: PropTypes.arrayOf(PropTypes.object),
+    selectedValue: PropTypes.number,
+    onOptionChange: PropTypes.func,
+    title: PropTypes.string,
+    subtitle: PropTypes.string 
 }
 
 const styles = StyleSheet.create({
@@ -78,7 +85,7 @@ const styles = StyleSheet.create({
         paddingVertical: 0
     },
     subtitle: {
-        ...Styles.xsmallText,
+        ...Styles.smallText,
         color: Colors.gray1,
     }
 })
