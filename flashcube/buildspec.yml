@@ -6,12 +6,13 @@ phases:
       python: 3.7
       nodejs: 10
     commands:
+      - yum install initscripts
       - yum install -y postgresql postgresql-server postgresql-devel postgresql-contrib
-      - service postgresql initdb
-      - service postgresql start
+      - pip install -r flashcube/requirements.txt
   pre_build:
     commands:
-      - pip install -r flashcube/requirements.txt
+      - service postgresql initdb
+      - service postgresql start
   build:
     commands:
       - cd flashcube
