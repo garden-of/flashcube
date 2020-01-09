@@ -3,6 +3,7 @@ phases:
   install:
     runtime-versions: 
       python: 3.7
+      nodejs: 10
   pre_build:
     commands:
       - pip install -r flashcube/requirements.txt

@@ -134,6 +134,9 @@ export default StyleSheet.create({
     },
 
     // TYPOGRAPHY
+    uppercase: {
+        textTransform: 'uppercase'
+    },
     title: {
         fontSize: 31,
         lineHeight: 41,
