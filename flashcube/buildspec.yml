@@ -16,6 +16,7 @@ phases:
       - ./configure
       - make
       - make install
+      - sqlite3 --version
       - cd ..
       - pip install -r flashcube/requirements.txt
   build:
