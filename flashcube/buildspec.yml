@@ -12,6 +12,7 @@ phases:
       - pip install -r flashcube/requirements.txt
   build:
     commands:
+      - cd flashcube
       - python manage.py test
 artifacts:
   files:
