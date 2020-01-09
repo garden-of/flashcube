@@ -12,6 +12,9 @@ phases:
       nodejs: 10
   pre_build:
     commands:
+      - sudo yum install postgresql postgresql-server postgresql-devel postgresql-contrib
+      - sudo postgresql-setup initdb
+      - sudo service postgresql start
       - pip install -r flashcube/requirements.txt
   build:
     commands:
