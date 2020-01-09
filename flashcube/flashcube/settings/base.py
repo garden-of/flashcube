@@ -92,6 +92,9 @@ if 'RDS_DB_NAME' in os.environ:
             'PASSWORD': os.environ['RDS_PASSWORD'],
             'HOST': os.environ['RDS_HOSTNAME'],
             'PORT': os.environ['RDS_PORT'],
+            'TEST': {
+                'ENGINE': 'django.db.backends.sqlite3'
+            }
         }
     }
 else:
@@ -102,12 +105,12 @@ else:
             'USER': 'flashcube',
             'PASSWORD': 'flashcube',
             'HOST': 'localhost',
-            'PORT': ''
+            'PORT': '',
+            'TEST': {
+                'ENGINE': 'django.db.backends.sqlite3'
+            }
         }
     }
-# Covers regular testing and django-coverage
-if 'test' in sys.argv or 'test_coverage' in sys.argv: 
-    DATABASES['default']['ENGINE'] = 'django.db.backends.sqlite3'
 
 
 # Password validation
