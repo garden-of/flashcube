@@ -17,7 +17,7 @@ phases:
     commands:
       - cd flashcube
       - printenv
-      - python manage.py test --keepdb
+      - python manage.py test
 artifacts:
   files:
     - '**/*'
