@@ -83,7 +83,14 @@ WSGI_APPLICATION = 'flashcube.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-if 'RDS_DB_NAME' in os.environ:
+if 'DB_ENVIRONMENT' in os.environ and os.environ['DB_ENVIRONMENT'] is 'test':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': 'flashcube'
+        }
+    }
+elif 'RDS_DB_NAME' in os.environ:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
