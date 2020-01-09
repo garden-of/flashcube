@@ -63,7 +63,7 @@ class PreferenceSelector extends React.Component {
                 </View>
                 <View style={styles.gridCol}>
                     <Text style={Styles.xsmallSemiBold}>
-                        LEARNING
+                        LEARN
                     </Text>
                 </View>
                 <View style={styles.gridCol}>

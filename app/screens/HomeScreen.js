@@ -12,7 +12,9 @@ import ListItem from '../components/ListItem/ListItem'
 
 import Colors from '../constants/Colors'
 import Styles from '../constants/Styles'
+
 import PreferenceSelector from '../components/PreferenceSelector/PreferenceSelector'
+import ProfileHeader from '../components/ProfileHeader/ProfileHeader'
 
 const mapStateToProps = state => ({
   ...state
@@ -34,6 +36,7 @@ class HomeScreen extends React.Component {
     this.handleLearningCategoryChange = this.handleLearningCategoryChange.bind(this)
     this.handleFinalizeCategories = this.handleFinalizeCategories.bind(this)
     this.handleFinalizeSets = this.handleFinalizeSets.bind(this)
+    this.renderMainFlow = this.renderMainFlow.bind(this)
     this.renderSetOnboardingFlow = this.renderSetOnboardingFlow.bind(this)
     this.renderSetListItem = this.renderSetListItem.bind(this)
   }
@@ -61,10 +64,6 @@ class HomeScreen extends React.Component {
         .then(() => this.props.listTowers())
         .then(() => this.props.getUserSubscriptions())
     }
-  }
-
-  renderMainFlow() {
-
   }
 
   handleBaseCategoryChange(selected) {
@@ -162,7 +161,7 @@ class HomeScreen extends React.Component {
           </View>
           <View style={{ ...styles.selector, flexBasis: '25%' }}>
             <LanguagePicker 
-              title='What language do you know best?'
+              title='What language do you speak?'
               subtitle='This will be your base language.'
               options={categories}
               onOptionChange={this.handleBaseCategoryChange}
@@ -194,8 +193,26 @@ class HomeScreen extends React.Component {
   }
 
   renderMainFlow() {
-    return <View>
-      
+
+    const { profile, subscriptions } = this.props.user
+    const { categories } = this.props.tower.categories
+
+    const fluentCategories = categories
+      .filter(category => profile.preferences.fluentCategories.includes(category.id))
+      .map(category => category.category)
+
+    const learningCategories = categories
+      .filter(category => profile.preferences.learningCategories.includes(category.id))
+      .map(category => category.category)
+
+    return <View style={styles.mainViewContainer}>
+      <ProfileHeader
+        name={profile.username}
+        fluent={fluentCategories}
+        learning={learningCategories}
+        numSubscriptions={subscriptions.subscriptions.length}
+        cubesMastered={0}
+      />
     </View>
   }
 
@@ -323,6 +340,10 @@ const styles = StyleSheet.create({
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
+    backgroundColor: 'rgba(0, 0, 0, 0.10)',
+  },
+  mainViewContainer: {
+    paddingTop: 70
   },
   loaderContainer: {
     width: '100%',

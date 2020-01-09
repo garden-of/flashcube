@@ -31,18 +31,22 @@ class GetUser(views.APIView):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = serializers.CategorySerializer
+    permission_classes = [IsAuthenticated]
 
 class CubeViewSet(viewsets.ModelViewSet):
     queryset = Cube.objects.all()
     serializer_class = serializers.CubeSerializer
+    permission_classes = [IsAuthenticated]
 
 class FaceViewSet(viewsets.ModelViewSet):
     queryset = Face.objects.all()
     serializer_class = serializers.FaceSerializer
+    permission_classes = [IsAuthenticated]
 
 class TowerViewSet(viewsets.ModelViewSet):
     queryset = Tower.objects.all()
     serializer_class = serializers.TowerSerializer
+    permission_classes = [IsAuthenticated]
 
 class UserPreferencesViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.UserPreferenceSerializer
