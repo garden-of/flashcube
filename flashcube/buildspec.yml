@@ -1,5 +1,9 @@
 version: 0.2
 
+env:
+  variables:
+    DJANGO_SETTINGS_MODULE: 'flashcube.settings.build'
+
 phases:
   install:
     runtime-versions: 
