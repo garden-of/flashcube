@@ -11,8 +11,7 @@ phases:
       - pip install -r flashcube/requirements.txt
   pre_build:
     commands:
-      - service postgresql initdb
-      - service postgresql start
+      - postgres -D /usr/local/pgsql/data
   build:
     commands:
       - cd flashcube
