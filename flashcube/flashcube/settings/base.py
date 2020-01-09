@@ -84,6 +84,7 @@ WSGI_APPLICATION = 'flashcube.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 if 'DB_ENVIRONMENT' in os.environ and os.environ['DB_ENVIRONMENT'] == 'test':
+    print('USING TEST DATABASE SETTINGS')
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
