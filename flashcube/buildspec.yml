@@ -10,7 +10,7 @@ phases:
   build:
     commands:
       - cd flashcube
-      - python manage.py test
+      - python manage.py test --keepdb
 artifacts:
   files:
     - '**/*'
