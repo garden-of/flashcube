@@ -39,6 +39,7 @@ class HomeScreen extends React.Component {
     this.renderMainFlow = this.renderMainFlow.bind(this)
     this.renderSetOnboardingFlow = this.renderSetOnboardingFlow.bind(this)
     this.renderSetListItem = this.renderSetListItem.bind(this)
+    this.renderSubscriptionItem = this.renderSubscriptionItem.bind(this)
   }
 
   componentDidMount() {
@@ -216,6 +217,13 @@ class HomeScreen extends React.Component {
         numSubscriptions={subscriptions.subscriptions.length}
         cubesMastered={0}
       />
+      <View>
+        <FlatList 
+          keyExtractor={(item, index) => index.toString()}
+          data={subscriptions.subscriptions}
+          renderItem={this.renderSubscriptionItem}
+        />
+      </View>
     </View>
   }
 
@@ -250,6 +258,37 @@ class HomeScreen extends React.Component {
         </View>
       </ImageBackground>
     </Modal>
+  }
+
+  renderSubscriptionItem({ item }) {
+    const { categories } = this.props.tower.categories
+    const { towers } = this.props.tower.towers
+    if (categories == undefined) return null
+    if (towers == undefined) return null
+
+    const mapDifficulty = () => {
+      switch(item.difficulty) {
+        case 'B':
+          return 'Beginner'
+        case 'I':
+          return 'Intermediate'
+        case 'E':
+          return 'Expert'
+        default:
+          return 'Beginner'
+      }
+    }
+
+    return <ListItem 
+      languages={categories.filter(category => item.categories.includes(category.id)).map(category => category.category)}
+      title={towers.filter(tower => item.tower == tower.id).map(tower => tower.name)}
+      subtitle={`${towers.filter(tower => item.tower == tower.id).map(tower => tower.num_cubes)} cubes | ${mapDifficulty()}`}
+      image={item.image}
+      onTap={() => this.props.navigation.navigate('TowerDetailScreen', {tower: item.tower })}
+      rightItem={{
+        type: 'chevron'
+      }}
+    />
   }
 
   renderSetListItem({ item }) {

@@ -90,9 +90,10 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     avatarContainer: {
-
+        flexBasis: '25%'
     },
     textContainer: {
+        flexBasis: '75%',
         paddingLeft: 15
     },
     userName: {
