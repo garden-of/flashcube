@@ -197,6 +197,9 @@ class HomeScreen extends React.Component {
     const { profile, subscriptions } = this.props.user
     const { categories } = this.props.tower.categories
 
+    if (categories == undefined) return null
+    if (subscriptions.subscriptions == undefined) return null
+
     const fluentCategories = categories
       .filter(category => profile.preferences.fluentCategories.includes(category.id))
       .map(category => category.category)
@@ -253,6 +256,8 @@ class HomeScreen extends React.Component {
 
     const { categories } = this.props.tower.categories
     const { subscriptions } = this.props.user.subscriptions
+
+    if (categories == undefined) return null
 
     const mapDifficulty = () => {
       switch(item.difficulty) {
