@@ -50,6 +50,7 @@ class TowerDetailScreen extends React.Component {
       </Text>
     }
 
+    // if the user isnt subscribed, show all the categories
     return <Text style={styles.categoryLabelHighlighted}>
       {category_string.map(category => category.category).join(', ')}
     </Text>
