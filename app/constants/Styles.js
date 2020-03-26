@@ -57,7 +57,12 @@ const xxsmall = {
 }
 
 export default StyleSheet.create({
+
+    // spacing
+    containerPadding: 10,
+
     headerStyle: {
+        backgroundColor: Colors.primary
     },
     headerTitleStyle: {
         color: Colors.white
@@ -131,6 +136,14 @@ export default StyleSheet.create({
     inputLabelStyle: {
         color: Colors.white,
         marginBottom: 5
+    },
+    titleStyle: {
+        width: '100%',
+        paddingVertical: 10
+    },
+    subtitleStyle: {
+        width: '100%',
+        paddingVertical: 5
     },
 
     // TYPOGRAPHY

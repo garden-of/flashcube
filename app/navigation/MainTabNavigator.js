@@ -85,6 +85,7 @@ const TowerStack = createStackNavigator(
   },
   {
     ...config,
+    headerMode: 'screen',
     tabBarOptions: {
       safeAreaInset: {
         bottom: 'always',
