@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Category(models.Model):
     category = models.CharField(max_length=200)
 
@@ -9,6 +10,7 @@ class Category(models.Model):
 
     def __str__(self):
         return self.category
+
 
 class CategoryStatus(models.Model):
     CHOICES = (
@@ -21,6 +23,7 @@ class CategoryStatus(models.Model):
     category = models.ForeignKey(to='Category', on_delete=models.CASCADE)
     status = models.CharField(max_length=2, choices=CHOICES, default='DL')
 
+
 class Cube(models.Model):
     name = models.CharField(max_length=200)
     tower = models.ForeignKey('Tower', on_delete=models.CASCADE)
@@ -30,6 +33,7 @@ class Cube(models.Model):
 
     def __str__(self):
         return '{tower}-{id}'.format(tower=self.tower, id=self.pk)
+
 
 class Face(models.Model):
     value = models.CharField(max_length=200)
@@ -41,6 +45,7 @@ class Face(models.Model):
 
     def __str__(self):
         return self.value
+
 
 class Tower(models.Model):
     CHOICES = (
@@ -64,6 +69,7 @@ class Tower(models.Model):
     def __str__(self):
         return self.name
 
+
 class UserPreferences(models.Model):
     
     user = models.OneToOneField(to=User, on_delete=models.CASCADE)
@@ -75,6 +81,7 @@ class UserPreferences(models.Model):
     baseCategory = models.ForeignKey(to='Category', on_delete=models.CASCADE, blank=True, null=True, related_name='base_category')
     learningCategories = models.ManyToManyField(to='Category', related_name='learning_categories', blank=True)
     fluentCategories = models.ManyToManyField(to='Category', related_name='fluent_categories', blank=True)
+
 
 class UserSubscription(models.Model):
 

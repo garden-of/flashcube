@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from towers.models import Category, Cube, Face, Tower, UserPreferences, UserSubscription
 from towers import serializers
 
+
 class CreateUser(views.APIView):
     permission_classes = [AllowAny]
 
@@ -21,6 +22,7 @@ class CreateUser(views.APIView):
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class GetUser(views.APIView):
     permission_classes = [IsAuthenticated]
 
@@ -28,25 +30,38 @@ class GetUser(views.APIView):
         serializer = serializers.UserSerializer(request.user)
         return Response(serializer.data)
 
+
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = serializers.CategorySerializer
     permission_classes = [IsAuthenticated]
 
+
 class CubeViewSet(viewsets.ModelViewSet):
-    queryset = Cube.objects.all()
+    
     serializer_class = serializers.CubeSerializer
     permission_classes = [IsAuthenticated]
+    queryset = Cube.objects.all()
+
+    def get_queryset(self):
+        queryset = Cube.objects.all()
+        tower = self.request.query_params.get('tower', None)
+        if tower is not None:
+            queryset = queryset.filter(tower=tower)
+        return queryset
+
 
 class FaceViewSet(viewsets.ModelViewSet):
     queryset = Face.objects.all()
     serializer_class = serializers.FaceSerializer
     permission_classes = [IsAuthenticated]
 
+
 class TowerViewSet(viewsets.ModelViewSet):
     queryset = Tower.objects.all()
     serializer_class = serializers.TowerSerializer
     permission_classes = [IsAuthenticated]
+
 
 class UserPreferencesViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.UserPreferenceSerializer
@@ -60,6 +75,7 @@ class UserPreferencesViewSet(viewsets.ModelViewSet):
 
         # this creates another query, but is an easy way to return a queryset
         return UserPreferences.objects.filter(user__exact=self.request.user)
+
 
 class UserSubscriptionViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.UserSubscriptionSerializer

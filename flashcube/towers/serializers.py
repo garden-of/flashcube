@@ -21,31 +21,38 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(validated_data['email'], validated_data['email'], validated_data['password'])
         return user
 
+
 class UserPreferenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserPreferences
         fields = '__all__'
 
-class UserSubscriptionSerializer(serializers.ModelSerializer):
 
+class UserSubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserSubscription
         fields = '__all__'
+
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
 
-class CubeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Cube
-        fields = '__all__'
 
 class FaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Face
         fields = '__all__'
+
+
+class CubeSerializer(serializers.ModelSerializer):
+    face_set = FaceSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Cube
+        fields = ['id', 'name', 'tower', 'face_set']
+
 
 class TowerSerializer(serializers.ModelSerializer):
     class Meta:
