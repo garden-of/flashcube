@@ -21,9 +21,9 @@ from towers import views
 
 router = routers.DefaultRouter()
 router.register(r'category', views.CategoryViewSet)
-router.register(r'cube', views.CubeViewSet)
-router.register(r'face', views.FaceViewSet)
-router.register(r'tower', views.TowerViewSet)
+router.register(r'cube', views.CubeViewSet, 'Cube')
+router.register(r'face', views.FaceViewSet, 'Face')
+router.register(r'tower', views.TowerViewSet, 'Tower')
 router.register(r'user_preferences', views.UserPreferencesViewSet, 'UserPreferences')
 router.register(r'user_subscription', views.UserSubscriptionViewSet, 'UserSubscription')
 
