@@ -15,6 +15,7 @@ import SignupScreen from '../screens/SignupScreen'
 import TowerScreen from '../screens/TowerScreen'
 import TowerDetailScreen from '../screens/TowerDetailScreen'
 import StorybookScreen from '../screens/StorybookScreen'
+import WriteScreen from '../screens/WriteScreen'
 
 const config = {
   web: { headerMode: 'screen' },
@@ -22,7 +23,7 @@ const config = {
   defaultNavigationOptions: {
     headerStyle: Styles.headerStyle,
     headerTitleStyle: Styles.headerTitleStyle,
-    headerTintColor: Colors.white
+    headerTintColor: Colors.primary
   },
   headerMode: 'none'
 }
@@ -81,7 +82,8 @@ HomeStack.path = '';
 const TowerStack = createStackNavigator(
   {
     Towers: TowerScreen,
-    TowerDetailScreen: TowerDetailScreen
+    TowerDetailScreen: TowerDetailScreen,
+    WriteScreen: WriteScreen
   },
   {
     ...config,

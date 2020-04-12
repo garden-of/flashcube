@@ -2,7 +2,8 @@ import * as actions from '../actions/tower'
 
 const defaultState = {
     towers: {},
-    categories: {}
+    categories: {},
+    currentTower: {}
 }
 
 export default function reducer(state = defaultState, action) {
@@ -64,13 +65,29 @@ export default function reducer(state = defaultState, action) {
             }
 
         // get a specific tower
-        case actions.GET_TOWER:
-            return { ...state,}
-        case actions.GET_TOWER_SUCCESS:
-            return { ...state, fetching: false, currentTower: action.payload.data }
-        case actions.GET_TOWER_FAIL:
+        case actions.GET_TOWER_CUBES:
             return {
                 ...state,
+                currentTower: {
+                    tower: action.payload.tower,
+                    fetching: true,
+                    fetched: false
+                }
+            }
+        case actions.GET_TOWER_CUBES_SUCCESS:
+            return { 
+                ...state, 
+                currentTower: {
+                    ...state.currentTower,
+                    fetched: true,
+                    fetching: false, 
+                    cubes: action.payload.data.results
+                }
+            }
+        case actions.GET_TOWER_CUBES_FAIL:
+            return {
+                ...state,
+                fetched: false,
                 fetching: false,
                 error: 'Error while fetching tower'
             }

@@ -62,16 +62,16 @@ export default StyleSheet.create({
     containerPadding: 10,
 
     headerStyle: {
-        backgroundColor: Colors.primary
+        backgroundColor: Colors.white
     },
     headerTitleStyle: {
-        color: Colors.white
+        color: Colors.primary
     },
     headerLeftStyle: {
-        color: Colors.white
+        color: Colors.primary
     },
     headerRightStyle: {
-        color: Colors.white
+        color: Colors.primary
     },
     modal: {
         display: 'flex',
@@ -104,6 +104,13 @@ export default StyleSheet.create({
         paddingLeft: 10
     },
     buttonContainerStyle: {
+    },
+    iconButtonStyle: {
+        backgroundColor: 'transparent',
+    },
+    iconButtonTextStyle: {
+    },
+    iconButtonContainerStyle: {
     },
     linkButton: {
         margin: 0,
@@ -139,11 +146,14 @@ export default StyleSheet.create({
     },
     titleStyle: {
         width: '100%',
-        paddingVertical: 10
+        paddingTop: 10,
+        paddingBottom: 5,
+        paddingHorizontal: 10,
     },
     subtitleStyle: {
         width: '100%',
-        paddingVertical: 5
+        paddingVertical: 5,
+        paddingHorizontal: 10,
     },
 
     // TYPOGRAPHY
@@ -167,7 +177,7 @@ export default StyleSheet.create({
     display2: {
         fontFamily: 'System',
         fontSize: 28,
-        lineHeight: 34,
+        lineHeight: 30,
         color: Colors.black,
         fontWeight: 'bold'
     },
