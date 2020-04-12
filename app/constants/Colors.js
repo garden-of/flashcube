@@ -1,11 +1,13 @@
 const tintColor = '#F5F0E6'
 const primary = '#44D7B6'
-const secondary = '#F5EB7E'
+const secondary = '#FF9775'
 
 const gray1 = '#6D6963'
-const gray2 = '#A8A199'
-const gray3 = '#D8D5D1'
-const gray4 = '#F5F0E6'
+const gray2 = '#999'
+const gray3 = '#bbb'
+const gray4 = '#ddd'
+const gray5 = '#e9e9e9'
+const gray6 = '#f9f9f9'
 
 export default {
   tintColor,
@@ -16,6 +18,8 @@ export default {
   gray2,
   gray3,
   gray4,
+  gray5,
+  gray6,
 
   tabIconDefault: '#ccc',
   tabIconSelected: tintColor,

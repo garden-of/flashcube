@@ -7,6 +7,12 @@ const defaultStore = {
     subscriptions: {}
 }
 
+const handleApiError = error => {
+    if (error.response.status == 401) {
+        return defaultStore
+    }
+}
+
 export default function reducer(state=defaultStore, action) {
     switch (action.type) {
         case actions.CREATE_USER_SUBSCRIPTION: {
@@ -65,15 +71,8 @@ export default function reducer(state=defaultStore, action) {
                     fetched: true
                 }
             }
-        case actions.GET_USER_FAIL:
-            return {
-                ...state,
-                profile: {
-                    ...state.profile,
-                    fetching: false,
-                    fetched: false
-                }
-            }
+        case actions.GET_USER_FAIL: 
+            return handleApiError(action.error)
         case actions.GET_USER_PREFERENCES:
             return {
                 ...state,

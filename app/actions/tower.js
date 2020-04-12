@@ -7,6 +7,20 @@ export const GET_TOWERS_FAIL = 'GET_TOWERS_FAIL'
 export const GET_TOWER = 'GET_TOWER'
 export const GET_TOWER_SUCCESS = 'GET_TOWER_SUCCESS'
 export const GET_TOWER_FAIL = 'GET_TOWER_FAIL'
+export const GET_TOWER_CUBES = 'GET_TOWER_CUBES'
+export const GET_TOWER_CUBES_SUCCESS = 'GET_TOWER_CUBES_SUCCESS'
+export const GET_TOWER_CUBES_FAIL = 'GET_TOWER_CUBES_FAIL'
+
+export function getCategories(categories) {
+    return {
+        type: GET_CATEGORIES,
+        payload: {
+            request: {
+                url: `/api/category/`
+            }
+        }
+    }
+}
 
 export function listTowers() {
     return {
@@ -30,12 +44,13 @@ export function getTower(tower) {
     }
 }
 
-export function getCategories(categories) {
+export function getTowerCubes(tower) {
     return {
-        type: GET_CATEGORIES,
+        type: GET_TOWER_CUBES,
         payload: {
+            tower,
             request: {
-                url: `/api/category/`
+                url: `/api/cube/?tower=${tower}`
             }
         }
     }
