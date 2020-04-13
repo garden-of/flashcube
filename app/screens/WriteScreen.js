@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux'
 import * as userActions from '../actions/user'
 import * as towerActions from '../actions/tower'
 
-import { View, StyleSheet, Animated, PanResponder, Dimensions } from 'react-native'
+import { View, StyleSheet, Animated, PanResponder, Dimensions, ActivityIndicator } from 'react-native'
 import { Card, Input, Button, Icon } from 'react-native-elements'
 
 import Styles from '../constants/Styles'
@@ -35,7 +35,9 @@ class WriteScreen extends React.Component {
       tower: this.props.navigation.getParam('tower'),
       activeCube: 0,
       pan: new Animated.ValueXY(),
-      stackedAnim: new Animated.Value( 0 )
+      topCard: new Animated.Value(0),
+      secondCard: new Animated.Value(0),
+      backCard: new Animated.Value(0),
     }
 
     this.panResponder = PanResponder.create({
@@ -51,36 +53,58 @@ class WriteScreen extends React.Component {
       onPanResponderTerminationRequest: () => false,
       onPanResponderRelease: ( event, gestureState ) => {
         
-        // bring the translationX back to 0
-        Animated.timing( this.state.pan, {
-          toValue: 0,
-          duration: 300
-        }).start()
 
         // go to the next face if threshold is reached
-        if ( ((gestureState.dx / SCREENWIDTH) > 0.25) ) {
+        if ( (Math.abs(gestureState.dx / SCREENWIDTH) > 0.40) ) {
 
-          // interpolate values in each cube view
-          Animated.timing( this.state.stackedAnim, {
-            toValue: 1,
-            duration: 300
-          }).start(() => {
-            // reset value to 0 when animation completes
-            this.state.stackedAnim.setValue(0)
+          // bring the translationX back to 0 quickly
+          Animated.timing( this.state.pan, {
+            toValue: 0,
+            duration: 0
+          }).start()
+
+          this.setState({activeCube: this.state.activeCube+1}, () => {
+
+            
+            // interpolate values in each cube view
+            Animated.timing( this.state.backCard, {
+              toValue: 1,
+              duration: 300
+            })
+
+            Animated.timing( this.state.topCard, {
+              toValue: 1,
+              duration: 400
+            })
+
+            Animated.timing( this.state.secondCard, {
+              toValue: 1,
+              duration: 500
+            }).start(() => {
+              // reset value to 0 when animation completes
+              this.state.backCard.setValue(0)
+              this.state.topCard.setValue(0)
+              this.state.secondCard.setValue(0)
+            })
           })
 
-          this.setState({
-            activeCube: this.state.activeCube+1
-          })
-
+        } else {
+          // bring the translationX back to 0 slowly, we 
+          // didnt rotate the card
+          Animated.timing( this.state.pan, {
+            toValue: 0,
+            duration: 200
+          }).start()
         }
       }
     }),
 
     this.fetchCubes = this.fetchCubes.bind(this)
     this.getCategoryNameFromId = this.getCategoryNameFromId.bind(this)
+    this.getRelativeRotation = this.getRelativeRotation.bind(this)
     this.renderCards = this.renderCards.bind(this)
     this.renderFaceInputs = this.renderFaceInputs.bind(this)
+    this.getZIndexRange = this.getZIndexRange.bind(this)
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -105,20 +129,94 @@ class WriteScreen extends React.Component {
     if (current < index) return len - index + current
   }
 
+  getScaleXRange(len, relativeIndex) {
+
+    // FRONT CARD
+    // front card needs to shrink to the min size
+    // this happens first
+    if (relativeIndex == 0) {
+      return this.state.topCard.interpolate({
+        inputRange: [0,1],
+        outputRange: [1,0]
+      })
+    }
+
+    // SECOND CARD
+    // needs to scale up to 1
+    if (relativeIndex == 1) {
+      return this.state.topCard.interpolate({
+        inputRange: [0,1],
+        outputRange: [1.0 - ( relativeIndex * .02 ), 1]
+      })
+    }
+
+    // NTH CARD
+    // scales up by increment
+    return this.state.backCard.interpolate({
+      inputRange: [0,1],
+      outputRange: [1.0 - ( relativeIndex * .02 ), 1.0 - ( relativeIndex * .02 ) + .02]
+    })
+
+  }
+
+  getZIndexRange(len, zIndex) {
+    
+    // FRONT CARD
+    // the front card needs to go to the back, so z=0
+    // this transition should happen the fastest
+    if (zIndex == len) {
+      return this.state.topCard.interpolate({
+        inputRange: [0,1],
+        outputRange: [zIndex, 0]
+      })
+    }
+
+    // SECOND CARD
+    // the second card needs to be promoted to the first
+    // this is the second transition
+    if (zIndex == (len-1)) {
+      return this.state.secondCard.interpolate({
+        inputRange: [0,1],
+        outputRange: [zIndex, zIndex+1]
+      })
+    }
+
+    // NTH CARD
+    // same logic as second card, but needs to happen last
+    return this.state.backCard.interpolate({
+      inputRange: [0,1],
+      outputRange: [zIndex, zIndex+1]
+    })
+
+  }
+
   getRelativeIndex(len, current, index) {
     if (current == index) return 0
-    if (current > index ) return len - index - 1
+    if (current > index ) return len
     if (current < index) return index - current
+  }
+
+  getRelativeOpacity(index) {
+    return 1.0 - (.05 * (index*index))
+  }
+
+  getRelativeRotation() {
+    const rotationX = SCREENWIDTH * 2
+
+    return this.state.pan.x.interpolate({
+      inputRange: [-rotationX, 0, rotationX],
+      outputRange: ['-25deg', '0deg', '25deg']
+    })
   }
 
   renderCards(cubes) {
 
     return cubes.map( (cube, index) => {
-      
-      //console.log(cube.name, this.getRelativeIndex(cubes.length, this.state.activeCube, index), this.getZIndex(cubes.length, this.state.activeCube, index))
+
       let relativeIndex = this.getRelativeIndex(cubes.length, this.state.activeCube, index)
+      let zIndex = this.getZIndex(cubes.length, this.state.activeCube, index)
       
-      if (relativeIndex > 3) return null
+      if (relativeIndex > 5) return null
 
       return <Animated.View
         {...this.panResponder.panHandlers}
@@ -126,13 +224,15 @@ class WriteScreen extends React.Component {
         style={[
           styles.cardView,
           {
-            zIndex: this.getZIndex(cubes.length, this.state.activeCube, index),
+            zIndex: this.getZIndexRange(cubes.length, zIndex),
             transform: [
-              { scaleX: 1.0 - ( this.getRelativeIndex(cubes.length, this.state.activeCube, index) * .02) },
+              { scaleX: this.getScaleXRange(cubes.length, relativeIndex)},
               { translateX: index == this.state.activeCube ? this.state.pan.x : 0 },
+              { translateY: index == this.state.activeCube ? this.state.pan.y : 0 },
+              { rotateZ: index == this.state.activeCube ? this.getRelativeRotation() : 0 },
             ],
-            top: 10-( this.getRelativeIndex(cubes.length, this.state.activeCube, index) * 3),
-            opacity: 1
+            top: 10 - ( relativeIndex * 3),
+            opacity: this.getRelativeOpacity(relativeIndex)
           }
         ]}
       >
@@ -140,98 +240,11 @@ class WriteScreen extends React.Component {
           title={cube.name}
           containerStyle={styles.cube}
         >
+          {this.renderFaceInputs(cube)}
         </Card>
       </Animated.View>
       }
     )
-
-    return [
-      // back cube
-      <Animated.View 
-        { ...this.panResponder.panHandlers }
-        style={[styles.cardView, {
-          zIndex: 1,
-          transform: [
-            { scaleX: this.state.stackedAnim.interpolate({
-              inputRange: [0,1],
-              outputRange: [0.9,0.95]
-            }) },
-          ],
-          top: this.state.stackedAnim.interpolate({
-            inputRange: [0,1],
-            outputRange: [0,5]
-          }),
-        }]} 
-        key={3}
-      >
-        <Card
-          title={cubes[this.state.activeCube+2].name}
-          containerStyle={styles.cube}
-        >
-        </Card>
-      </Animated.View>,
-
-      // middle cube
-      <Animated.View 
-        { ...this.panResponder.panHandlers }
-        style={[styles.cardView, {
-          zIndex: 2,
-          transform: [
-            { scaleX: this.state.stackedAnim.interpolate({
-              inputRange: [0,1],
-              outputRange: [0.95,1]
-            }) },
-          ],
-          top: this.state.stackedAnim.interpolate({
-            inputRange: [0,1],
-            outputRange: [5,10]
-          }),
-        }]} 
-        key={2}
-      >
-        <Card
-          title={cubes[this.state.activeCube+1].name}
-          containerStyle={styles.cube}
-        >
-        </Card>
-      </Animated.View>,
-
-      // front cube
-      <Animated.View 
-        { ...this.panResponder.panHandlers }
-        style={[styles.cardView, {
-          zIndex: this.state.stackedAnim.interpolate({
-            inputRange: [0, 0.5, 1],
-            outputRange: [ 3, 2, 0]
-          }),
-          transform: [
-            { translateX: this.state.pan.x },
-            { translateY: this.state.pan.y },
-            { scaleX: this.state.stackedAnim.interpolate({
-              inputRange: [0,1],
-              outputRange: [1,0.9]
-            }) },
-          ],
-          top: this.state.stackedAnim.interpolate({
-            inputRange: [0,1],
-            outputRange: [10,0]
-          }),
-        }]} 
-        key={1}
-      >
-        <Card
-          title={cubes[this.state.activeCube].name}
-          containerStyle={styles.cube}
-        >
-          <View style={styles.inputContainer}>
-            {this.renderFaceInputs(cubes[this.state.activeCube])}
-          </View>
-        </Card>
-      </Animated.View>,
-
-    
-
-    ]
   }
 
   renderCardStack() {
