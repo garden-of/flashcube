@@ -58,7 +58,7 @@ class WriteScreen extends React.Component {
         }).start()
 
         // go to the next face if threshold is reached
-        if ( (gestureState.dx / SCREENWIDTH) > 0.2) {
+        if ( ((gestureState.dx / SCREENWIDTH) > 0.25) ) {
 
           // interpolate values in each cube view
           Animated.timing( this.state.stackedAnim, {
@@ -99,7 +99,51 @@ class WriteScreen extends React.Component {
     return categories.find(c => c.id == categoryId).category
   }
 
+  getZIndex(len, current, index) {
+    if (current == index) return len
+    if (current > index) return current - index
+    if (current < index) return len - index + current
+  }
+
+  getRelativeIndex(len, current, index) {
+    if (current == index) return 0
+    if (current > index ) return len - index - 1
+    if (current < index) return index - current
+  }
+
   renderCards(cubes) {
+
+    return cubes.map( (cube, index) => {
+      
+      //console.log(cube.name, this.getRelativeIndex(cubes.length, this.state.activeCube, index), this.getZIndex(cubes.length, this.state.activeCube, index))
+      let relativeIndex = this.getRelativeIndex(cubes.length, this.state.activeCube, index)
+      
+      if (relativeIndex > 3) return null
+
+      return <Animated.View
+        {...this.panResponder.panHandlers}
+        key={index}
+        style={[
+          styles.cardView,
+          {
+            zIndex: this.getZIndex(cubes.length, this.state.activeCube, index),
+            transform: [
+              { scaleX: 1.0 - ( this.getRelativeIndex(cubes.length, this.state.activeCube, index) * .02) },
+              { translateX: index == this.state.activeCube ? this.state.pan.x : 0 },
+            ],
+            top: 10-( this.getRelativeIndex(cubes.length, this.state.activeCube, index) * 3),
+            opacity: 1
+          }
+        ]}
+      >
+        <Card
+          title={cube.name}
+          containerStyle={styles.cube}
+        >
+        </Card>
+      </Animated.View>
+      }
+    )
 
     return [
       // back cube
