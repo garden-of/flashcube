@@ -5,6 +5,8 @@ import { bindActionCreators } from 'redux'
 import { View, StyleSheet, ImageBackground } from 'react-native'
 import { Button } from 'react-native-elements'
 
+import ProfileHeader from '../components/ProfileHeader/ProfileHeader'
+
 import * as actions from '../actions/user'
 
 const mapStateToProps = state => ({
@@ -28,16 +30,43 @@ class ProfileScreen extends React.Component {
     this.props.navigation.navigate('Auth')
   }
 
+  renderHeader() {
+    const { profile, subscriptions } = this.props.user
+    const { categories } = this.props.tower.categories
+
+    if (categories == undefined) return null
+    if (subscriptions.subscriptions == undefined) return null
+
+    const fluentCategories = categories
+      .filter(category => profile.preferences.fluentCategories.includes(category.id))
+      .map(category => category.category)
+
+    const learningCategories = categories
+      .filter(category => profile.preferences.learningCategories.includes(category.id))
+      .map(category => category.category)
+
+    return <View style={styles.profileSummary}>
+      <ProfileHeader
+        name={profile.username}
+        fluent={fluentCategories}
+        learning={learningCategories}
+        numSubscriptions={subscriptions.subscriptions.length}
+        cubesMastered={0}
+      />
+    </View>
+  }
+
   render() {
       return <View>
-          <ImageBackground source={require('../assets/images/background.png')} style={styles.imgBackground}>
-            <View style={styles.container}>
-              <Button 
-                title='Sign Out'
-                onPress={this.handleSignOut}
-              />
-            </View>
-          </ImageBackground>
+        <View style={styles.container}>
+          {this.renderHeader()}
+          <View style={styles.signOut}>
+            <Button 
+              title='Sign Out'
+              onPress={this.handleSignOut}
+            />
+          </View>
+        </View>
       </View>
   }
 }
@@ -49,12 +78,19 @@ const styles = StyleSheet.create({
   },
   container: {
     display: 'flex',
+    paddingVertical:70,
     width: '100%',
     height: '100%',
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     alignContent: 'center'
+  },
+  profileSummary: {
+    flexBasis: '80%',
+  },
+  signOut: {
+    flexBasis: '20%'
   }
 })
 

@@ -14,8 +14,9 @@ import ProfileScreen from '../screens/ProfileScreen'
 import SignupScreen from '../screens/SignupScreen'
 import TowerScreen from '../screens/TowerScreen'
 import TowerDetailScreen from '../screens/TowerDetailScreen'
-import StorybookScreen from '../screens/StorybookScreen'
+//import StorybookScreen from '../screens/StorybookScreen'
 import WriteScreen from '../screens/WriteScreen'
+import FlashScreen from '../screens/FlashScreen'
 
 const config = {
   web: { headerMode: 'screen' },
@@ -83,7 +84,8 @@ const TowerStack = createStackNavigator(
   {
     Towers: TowerScreen,
     TowerDetailScreen: TowerDetailScreen,
-    WriteScreen: WriteScreen
+    WriteScreen: WriteScreen,
+    FlashScreen: FlashScreen,
   },
   {
     ...config,
@@ -127,7 +129,7 @@ ProfileStack.navigationOptions = {
   ),
 }
 
-const StorybookStack = createStackNavigator(
+/*const StorybookStack = createStackNavigator(
   { 
     Storybooks: StorybookScreen 
   },
@@ -149,14 +151,14 @@ StorybookStack.navigationOptions = {
   ),
 }
 
-StorybookStack.path = ''
+StorybookStack.path = ''*/
 
 const tabNavigator = createBottomTabNavigator(
   {
     HomeStack,
     TowerStack,
     ProfileStack,
-    StorybookStack
+    //StorybookStack
   },
   {
     tabBarOptions: {

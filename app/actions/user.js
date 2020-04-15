@@ -92,7 +92,8 @@ export function deleteUserSubscription(subscription) {
             request: {
                 url: `/api/user_subscription/${subscription.id}/`,
                 method: 'DELETE'
-            }
+            },
+            id: subscription.id
         }
     }
 }

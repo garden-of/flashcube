@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "flashcube",
-    "slug": "flashcube",
+    "name": "boqu",
+    "slug": "boqu",
     "privacy": "public",
     "sdkVersion": "36.0.0",
     "platforms": [
@@ -11,7 +11,6 @@
     "orientation": "portrait",
     "icon": "./assets/images/flashcube-icon.png",
     "splash": {
-      "image": "./assets/images/background.png",
       "resizeMode": "contain",
       "backgroundColor": "#44D7B6"
     },
@@ -22,7 +21,10 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.gardenof.boqu",
+      "buildNumber": "0.0.1",
+      "icon": "./assets/icons/icon-ios-1024@1x.png"
     },
     "description": "",
     "facebookAppId": "468157980709865",

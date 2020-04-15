@@ -52,6 +52,14 @@ export default function reducer(state=defaultStore, action) {
                 }
             }
         }
+        case actions.DELETE_USER_SUBSCRIPTION: {
+            return {
+                ...state,
+                subscriptions: {
+                    subscriptions: state.subscriptions.subscriptions.filter(s => s.id !== action.payload.id)
+                }
+            }
+        }
         case actions.GET_USER:
             return {
                 ...state,

@@ -117,7 +117,7 @@ export default StyleSheet.create({
         padding: 0
     },
     linkButtonTitle: {
-        color: Colors.gray3,
+        color: Colors.gray6,
         fontSize: 14,
         fontWeight: '600',
         textDecorationLine: 'underline'
@@ -263,6 +263,10 @@ export default StyleSheet.create({
     },
     xsmallText: {
         ...xsmall
+    },
+    xsmallTagCaps: {
+        ...xsmall,
+        ...tag
     },
     xxsmallTagCaps: {
         ...xxsmall,

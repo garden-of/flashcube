@@ -38,7 +38,7 @@ class ProfileHeader extends React.Component {
                         <Text style={Styles.xsmallSemiBold}>FLUENT IN</Text>
                     </View>
                     <View style={styles.statValue}>
-                        <Text style={{...Styles.xsmallSemiBold, ...Styles.uppercase, color: Colors.gray4}}>{this.joinAndShorten(this.props.fluent)}</Text>
+                        <Text style={{...Styles.xsmallText, ...Styles.uppercase, color: Colors.gray2}}>{this.joinAndShorten(this.props.fluent)}</Text>
                     </View>
                 </View>
                 <View style={styles.statContainer}>
@@ -46,7 +46,7 @@ class ProfileHeader extends React.Component {
                         <Text style={Styles.xsmallSemiBold}>LEARNING</Text>
                     </View>
                     <View style={styles.statValue}>
-                        <Text style={{...Styles.xsmallSemiBold, ...Styles.uppercase, color: Colors.gray4}}>{this.joinAndShorten(this.props.learning)}</Text>
+                        <Text style={{...Styles.xsmallText, ...Styles.uppercase, color: Colors.gray2}}>{this.joinAndShorten(this.props.learning)}</Text>
                     </View>
                 </View>
                 <View style={styles.statContainer}>
@@ -54,7 +54,7 @@ class ProfileHeader extends React.Component {
                         <Text style={Styles.xsmallSemiBold}>SETS</Text>
                     </View>
                     <View style={styles.statValue}>
-                        <Text style={{...Styles.xsmallSemiBold, ...Styles.uppercase, color: Colors.gray4}}>{this.props.numSubscriptions} SETS</Text>
+                        <Text style={{...Styles.xsmallText, ...Styles.uppercase, color: Colors.gray2}}>{this.props.numSubscriptions} SETS</Text>
                     </View>
                 </View>
                 <View style={styles.statContainer}>
@@ -62,7 +62,7 @@ class ProfileHeader extends React.Component {
                         <Text style={Styles.xsmallSemiBold}>WORDS MASTERED</Text>
                     </View>
                     <View style={styles.statValue}>
-                        <Text style={{...Styles.xsmallSemiBold, ...Styles.uppercase, color: Colors.gray4}}>{this.props.cubesMastered}</Text>
+                        <Text style={{...Styles.xsmallText, ...Styles.uppercase, color: Colors.gray2}}>{this.props.cubesMastered}</Text>
                     </View>
                 </View>
             </View>
