@@ -33,16 +33,23 @@ class TowerDetailScreen extends React.Component {
     this.state = {
       tower: towers.filter(tower => navigation.getParam('tower', 0) == tower.id)[0],
       cubeSearch: '',
-      activeCube: null
+      activeCube: null,
     }
 
     this.handleSearchChange = this.handleSearchChange.bind(this)
+    this.handleFlashLearnAction = this.handleFlashLearnAction.bind(this)
     this.handleWriteLearnAction = this.handleWriteLearnAction.bind(this)
     this.fetchCubes = this.fetchCubes.bind(this)
     this.getCategoryNameFromId = this.getCategoryNameFromId.bind(this)
     this.isSubscribedFace = this.isSubscribedFace.bind(this)
+    this.isSubscribedTower = this.isSubscribedTower.bind(this)
     this.renderTowerCategories = this.renderTowerCategories.bind(this)
     this.renderCubeList = this.renderCubeList.bind(this)
+    this.toggleSubscription = this.toggleSubscription.bind(this)
+  }
+
+  componentDidMount() {
+    this.props.navigation.setParams({ toggleSubscription: this.toggleSubscription})
   }
 
   componentDidUpdate(prevProps) {
@@ -58,7 +65,7 @@ class TowerDetailScreen extends React.Component {
       headerRight: <Button 
             icon={
               <Icon
-              name='ios-options'
+              name={navigation.getParam('subscribed', false) ? 'ios-heart' : 'ios-heart-empty'}
               type='ionicon'
               size={25}
               color={Colors.primary}
@@ -67,6 +74,7 @@ class TowerDetailScreen extends React.Component {
             buttonStyle={Styles.iconButtonStyle} 
             titleStyle={Styles.iconButtonTextStyle} 
             containerStyle={styles.iconbuttonContainer}
+            onPress={navigation.getParam('toggleSubscription')}
         />
     }
   }
@@ -77,6 +85,10 @@ class TowerDetailScreen extends React.Component {
 
   handleSearchChange(text) {
     this.setState({cubeSearch: text})
+  }
+
+  handleFlashLearnAction() {
+    this.props.navigation.navigate('FlashScreen', {tower: this.state.tower })
   }
 
   handleWriteLearnAction() {
@@ -92,6 +104,11 @@ class TowerDetailScreen extends React.Component {
     return categories.find(c => c.id == categoryId).category
   }
 
+  isSubscribedTower() {
+    const { subscriptions } = this.props.user.subscriptions
+    return subscriptions.map(sub => sub.tower).includes(this.state.tower.id)
+  }
+
   isSubscribedFace(categoryId) {
     const { learningCategories } = this.props.user.profile.preferences
 
@@ -103,10 +120,13 @@ class TowerDetailScreen extends React.Component {
     const { subscriptions } = this.props.user.subscriptions
     
     // if this is a subscribed tower, only show the categories the user is subscribed to
-    if (subscriptions.map(sub => sub.tower).includes(this.state.tower.id)) {
+    if (this.isSubscribedTower()) {
       let subscription = subscriptions.filter(sub => sub.tower == this.state.tower.id)[0]
-      let category_string = categories.filter(category => subscription.categories.includes(category.id))
+      
+      let category_string = categories
+        .filter(category => subscription.categories.includes(category.id))
         .map((category, index) => category.category)
+      
       return <Text style={styles.categoryLabelHighlighted}>
         {category_string.join(', ')}
       </Text>
@@ -114,7 +134,7 @@ class TowerDetailScreen extends React.Component {
 
     // if the user isnt subscribed, show all the categories
     return <Text style={styles.categoryLabelHighlighted}>
-      {category_string.map(category => category.category).join(', ')}
+      {categories.map(category => category.category).join(', ')}
     </Text>
 
 
@@ -137,6 +157,7 @@ class TowerDetailScreen extends React.Component {
           titleStyle={styles.learnActionTitle} 
           containerStyle={styles.learnActionContainerFlash}
           iconContainerStyle={styles.learnActionIconContainer}
+          onPress={this.handleFlashLearnAction}
           key={1}
         />
       </View>,
@@ -249,6 +270,32 @@ class TowerDetailScreen extends React.Component {
     this.setState({activeCube})
   }
 
+  toggleSubscription() {
+    const { profile } = this.props.user
+    const { preferences } = profile
+    
+    // handle subscription
+    if (!this.isSubscribedTower()) {
+      const subscriptionCategories = [...new Set([
+        ...preferences.learningCategories,
+        ...preferences.fluentCategories
+      ])]
+  
+      this.props.createUserSubscription(this.state.tower.id, profile.id, subscriptionCategories)
+      this.props.navigation.setParams({ subscribed: true})
+    } 
+    
+    // handle unsubscription
+    else {
+      const { subscriptions } = this.props.user.subscriptions
+      let subscription = subscriptions.find(s => s.tower == this.state.tower.id)
+      
+      this.props.deleteUserSubscription(subscription).then(() => 
+        this.props.navigation.setParams({ subscribed: false})
+      )
+    }
+  }
+
   render() {
 
     return (
@@ -341,19 +388,19 @@ const styles = StyleSheet.create({
   categoryLabelHighlighted: {
     ...Styles.xxsmallText,
     textTransform: 'uppercase',
-    color: Colors.gray1,
+    color: Colors.gray2,
   },
   grayHeadline: {
     ...Styles.headline,
     color: Colors.gray2
   },
   highlightedListItem: {
-    backgroundColor: Colors.gray5
+    backgroundColor: Colors.gray6
   },
   faceContainer: {
     paddingLeft: 30,
-    paddingVertical: 5,
-    backgroundColor: Colors.gray5
+    paddingVertical: 7,
+    backgroundColor: Colors.gray6
   },
   faceTitle: {
     ...Styles.smallText

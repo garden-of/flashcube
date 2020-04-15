@@ -161,89 +161,80 @@ class LoginScreen extends React.Component {
   
     return (
       <View>
-        <ImageBackground source={require('../assets/images/background.png')} style={styles.imgBackground}>
-          <View style={styles.container}>
-            <View style={styles.title}>
-              <Text style={styles.titleText}>FLASHCUBE</Text>
-            </View>
-            <View style={styles.subtitle}>
-              <Text style={styles.subtitleText}>Flashcube builds your vocabulary in multiple languages at once</Text>
-            </View>
-            <View style={styles.socialButtons}>
-              <View style={styles.login}>
-                <Text>New to Flashcube?</Text>
-                <Button 
-                  type='clear'
-                  title='Create Account'
-                  titleStyle={Styles.linkButtonTitle}
-                  onPress={() => this.props.navigation.navigate('Signup')}
-                />
-              </View>
-              <ButtonGroup 
-                buttons={loginButtons}
-                containerStyle={styles.socialButtonGroup}
-                containerBorderRadius={10}
-                innerBorderStyle={{
-                  color: 'rgba(0, 0, 0, 0.1)',
-                  width: 2
-                }}
-              />
-            </View>
-            <View style={styles.LoginForm}>
-                <Input
-                  leftIcon={
-                    <Icon
-                      name='ios-mail'
-                      type='ionicon'
-                      size={20}
-                      color={Colors.gray2}
-                    />
-                  }
-                  placeholder='email'
-                  placeholderTextColor={Colors.gray2}
-                  containerStyle={styles.textInputContainer}
-                  inputContainerStyle={styles.textInputContainerContainer}
-                  inputStyle={styles.textInput}
-                  autoCapitalize='none'
-                  onChange={this.handleEmailFieldUpdate}
-                  errorMessage={this.renderEmailErrorMessage()}
-                />
-                <Input
-                  leftIcon={
-                    <Icon
-                      name='ios-lock'
-                      type='ionicon'
-                      size={20}
-                      color={Colors.gray2}
-                    />
-                  }
-                  placeholder='password'
-                  containerStyle={styles.textInputContainer}
-                  inputContainerStyle={styles.textInputContainerContainer}
-                  inputStyle={styles.textInput}
-                  autoCapitalize='none'
-                  placeholderTextColor={Colors.gray2}
-                  onChange={this.handlePasswordFieldUpdate}
-                  errorMessage={this.state.password.error ? this.state.password.errorMessage : null}
-                  secureTextEntry
-                />
-                <Button 
-                  title='Login'
-                  buttonStyle={Styles.transparentButtonStyle} 
-                  titleStyle={Styles.outlineButtonTextStyle} 
-                  containerStyle={styles.buttonContainer}
-                  onPress={this.handleLogin}
-                />
-            </View>
-            <View style={styles.footer}>
+        <View style={styles.container}>
+          <View style={styles.title}>
+            <Text style={styles.titleText}>BOQU</Text>
+          </View>
+          <View style={styles.subtitle}>
+            <Text style={styles.subtitleText}>Build your vocabulary in multiple languages</Text>
+          </View>
+          <View style={styles.socialButtons}>
+            <View style={styles.login}>
+              <Text>New to Flashcube?</Text>
               <Button 
                 type='clear'
-                title='Continue as Guest'
+                title='Create Account'
                 titleStyle={Styles.linkButtonTitle}
+                onPress={() => this.props.navigation.navigate('Signup')}
               />
             </View>
+            <ButtonGroup 
+              buttons={loginButtons}
+              containerStyle={styles.socialButtonGroup}
+              containerBorderRadius={10}
+              innerBorderStyle={{
+                color: 'rgba(0, 0, 0, 0.1)',
+                width: 2
+              }}
+            />
           </View>
-        </ImageBackground>
+          <View style={styles.LoginForm}>
+              <Input
+                leftIcon={
+                  <Icon
+                    name='ios-mail'
+                    type='ionicon'
+                    size={20}
+                    color={Colors.gray2}
+                  />
+                }
+                placeholder='email'
+                placeholderTextColor={Colors.gray2}
+                containerStyle={styles.textInputContainer}
+                inputContainerStyle={styles.textInputContainerContainer}
+                inputStyle={styles.textInput}
+                autoCapitalize='none'
+                onChange={this.handleEmailFieldUpdate}
+                errorMessage={this.renderEmailErrorMessage()}
+              />
+              <Input
+                leftIcon={
+                  <Icon
+                    name='ios-lock'
+                    type='ionicon'
+                    size={20}
+                    color={Colors.gray2}
+                  />
+                }
+                placeholder='password'
+                containerStyle={styles.textInputContainer}
+                inputContainerStyle={styles.textInputContainerContainer}
+                inputStyle={styles.textInput}
+                autoCapitalize='none'
+                placeholderTextColor={Colors.gray2}
+                onChange={this.handlePasswordFieldUpdate}
+                errorMessage={this.state.password.error ? this.state.password.errorMessage : null}
+                secureTextEntry
+              />
+              <Button 
+                title='Login'
+                buttonStyle={Styles.transparentButtonStyle} 
+                titleStyle={Styles.outlineButtonTextStyle} 
+                containerStyle={styles.buttonContainer}
+                onPress={this.handleLogin}
+              />
+          </View>
+        </View>
       </View>
     )
   }
@@ -263,7 +254,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    backgroundColor: Colors.primary,
   },
   title: {
     flexBasis: '15%',
@@ -278,7 +269,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase'
   },
   subtitle: {
-    flexBasis: '20%',
+    flexBasis: '15%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center'
@@ -292,7 +283,7 @@ const styles = StyleSheet.create({
   },
   socialButtons: {
     marginTop: 10,
-    flexBasis: '10%'
+    flexBasis: '9%'
   },
   socialButtonGroup: {
     width: '100%',
@@ -302,7 +293,7 @@ const styles = StyleSheet.create({
   LoginForm: {
     marginTop: 20,
     width: '100%',
-    flexBasis: '35%'
+    flexBasis: '50%'
   },
   textInputContainer: {
     width: '100%',

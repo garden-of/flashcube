@@ -217,7 +217,8 @@ class HomeScreen extends React.Component {
         numSubscriptions={subscriptions.subscriptions.length}
         cubesMastered={0}
       />
-      <View>
+      <View style={styles.subscribedTowerList}>
+        <Text style={Styles.headline}>Your Towers</Text>
         <FlatList 
           keyExtractor={(item, index) => index.toString()}
           data={subscriptions.subscriptions}
@@ -284,7 +285,7 @@ class HomeScreen extends React.Component {
       title={towers.filter(tower => item.tower == tower.id).map(tower => tower.name)}
       subtitle={`${towers.filter(tower => item.tower == tower.id).map(tower => tower.num_cubes)} cubes | ${mapDifficulty()}`}
       image={item.image}
-      onTap={() => this.props.navigation.navigate('TowerDetailScreen', {tower: item.tower })}
+      onTap={() => this.props.navigation.navigate('TowerDetailScreen', {tower: item.tower, subscribed: true })}
       rightItem={{
         type: 'chevron'
       }}
@@ -365,11 +366,9 @@ class HomeScreen extends React.Component {
 
   render() {
     return <View>
-        <ImageBackground source={require('../assets/images/background.png')} style={styles.imgBackground}>
           <View style={styles.container}>
             {this.renderHomeContent()}
           </View>
-        </ImageBackground>
       </View>
     }
 }
@@ -384,7 +383,7 @@ const styles = StyleSheet.create({
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: 'rgba(0, 0, 0, 0.10)',
+    backgroundColor: Colors.white,
   },
   mainViewContainer: {
     paddingTop: 70
@@ -406,6 +405,10 @@ const styles = StyleSheet.create({
   buttonContainer: {
     ...Styles.buttonContainer,
     marginHorizontal: 25
+  },
+  subscribedTowerList: {
+    paddingTop: 20,
+    paddingHorizontal: 10
   }
 })
 

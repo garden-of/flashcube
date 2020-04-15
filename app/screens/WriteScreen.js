@@ -7,6 +7,7 @@ import * as towerActions from '../actions/tower'
 
 import { View, StyleSheet, Animated, PanResponder, Dimensions, ActivityIndicator } from 'react-native'
 import { Card, Input, Button, Icon } from 'react-native-elements'
+import * as Progress from 'react-native-progress'
 
 import Styles from '../constants/Styles'
 import Colors from '../constants/Colors'
@@ -26,14 +27,63 @@ const mapDispatchToProps = dispatch => {
   }, dispatch)
 }
 
+// calculate the Levenshtein distance between the expected
+// answer and the actual answer.
+const stringSimilarity = (a, b) => {
+  if (a.length == 0) return null
+  if (b.length == 0) return null
+
+  a = a.toLowerCase()
+  b = b.toLowerCase()
+
+  let matrix = []
+
+  for (let i=0; i <= b.length; i++) {
+    matrix[i] = [i]
+  }
+  for (let j=0; j <= a.length; j++) {
+    matrix[0][j] = j
+  }
+  
+  for (let i=1; i <= b.length; i++) {
+    for (let j=1; j <= a.length; j++) {
+      if(b.charAt(i-1) == a.charAt(j-1)) {
+        matrix[i][j] = matrix[i-1][j-1]
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i-1][j-1] + 1,  // substitution
+          Math.min(
+            matrix[i][j-1] + 1,
+            matrix[i-1][j] +1
+          )
+        )
+      }
+    }
+  }
+  return matrix[b.length][a.length]
+}
+
 class WriteScreen extends React.Component {
 
   constructor(props) {
     super(props)
 
+    const defaultCubeFields = this.props.tower.currentTower.cubes
+      .reduce( (map, cube) => {
+        map[cube.id] = cube.face_set.filter(face => 
+          this.props.user.profile.preferences.learningCategories.includes(face.category)
+        ).reduce( (innerMap, face) => {
+          innerMap[face.id] = {...face, currentValue: null, accuracy: null}
+          return innerMap
+        }, {})
+        return map
+      }, {})
+
     this.state = {
       tower: this.props.navigation.getParam('tower'),
       activeCube: 0,
+      cubeValues: defaultCubeFields,
+      hideAnswers: true,
       pan: new Animated.ValueXY(),
       topCard: new Animated.Value(0),
       secondCard: new Animated.Value(0),
@@ -63,7 +113,10 @@ class WriteScreen extends React.Component {
             duration: 0
           }).start()
 
-          this.setState({activeCube: this.state.activeCube+1}, () => {
+          this.setState({
+            activeCube: this.state.activeCube+1,
+            hideAnswers: true
+          }, () => {
 
             
             // interpolate values in each cube view
@@ -121,6 +174,26 @@ class WriteScreen extends React.Component {
   getCategoryNameFromId(categoryId) {
     let { categories } = this.props.tower.categories
     return categories.find(c => c.id == categoryId).category
+  }
+
+  getFaceStatusIndicator(cubeId, faceId) {
+    const accuracy = this.state.cubeValues[cubeId][faceId].accuracy
+
+    if (accuracy == null) return 'ios-radio-button-off'
+    if (accuracy == 0) return 'ios-checkmark-circle'
+    if (accuracy < 3) return 'ios-alert'
+    return 'ios-close-circle'
+
+  }
+
+  getFaceStatusColor(cubeId, faceId) {
+    const accuracy = this.state.cubeValues[cubeId][faceId].accuracy
+
+    if (accuracy == null) return Colors.gray5
+    if (accuracy == 0) return Colors.primary
+    if (accuracy < 3) return Colors.secondary
+    return Colors.red
+
   }
 
   getZIndex(len, current, index) {
@@ -209,6 +282,23 @@ class WriteScreen extends React.Component {
     })
   }
 
+  
+  handleInputChange(cubeId, faceId, text) {
+    this.setState({
+      cubeValues: {
+        ...this.state.cubeValues,
+        [cubeId]: {
+          ...this.state.cubeValues[cubeId],
+          [faceId]: {
+            ...this.state.cubeValues[cubeId][faceId],
+            currentValue: text,
+            accuracy: stringSimilarity(this.state.cubeValues[cubeId][faceId].value, text)
+          }
+        }
+      }
+    })
+  }
+
   renderCards(cubes) {
 
     return cubes.map( (cube, index) => {
@@ -265,58 +355,104 @@ class WriteScreen extends React.Component {
     // state when tower cubes are being fetched
     if (currentTower.fetching) return <ActivityIndicator />
 
-    return this.renderCards(currentTower.cubes)
+    return [
+      <View style={styles.progressContainer} key={0}>
+        <Progress.Bar
+          progress={(this.state.activeCube + 1) / currentTower.cubes.length}
+          borderRadius={1}
+          width={null}
+          height={7}
+          borderWidth={0}
+          color={Colors.primary}
+          unfilledColor={Colors.gray6}
+        />
+      </View>,
+      <View style={styles.cardContainer} key={1}>
+        {this.renderCards(currentTower.cubes)}
+      </View>,
+      <View style={styles.controlContainer} key={2}>
+        <Icon 
+          type='ionicon'
+          name='ios-arrow-back'
+          color={Colors.gray1}
+          onPress={() => this.setState({
+            activeCube: Math.max(this.state.activeCube - 1, 0),
+            hideAnswers: true
+          })}
+          raised
+        />
+        <Icon 
+          type='ionicon'
+          name={this.state.hideAnswers ? 'ios-eye' : 'ios-eye-off'}
+          color={Colors.gray1}
+          onPress={() => this.setState({hideAnswers: !this.state.hideAnswers})}
+          raised
+        />
+        <Icon 
+          type='ionicon'
+          name='ios-refresh'
+          color={Colors.gray1}
+          onPress={() => this.setState({
+            activeCube: 0,
+            hideAnswers: true
+          })}
+          raised
+        />
+        <Icon 
+          type='ionicon'
+          name='ios-arrow-forward'
+          color={Colors.gray1}
+          onPress={() => this.setState({
+            activeCube: Math.min(this.state.activeCube + 1, currentTower.cubes.length),
+            hideAnswers: true
+          })}
+          raised
+        />
+      </View>
+    ]
   }
 
   renderFaceInputs(cube) {
     
     const { baseCategory, learningCategories } = this.props.user.profile.preferences
-    
+
+
     return cube.face_set
       .filter(face => face.category != baseCategory)
       .filter(face => learningCategories.includes(face.category))
-      .map((face, index) => 
-        <View style={styles.faceContianer} key={index}>
+      .sort((a, b) => {
+        let aName = this.getCategoryNameFromId(a.category)
+        let bName = this.getCategoryNameFromId(b.category)
+        if (aName > bName) return 1
+        if (aName < bName) return -1
+        return 0
+      } )
+      .map((face, index) => {
+        return <View style={styles.faceContianer} key={index}>
           <View style={styles.faceInputContainer}>
             <Input 
-              label={this.getCategoryNameFromId(face.category)} 
+              label={this.getCategoryNameFromId(face.category)}
+              autoCapitalize='none' 
               labelStyle={{
                 ...Styles.xsmallText,
                 color: Colors.gray3,
                 textTransform: 'uppercase',
               }}
               key={index}
-            />
-          </View>
-          <View style={styles.faceActionsContainer}>
-            <Button 
-              icon={
-                <Icon
-                name='ios-eye'
-                type='ionicon'
-                size={25}
-                color={Colors.gray4}
-                />
-              }
-              buttonStyle={Styles.iconButtonStyle} 
-              titleStyle={Styles.iconButtonTextStyle} 
-              containerStyle={styles.iconbuttonContainer}
-            />
-            <Button 
-              icon={
-                <Icon
-                name='ios-radio-button-off'
-                type='ionicon'
-                size={20}
-                color={Colors.gray4}
-                />
-              }
-              buttonStyle={Styles.iconButtonStyle} 
-              titleStyle={Styles.iconButtonTextStyle} 
-              containerStyle={styles.iconbuttonContainer}
+              value={this.state.cubeValues[cube.id][face.id].currentValue}
+              placeholder={this.state.hideAnswers ? null : this.state.cubeValues[cube.id][face.id].value }
+              onChangeText={(text) => this.handleInputChange(cube.id, face.id, text)}
+              rightIcon={this.state.cubeValues[cube.id][face.id].currentValue 
+                ? {
+                  name: this.getFaceStatusIndicator(cube.id, face.id),
+                  type: 'ionicon',
+                  color: this.getFaceStatusColor(cube.id, face.id)
+                 }
+                : null}
             />
           </View>
         </View>
+        }
       )
   }
 
@@ -333,9 +469,28 @@ class WriteScreen extends React.Component {
 const styles = StyleSheet.create({
     container: {
       height: '100%',
+      width: '100%',
       display: 'flex',
       flexDirection: 'column',
     },
+    progressContainer: {
+      flexBasis: '5%',
+      paddingHorizontal: 20,
+      paddingTop: 25
+    },
+    cardContainer: {
+      flexBasis: '83%',
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    controlContainer: {
+      flexBasis: '12%',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: -1,
+    },  
     cardView: {
       height: '100%',
       width: '100%',
@@ -355,17 +510,11 @@ const styles = StyleSheet.create({
       width: '100%',
       alignItems: 'center',
       paddingBottom: 20,
-      paddingRight: 20
+      paddingRight: 5
     },
     faceInputContainer: {
-      flexBasis: '85%'
+      flexBasis: '100%'
     },
-    faceActionsContainer: {
-      flexBasis: '15%',
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center'
-    }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(WriteScreen)
