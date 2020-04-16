@@ -24,7 +24,7 @@ const ENV = {
     },
     stage: {
         apiUrl: 'http://stage.flashcube.co/',
-        fbAppId: '606835736732194',
+        fbAppId: '693470401458341',
         internalClientId: 'M1ZhmlzIU0kbBYANvjENR4Y9xzUaj21e9o2spqeu',
         internalClientSecret: 'wthwp6PqHFRjvY2b8iD7zTD6CaCxEasNehUVR0OpzUrevs8vXTxgT0RUZpVWu3JFBxGfqzzPlgqBO4ixI8J65THECDg1exKRg8iV9ahGenUC1C3DRP3idVfCr2TVXqjR'
     },

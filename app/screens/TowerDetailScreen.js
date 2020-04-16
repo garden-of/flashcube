@@ -273,7 +273,7 @@ class TowerDetailScreen extends React.Component {
   toggleSubscription() {
     const { profile } = this.props.user
     const { preferences } = profile
-    
+
     // handle subscription
     if (!this.isSubscribedTower()) {
       const subscriptionCategories = [...new Set([

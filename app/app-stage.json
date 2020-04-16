@@ -26,10 +26,10 @@
       "buildNumber": "1",
       "icon": "./assets/icons/icon-ios-1024@1x.png"
     },
-    "description": "",
-    "facebookAppId": "468157980709865",
-    "facebookAutoInitEnabled": true,
-    "facebookAutoLogAppEventsEnabled": true
-
+      "description": "",
+      "facebookScheme": "fb1234567890",
+      "facebookDisplayName": "Boqu",
+      "facebookAppId": "693470401458341"
+    }
   }
-}
+  
