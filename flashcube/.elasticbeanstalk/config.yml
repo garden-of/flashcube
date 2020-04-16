@@ -1,6 +1,6 @@
 branch-defaults:
   default:
-    environment: flashcube-dev
+    environment: flashcube-stage
     group_suffix: null
 environment-defaults:
   flashcube-dev:
