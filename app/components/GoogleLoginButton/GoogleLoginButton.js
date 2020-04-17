@@ -1,28 +1,31 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, Alert } from 'react-native'
 import { Button, Icon } from 'react-native-elements'
 
 import Styles from '../../constants/Styles'
 
-const GOOGLE_CLIENT_ID = '498982492232-reae9rludoenv1497jcc757lm44hdspq.apps.googleusercontent.com'
 import * as Google from 'expo-google-app-auth'
+
+import getEnvVars from '../../environment/environment'
 
 export default class GoogleLoginButton extends React.Component {
 
     _handlePressAsync = async () => {
+        const env = getEnvVars()
         try {
             const response = await Google.logInAsync({
-                iosClientId: GOOGLE_CLIENT_ID,
+                iosClientId: env.googleClientId,
                 scopes: ['profile', 'email']
             })
             if (response.type === 'success') {
                 this.props.onLoginSuccess(response)
             } else {
-                this.props.onLoginFail(response)
+                // cancelled
+                return
             }
         }
         catch({ message }) {
-            this.props.onLoginFail(message)
+            return
         }
     }
 

@@ -23,7 +23,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.gardenof.boqu",
-      "buildNumber": "1",
+      "buildNumber": "2",
       "icon": "./assets/icons/icon-ios-1024@1x.png"
     },
       "description": "",

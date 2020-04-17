@@ -3,7 +3,6 @@
     "name": "Boqu",
     "slug": "Boqu",
     "privacy": "public",
-    "sdkVersion": "36.0.0",
     "platforms": [
       "ios"
     ],
@@ -30,6 +29,5 @@
     "facebookAppId": "468157980709865",
     "facebookAutoInitEnabled": true,
     "facebookAutoLogAppEventsEnabled": true
-
   }
 }

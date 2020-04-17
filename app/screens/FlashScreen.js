@@ -37,10 +37,9 @@ class FlashScreen extends React.Component {
     this.state = {
       tower: this.props.navigation.getParam('tower'),
       activeCube: 0,
-      activeFace: this.props.user.profile.preferences.baseCategory,
+      activeFace: null,
       pan: new Animated.Value(0)
     }
-
 
     this.fetchCubes = this.fetchCubes.bind(this)
     this.getCategoryNameFromId = this.getCategoryNameFromId.bind(this)
@@ -62,7 +61,10 @@ class FlashScreen extends React.Component {
 
   getCategoryNameFromId(categoryId) {
     let { categories } = this.props.tower.categories
-    return categories.find(c => c.id == categoryId).category
+
+    let category = categories.find(c => c.id == categoryId)
+    if (category) return category.category
+    else return 'unknown'
   }
 
   getRelativeIndex(len, current, index) {
@@ -185,6 +187,7 @@ class FlashScreen extends React.Component {
   renderCardStack() {
 
     const { currentTower } = this.props.tower
+    const { profile } = this.props.user
 
     // default state
     if (!currentTower.fetched && !currentTower.fetching && !currentTower.error) {
@@ -196,9 +199,6 @@ class FlashScreen extends React.Component {
       this.fetchCubes()
       return <ActivityIndicator />
     }
-
-    // state when tower cubes are being fetched
-    if (currentTower.fetching) return <ActivityIndicator />
 
     return [
       <View key={0} style={{zIndex: 1000}}>
@@ -221,7 +221,7 @@ class FlashScreen extends React.Component {
           <View
             style={styles.currentFace}
           >
-            {this.renderCategories()}
+            
           </View>
         </LinearGradient>
       </View>,
@@ -279,6 +279,10 @@ class FlashScreen extends React.Component {
 
   render() {
 
+    const { categories } = this.props.tower
+
+    if (!categories.fetched) return <ActivityIndicator />
+
     return (
       <View style={styles.container}>
         {this.renderCardStack()}
@@ -293,6 +297,8 @@ const styles = StyleSheet.create({
       width: '100%',
       display: 'flex',
       flexDirection: 'column',
+      justifyContent: 'center',
+      alignContent: 'center'
     },
     progressContainer: {
       flexBasis: '15%',
