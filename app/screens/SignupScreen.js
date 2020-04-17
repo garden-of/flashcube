@@ -4,7 +4,8 @@ import { bindActionCreators } from 'redux'
 
 import * as actions from '../actions/user'
 
-import { View, StyleSheet, ImageBackground, Text } from 'react-native'
+import { View, StyleSheet, KeyboardAvoidingView, Text,
+         TouchableWithoutFeedback, Keyboard } from 'react-native'
 import { Input, Button, ButtonGroup, Icon } from 'react-native-elements'
 
 import GoogleLoginButton from '../components/GoogleLoginButton/GoogleLoginButton'
@@ -31,13 +32,19 @@ class SignupScreen extends React.Component {
       password: {}
     }
 
+    props.clearAuthErrors()
+
     this.handleCreateAccount = this.handleCreateAccount.bind(this)
     this.handleEmailFieldUpdate = this.handleEmailFieldUpdate.bind(this)
+    this.handleLogin = this.handleLogin.bind(this)
     this.handlePasswordFieldUpdate = this.handlePasswordFieldUpdate.bind(this)
     this.navigateTo = this.navigateTo.bind(this)
   }
 
   emailIsValid(email) {
+
+    if (email == undefined) return false
+
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
   }
@@ -132,8 +139,71 @@ class SignupScreen extends React.Component {
 
   }
 
+  handleLogin() {
+    let emailValid = true
+    let passwordValid = true
+
+    if (!this.state.email.value || !this.state.email.value.length > 0) {
+      emailValid = false
+      this.setState({
+        email: {
+          ...this.state.email,
+          error: true,
+          errorMessage: 'email address is required'
+        }
+      })
+    }
+
+    else if (!this.emailIsValid(this.state.email.value)) {
+      emailValid = false
+      this.setState({
+        email: {
+          ...this.state.email,
+          error: true,
+          errorMessage: 'please enter a valid email address'
+        }
+      })
+    }
+
+    if (emailValid) {
+      this.setState({
+        email: {
+          value: this.state.email.value
+        }
+      })
+    }
+
+    if (!this.state.password.value || !this.state.password.value.length > 0) {
+      passwordValid = false
+      this.setState({
+        password: {
+          ...this.state.password,
+          error: true,
+          errorMessage: 'password is required'
+        }
+      })
+    }
+
+    if (passwordValid) {
+      this.setState({
+        password: {
+          value: this.state.password.value
+        }
+      })
+    }
+
+    if (emailValid && passwordValid) {
+      this.props.loginUser(this.state.email.value, this.state.password.value)
+      .then(() => this.props.getUserPreferences(this.props.user.profile))
+      .then(() => this.navigateTo('Home'))
+      .catch((response) => {console.log(response)})
+    }
+
+  }
+
   passwordIsValid(password) {
-    return password.length > 8
+    if (password == undefined) return false
+    return true
   }
 
   renderEmailErrorMessage() {
@@ -164,6 +234,9 @@ class SignupScreen extends React.Component {
 
   render() {
 
+    const { auth } = this.props.user
+    const { isRegistering } = this.props.user.registration
+
     const loginButtons = [
       { element: () => <GoogleLoginButton 
           onLoginSuccess={(r) => this.props.convertToken('google-oauth2', r).then(() => this.navigateTo('Home'))}
@@ -176,104 +249,127 @@ class SignupScreen extends React.Component {
     ]
   
     return (
-      <View>
-        <View style={styles.container}>
-          <View style={styles.title}>
-            <Text style={styles.titleText}>BOQU</Text>
-          </View>
-          <View style={styles.subtitle}>
-            <Text style={styles.subtitleText}>Build your vocabulary in multiple languages</Text>
-          </View>
-          <View style={styles.socialButtons}>
-            <View style={styles.login}>
-              <Text>Already have an account?</Text>
-              <Button 
-                type='clear'
-                title='Login'
-                titleStyle={Styles.linkButtonTitle}
-                onPress={() => this.props.navigation.navigate('Login')}
+      <KeyboardAvoidingView style={styles.container} behavior='padding'>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.innerContainer}>
+            <View style={styles.title}>
+              <Text style={styles.titleText}>BOQU</Text>
+            </View>
+            <View style={styles.subtitle}>
+              <Text style={styles.subtitleText}>Build your vocabulary in multiple languages</Text>
+            </View>
+            <View style={styles.socialButtons}>
+              <View style={styles.login}>
+                <Text>{isRegistering ? 'Already have an account?' : 'New here?'}</Text>
+                <Button 
+                  type='clear'
+                  title={isRegistering ? 'Login' : 'Create An Account'}
+                  titleStyle={Styles.linkButtonTitle}
+                  onPress={() => this.props.toggleRegistration()}
+                />
+              </View>
+              <ButtonGroup 
+                buttons={loginButtons}
+                containerStyle={styles.socialButtonGroup}
+                containerBorderRadius={10}
+                innerBorderStyle={{
+                  color: 'rgba(0, 0, 0, 0.1)',
+                  width: 2
+                }}
               />
             </View>
-            <ButtonGroup 
-              buttons={loginButtons}
-              containerStyle={styles.socialButtonGroup}
-              containerBorderRadius={10}
-              innerBorderStyle={{
-                color: 'rgba(0, 0, 0, 0.1)',
-                width: 2
-              }}
-            />
-          </View>
-          <View style={styles.signUpForm}>
-              <Input
-                leftIcon={
-                  <Icon
-                    name='ios-mail'
-                    type='ionicon'
-                    size={20}
-                    color={Colors.gray2}
-                  />
+            <View style={styles.signUpForm}>
+                { auth.error
+                  ? <Text style={styles.bigErrorMessage}>Hmm, looks like we don't recognize that username or password. Please try again.</Text>
+                  : null
                 }
-                placeholder='email'
-                placeholderTextColor={Colors.gray2}
-                containerStyle={styles.textInputContainer}
-                inputContainerStyle={styles.textInputContainerContainer}
-                inputStyle={styles.textInput}
-                autoCapitalize='none'
-                onChange={this.handleEmailFieldUpdate}
-                errorMessage={this.renderEmailErrorMessage()}
-              />
-              <Input
-                leftIcon={
-                  <Icon
-                    name='ios-lock'
-                    type='ionicon'
-                    size={20}
-                    color={Colors.gray2}
-                  />
-                }
-                placeholder='password'
-                containerStyle={styles.textInputContainer}
-                inputContainerStyle={styles.textInputContainerContainer}
-                inputStyle={styles.textInput}
-                autoCapitalize='none'
-                placeholderTextColor={Colors.gray2}
-                onChange={this.handlePasswordFieldUpdate}
-                errorMessage={this.state.password.error ? this.state.password.errorMessage : null}
-                secureTextEntry
-              />
-              <Button 
-                title='Create Account'
-                buttonStyle={Styles.transparentButtonStyle} 
-                titleStyle={Styles.outlineButtonTextStyle} 
-                containerStyle={styles.buttonContainer}
-                onPress={this.handleCreateAccount}
-              />
+                <Input
+                  leftIcon={
+                    <Icon
+                      name='ios-mail'
+                      type='ionicon'
+                      size={20}
+                      color={Colors.gray5}
+                    />
+                  }
+                  placeholder='email'
+                  placeholderTextColor={Colors.gray2}
+                  containerStyle={styles.textInputContainer}
+                  inputContainerStyle={styles.textInputContainerContainer}
+                  inputStyle={styles.textInput}
+                  autoCapitalize='none'
+                  onChange={this.handleEmailFieldUpdate}
+                  errorMessage={this.renderEmailErrorMessage()}
+                  errorStyle={styles.errorMessage}
+                  textContentType='emailAddress'
+                />
+                <Input
+                  leftIcon={
+                    <Icon
+                      name='ios-lock'
+                      type='ionicon'
+                      size={20}
+                      color={Colors.gray5}
+                    />
+                  }
+                  placeholder='password'
+                  containerStyle={styles.textInputContainer}
+                  inputContainerStyle={styles.textInputContainerContainer}
+                  inputStyle={styles.textInput}
+                  autoCapitalize='none'
+                  placeholderTextColor={Colors.gray2}
+                  onChange={this.handlePasswordFieldUpdate}
+                  errorMessage={this.state.password.error && this.state.password.value ? this.state.password.errorMessage : null}
+                  errorStyle={styles.errorMessage}
+                  textContentType='password'
+                  secureTextEntry
+                />
+                <Button 
+                  title={isRegistering ? 'Create Account' : 'Login'}
+                  buttonStyle={Styles.transparentButtonStyle}
+                  disabledStyle={Styles.transparentButtonDisabledStyle}
+                  disabledTitleStyle={Styles.transparentButtonDisabledTitleStyle} 
+                  titleStyle={Styles.outlineButtonTextStyle} 
+                  containerStyle={styles.buttonContainer}
+                  onPress={isRegistering ? this.handleCreateAccount : this.handleLogin}
+                  disabled={!(this.emailIsValid(this.state.email.value) 
+                            && this.passwordIsValid(this.state.password.value))}
+                />
+            </View>
           </View>
-        </View>
-      </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  imgBackground: {
-    width: '100%',
-    height: '100%'
-  },
   container: {
     width: '100%',
-    height: '100%',
-    padding: 20,
-    paddingTop: 50,
+    backgroundColor: Colors.primary,
+    flexGrow: 1
+  },
+  innerContainer: {
+    width: '100%',
+    paddingHorizontal: 20,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.primary,
+    flexGrow: 1,
   },
+  errorMessage: {
+    ...Styles.smallText,
+    color: Colors.white
+  },
+  bigErrorMessage: {
+    ...Styles.smallSemiBold,
+    color: Colors.tintColor,
+    textAlign: 'center',
+    marginBottom: 10    
+  },  
   title: {
-    flexBasis: '15%',
+    flexBasis: '20%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-end'
@@ -285,41 +381,45 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase'
   },
   subtitle: {
-    flexBasis: '15%',
+    flexBasis: '10%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center'
   },
   subtitleText: {
+    ...Styles.subtitle,
     color: Colors.tintColor,
-    fontSize: 13,
-    fontWeight: '600',
     textTransform: 'uppercase',
     textAlign: 'center'
   },
   socialButtons: {
-    marginTop: 10,
-    flexBasis: '9%'
+    flexBasis: '15%',
+    display: 'flex',
+    justifyContent: 'center',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    //paddingBottom: 5
   },
   socialButtonGroup: {
     width: '100%',
-    backgroundColor: 'rgba(256, 256, 256, 0.35)',
+    backgroundColor: 'rgba(256, 256, 256, 0.2)',
     borderColor: 'rgba(0, 0, 0, 0.1)',
   },
   signUpForm: {
-    marginTop: 20,
     width: '100%',
-    flexBasis: '50%'
+    flexBasis: '55%',
+    display: 'flex',
+    justifyContent: 'flex-start'
   },
   textInputContainer: {
     width: '100%',
-    marginBottom: 8,
     paddingHorizontal: 0,
-    marginHorizontal: 0
+    marginHorizontal: 0,
+    marginVertical: 5
   },
   textInputContainerContainer: {
     borderBottomWidth: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     borderRadius: 3,
   },
   textInput: {
@@ -331,7 +431,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10
   },
   buttonContainer: {
-    marginTop: 5
+    marginVertical: 5
   },
   footer: {
     flexBasis: '20%',
@@ -344,6 +444,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    alignContent: 'center',
     justifyContent: 'center'
   }
 })

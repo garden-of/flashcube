@@ -2,7 +2,7 @@ import * as actions from '../actions/user'
 
 const defaultStore = {
     auth: {},
-    registration: {},
+    registration: { isRegeitering: true },  // show the registration screen by default, change to show login instead
     profile: {},
     subscriptions: {}
 }
@@ -15,6 +15,15 @@ const handleApiError = error => {
 
 export default function reducer(state=defaultStore, action) {
     switch (action.type) {
+        case actions.CLEAR_AUTH_ERRORS: {
+            return {
+                ...state,
+                auth: {
+                    ...state.auth,
+                    error: false
+                }
+            }
+        }
         case actions.CREATE_USER_SUBSCRIPTION: {
 
             let newSubscriptions = []
@@ -76,7 +85,8 @@ export default function reducer(state=defaultStore, action) {
                     ...state.profile,
                     ...action.payload.data,
                     fetching: false,
-                    fetched: true
+                    fetched: true,
+                    error: false
                 }
             }
         case actions.GET_USER_FAIL: 
@@ -162,7 +172,8 @@ export default function reducer(state=defaultStore, action) {
                     ...state.auth,
                     ...action.payload.data,
                     isLoggingIn: false,
-                    isLoggedIn: true
+                    isLoggedIn: true,
+                    error: false
                 }
             }
         case actions.LOGIN_FAIL:
@@ -239,6 +250,14 @@ export default function reducer(state=defaultStore, action) {
                         ...action.payload.request.data,
                         fetching: true,
                     }
+                }
+            }
+        case actions.TOGGLE_REGISTRATION:
+            return {
+                ...state,
+                registration: {
+                    ...state.registration,
+                    isRegistering: !state.registration.isRegistering
                 }
             }
         case actions.UPDATE_USER_PREFERENCES_SUCCESS:

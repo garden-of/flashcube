@@ -2,6 +2,7 @@ import getEnvVars from '../environment/environment'
 
 const envVars = getEnvVars()
 
+export const CLEAR_AUTH_ERRORS = 'CLEAR_AUTH_ERRORS'
 
 export const CREATE_USER_SUBSCRIPTION = 'CREATE_USER_SUBSCRIPTION'
 export const CREATE_USER_SUBSCRIPTION_SUCCESS = 'CREATE_USER_SUBSCRIPTION_SUCCESS'
@@ -33,12 +34,21 @@ export const REGISTER_USER_FAIL = 'REGISTER_USER_FAIL'
 
 export const SIGN_OUT = 'SIGN_OUT'
 
+export const TOGGLE_REGISTRATION = 'TOGGLE_REGISTRATION'
+
 export const UPDATE_USER_PREFERENCES = 'UPDATE_USER_PREFERENCES'
 export const UPDATE_USER_PREFERENCES_SUCCESS = 'UPDATE_USER_PREFERENCES_SUCCESS'
 export const UPDATE_USER_PREFERENCES_FAIL = 'UPDATE_USER_PREFERENCES_FAIL'
 
 const INTERNAL_CLIENT_ID = envVars.internalClientId
 const INTERNAL_CLIENT_SECRET = envVars.internalClientSecret
+
+export function clearAuthErrors() {
+    return {
+        type: CLEAR_AUTH_ERRORS,
+        payload: {}
+    }
+}
 
 export function convertToken(provider, response) {
     
@@ -171,6 +181,13 @@ export function registerUser(email, password) {
 export function signOut() {
     return {
         type: SIGN_OUT,
+        payload: {}
+    }
+}
+
+export function toggleRegistration() {
+    return {
+        type: TOGGLE_REGISTRATION,
         payload: {}
     }
 }
