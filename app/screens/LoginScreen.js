@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux'
 
 import * as actions from '../actions/user'
 
-import { View, StyleSheet, ImageBackground, Text } from 'react-native'
+import { View, StyleSheet, ImageBackground, Text, Alert } from 'react-native'
 import { Input, Button, ButtonGroup, Icon } from 'react-native-elements'
 
 import GoogleLoginButton from '../components/GoogleLoginButton/GoogleLoginButton'
@@ -151,11 +151,11 @@ class LoginScreen extends React.Component {
     const loginButtons = [
       { element: () => <GoogleLoginButton 
           onLoginSuccess={(r) => this.props.convertToken('google-oauth2', r).then(() => this.navigateTo('Home'))}
-          onLoginFail={(response) => console.log(response)}
+          onLoginFail={(response) => Alert.alert('login failed', response)}
         /> },
       { element: () => <FBLoginButton 
           onLoginSuccess={(r) => this.props.convertToken('facebook', r).then(() => this.navigateTo('Home'))}
-          onLoginFail={(response) => console.log(response)}
+          onLoginFail={(response) => Alert.alert('login failed', response)}
         /> }
     ]
   
