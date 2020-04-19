@@ -15,7 +15,8 @@ export default function reducer(state = defaultState, action) {
                 ...state, 
                 categories: {
                     fetching: true,
-                    fetched: false
+                    fetched: false,
+                    error: false
                 }
             }
         case actions.GET_CATEGORIES_SUCCESS:
@@ -24,6 +25,7 @@ export default function reducer(state = defaultState, action) {
                 categories: {
                     fetched: true,
                     fetching: false,
+                    error: false,
                     categories: action.payload.data.results
                 }
             }
@@ -32,7 +34,8 @@ export default function reducer(state = defaultState, action) {
                 ...state,
                 categories: {
                     fetched: false,
-                    loadign: false
+                    loading: false,
+                    error: true
                 }
             }
 
@@ -42,7 +45,9 @@ export default function reducer(state = defaultState, action) {
                 ...state,
                 towers: {
                     ...state.towers,
-                    fetching: true
+                    fetching: true,
+                    fetched: false,
+                    error: false
                 }
             }
         case actions.GET_TOWERS_SUCCESS:
@@ -51,6 +56,7 @@ export default function reducer(state = defaultState, action) {
                 towers: {
                     fetching: false,
                     fetched: true,
+                    error: false,
                     towers: action.payload.data.results
                 }
             }
@@ -60,7 +66,8 @@ export default function reducer(state = defaultState, action) {
                 towers: {
                     fetching: false,
                     fetched: false,
-                    error: 'Error while fetching towers'
+                    error: true,
+                    errorMessage: 'Error while fetching towers'
                 }
             }
 
@@ -71,7 +78,8 @@ export default function reducer(state = defaultState, action) {
                 currentTower: {
                     tower: action.payload.tower,
                     fetching: true,
-                    fetched: false
+                    fetched: false,
+                    error: false
                 }
             }
         case actions.GET_TOWER_CUBES_SUCCESS:
@@ -80,7 +88,8 @@ export default function reducer(state = defaultState, action) {
                 currentTower: {
                     ...state.currentTower,
                     fetched: true,
-                    fetching: false, 
+                    fetching: false,
+                    error: false, 
                     cubes: action.payload.data.results
                 }
             }
@@ -89,7 +98,8 @@ export default function reducer(state = defaultState, action) {
                 ...state,
                 fetched: false,
                 fetching: false,
-                error: 'Error while fetching tower'
+                error: true,
+                errorMessage: 'Error while fetching tower'
             }
 
         default:

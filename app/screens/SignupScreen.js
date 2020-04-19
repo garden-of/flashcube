@@ -249,7 +249,7 @@ class SignupScreen extends React.Component {
     ]
   
     return (
-      <KeyboardAvoidingView style={styles.container} behavior='padding'>
+      <KeyboardAvoidingView style={styles.container} behavior='height'>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.innerContainer}>
             <View style={styles.title}>

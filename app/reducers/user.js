@@ -40,7 +40,8 @@ export default function reducer(state=defaultStore, action) {
             return {
                 ...state,
                 subscriptions: {
-                    fetching: true,
+                    ...state.subscriptions,
+                    error: false,
                     subscriptions: newSubscriptions
                 }
             }
@@ -57,7 +58,19 @@ export default function reducer(state=defaultStore, action) {
                 subscriptions: {
                     fetching: false,
                     fetched: true,
+                    error: false,
                     subscriptions: newSubscriptions
+                }
+            }
+        }
+        case actions.CREATE_USER_SUBSCRIPTION_FAIL: {
+
+            return {
+                ...state,
+                subscriptions: {
+                    fetching: false,
+                    fetched: true,
+                    error: true
                 }
             }
         }
@@ -65,6 +78,7 @@ export default function reducer(state=defaultStore, action) {
             return {
                 ...state,
                 subscriptions: {
+                    ...state.subscriptions,
                     subscriptions: state.subscriptions.subscriptions.filter(s => s.id !== action.payload.id)
                 }
             }
@@ -75,7 +89,8 @@ export default function reducer(state=defaultStore, action) {
                 profile: {
                     ...state.profile,
                     fetching: true,
-                    fetched: false
+                    fetched: false,
+                    error: false
                 }
             }
         case actions.GET_USER_SUCCESS:
@@ -99,7 +114,8 @@ export default function reducer(state=defaultStore, action) {
                     preferences: {
                         ...state.profile.preferences,
                         fetching: true,
-                        fetched: false
+                        fetched: false,
+                        error: false
                     }
                 }
             }
@@ -113,6 +129,7 @@ export default function reducer(state=defaultStore, action) {
                         ...action.payload.data.results[0],
                         fetching: false,
                         fetched: true,
+                        error: false
                     }
                 }
             }
@@ -125,6 +142,7 @@ export default function reducer(state=defaultStore, action) {
                         ...state.profile.preferences,
                         fetching: false,
                         fetched: false,
+                        error: true
                     }
                 }
             }
@@ -133,7 +151,9 @@ export default function reducer(state=defaultStore, action) {
                 ...state,
                 subscriptions: {
                     ...state.subscriptions,
-                    fetching: true
+                    fetching: true,
+                    fetched: false,
+                    error: false
                 }
             }
         case actions.GET_USER_SUBSCRIPTIONS_SUCCESS:
@@ -143,6 +163,7 @@ export default function reducer(state=defaultStore, action) {
                     ...state.subscriptions,
                     fetched: true,
                     fetching: false,
+                    error: false,
                     subscriptions: action.payload.data.results
                 }
             }
@@ -152,7 +173,8 @@ export default function reducer(state=defaultStore, action) {
                 subscriptions: {
                     ...state.subscriptions,
                     fetched: false,
-                    fetching: false
+                    fetching: false,
+                    error: true
                 }
             }
         case actions.LOGIN:
@@ -194,6 +216,7 @@ export default function reducer(state=defaultStore, action) {
                 registration: {
                     isRegistered: false,
                     isRegestering: true,
+                    error: false
                 },
                 profile: {
                     ...state.profile,
@@ -249,6 +272,8 @@ export default function reducer(state=defaultStore, action) {
                         ...state.profile.preferences,
                         ...action.payload.request.data,
                         fetching: true,
+                        fetched: false,
+                        error: false
                     }
                 }
             }
@@ -270,6 +295,7 @@ export default function reducer(state=defaultStore, action) {
                         ...action.payload.data,
                         fetching: false,
                         fetched: true,
+                        error: false
                     }
                 }
             }
@@ -282,6 +308,7 @@ export default function reducer(state=defaultStore, action) {
                         ...state.profile.preferences,
                         fetching: false,
                         fetched: false,
+                        error: true
                     }
                 }
             }
