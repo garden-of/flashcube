@@ -468,10 +468,11 @@ class WriteScreen extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-      height: '100%',
+      flex: 1,
       width: '100%',
       display: 'flex',
       flexDirection: 'column',
+      justifyContent: 'center',
     },
     progressContainer: {
       flexBasis: '5%',
