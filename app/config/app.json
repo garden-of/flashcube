@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "Boqu",
+    "slug": "Boqu",
+    "privacy": "public",
+    "platforms": [
+      "ios"
+    ],
+    "version": "0.0.1",
+    "orientation": "portrait",
+    "icon": "./assets/icons/icon-ios-1024@1x.png",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#44D7B6"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.gardenof.boqu",
+      "buildNumber": "3",
+      "icon": "./assets/icons/icon-ios-1024@1x.png"
+    },
+    "description": "",
+    "facebookAppId": "468157980709865",
+    "facebookAutoInitEnabled": true,
+    "facebookAutoLogAppEventsEnabled": true
+  }
+}

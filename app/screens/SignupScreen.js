@@ -237,6 +237,10 @@ class SignupScreen extends React.Component {
     const { auth } = this.props.user
     const { isRegistering } = this.props.user.registration
 
+    if (auth.isLoggedIn) {
+      this.props.navigation.navigate('Home')
+    }
+
     const loginButtons = [
       { element: () => <GoogleLoginButton 
           onLoginSuccess={(r) => this.props.convertToken('google-oauth2', r).then(() => this.navigateTo('Home'))}
@@ -273,7 +277,7 @@ class SignupScreen extends React.Component {
                 containerStyle={styles.socialButtonGroup}
                 containerBorderRadius={10}
                 innerBorderStyle={{
-                  color: 'rgba(0, 0, 0, 0.1)',
+                  color: 'rgba(256, 256, 256, 0.25)',
                   width: 2
                 }}
               />
@@ -398,12 +402,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     display: 'flex',
     justifyContent: 'flex-end',
-    //paddingBottom: 5
   },
   socialButtonGroup: {
     width: '100%',
     backgroundColor: 'rgba(256, 256, 256, 0.2)',
-    borderColor: 'rgba(0, 0, 0, 0.1)',
+    borderColor: 'rgba(256, 256, 256, 0.3)',
   },
   signUpForm: {
     width: '100%',

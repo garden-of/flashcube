@@ -272,7 +272,6 @@ export default function reducer(state=defaultStore, action) {
                         ...state.profile.preferences,
                         ...action.payload.request.data,
                         fetching: true,
-                        fetched: false,
                         error: false
                     }
                 }

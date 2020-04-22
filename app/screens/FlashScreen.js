@@ -55,6 +55,28 @@ class FlashScreen extends React.Component {
     }
   }
 
+  componentDidMount() {
+    this.props.navigation.setParams({ toggleSubscription: this.toggleSubscription})
+
+    // fetch relevant store data
+    const { categories, currentTower } = this.props.tower
+    const { profile } = this.props.user
+
+    if (!categories.fetching && !categories.fetched) this.props.getCategories()
+    if (!currentTower.fetching && !currentTower.fetched) this.props.getTowerCubes(this.state.tower.id)
+    if (!profile.fetching && !profile.fetched) this.props.getUser()
+  }
+
+  componentDidUpdate(prevProps) {
+    const { towers } = this.props.tower.towers
+    const newTower = this.props.navigation.getParam('tower')
+
+    if (newTower.id != this.state.tower.id) {
+      this.setState({tower: towers.filter(tower => newTower == tower.id)[0]})
+      this.props.getTowerCubes(newTower.id)
+    }
+  }
+
   fetchCubes(towerId) {
     this.props.getTowerCubes(this.state.tower.id)
   }
@@ -103,7 +125,7 @@ class FlashScreen extends React.Component {
     return cube.face_set
         .filter(face => learningCategories.includes(face.category) || baseCategory == face.category)
         .sort((a,b) => {
-          if (a.category = baseCategory) return -1
+          if (a.category == baseCategory) return -1
           let aName = this.getCategoryNameFromId(a.category)
           let bName = this.getCategoryNameFromId(b.category)
           if (aName > bName) return 1
@@ -119,9 +141,16 @@ class FlashScreen extends React.Component {
                 }]}
               key={index}
             >
-                <Text style={[Styles.mediumSemiBold, styles.cubeValue]}>
-                    {face.value}
-                </Text>
+                <View style={styles.cardTitle}>
+                  <Text style={[Styles.mediumSemiBold, styles.cubeCategory]}>
+                      {this.getCategoryNameFromId(face.category)}
+                  </Text>
+                </View>
+                <View style={styles.cardBody}>
+                  <Text style={[Styles.display2, styles.cubeValue]}>
+                      {face.value}
+                  </Text>
+                </View>
             </View>
         })
   }
@@ -187,8 +216,6 @@ class FlashScreen extends React.Component {
   renderCardStack() {
 
     const { currentTower } = this.props.tower
-    const { profile } = this.props.user
-
     // default state
     if (!currentTower.fetched && !currentTower.fetching && !currentTower.error) {
       this.fetchCubes()
@@ -279,9 +306,34 @@ class FlashScreen extends React.Component {
 
   render() {
 
-    const { categories } = this.props.tower
+    // requires the following reducers to be loaded:
+    // - tower.categories
+    // - tower.currentTower
+    // - user.profile
+    const { categories, currentTower } = this.props.tower
+    const { profile } = this.props.user
 
-    if (!categories.fetched) return <ActivityIndicator />
+    // default state when no fetch attempt has been made
+    if ((!categories.fetched && !categories.error) || (!currentTower.fetched && !currentTower.error) || 
+        (!profile.fetched && !profile.error)) {
+      return <View style={styles.container}>
+        <ActivityIndicator size='large'/>
+      </View>
+    }
+
+    // default state when loading
+    if (categories.fetching || currentTower.fetching || profile.fetching) {
+      return <View style={styles.container}>
+        <ActivityIndicator size='large'/>
+      </View>
+    }
+    
+    // show error if loading fails
+    if (categories.error || currentTower.error || profile.error) {
+      return <View style={styles.container}>
+        <Icon name='error' color={Colors.gray4} size={50} />
+      </View>
+    }
 
     return (
       <View style={styles.container}>
@@ -332,6 +384,30 @@ const styles = StyleSheet.create({
       elevation: 3,
       borderBottomColor: Colors.gray6,
       borderBottomWidth: 1
+    },
+    cardTitle: {
+      flexBasis: '15%',
+      width: '100%',
+      borderBottomColor: Colors.gray5,
+      borderBottomWidth: 1,
+      paddingVertical: 10,
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center'
+    },
+    cardBody: {
+      flexBasis: '85%',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignContent: 'center'
+    },
+    cubeValue: {
+
+    },
+    cubeCategory: {
+      color: Colors.gray1
     },
     controlContainer: {
       flexBasis: '15%',
