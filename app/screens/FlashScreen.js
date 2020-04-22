@@ -202,7 +202,7 @@ class FlashScreen extends React.Component {
         <CubeNavigationHorizontal 
           loop 
           relativeIndex={relativeIndex} 
-          height={300} 
+          height={500} 
           width={350}
           callBackAfterSwipe={this.handleCubeSwipe}
         >
@@ -267,7 +267,7 @@ class FlashScreen extends React.Component {
         >
           <Icon 
             type='ionicon'
-            name='ios-arrow-up'
+            name='ios-arrow-down'
             color={Colors.gray1}
             onPress={() => this.setState({
               activeCube: Math.max(this.state.activeCube - 1, 0),
@@ -284,7 +284,7 @@ class FlashScreen extends React.Component {
           />
           <Icon 
             type='ionicon'
-            name='ios-arrow-down'
+            name='ios-arrow-up'
             color={Colors.gray1}
             onPress={() => {
               Animated.timing( this.state.pan, {
@@ -393,7 +393,9 @@ const styles = StyleSheet.create({
       paddingVertical: 10,
       display: 'flex',
       flexDirection: 'row',
-      justifyContent: 'center'
+      justifyContent: 'center',
+      alignContent: 'center',
+      alignItems: 'center'
     },
     cardBody: {
       flexBasis: '85%',
