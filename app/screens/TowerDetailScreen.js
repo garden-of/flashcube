@@ -65,7 +65,7 @@ class TowerDetailScreen extends React.Component {
     const newTower = this.props.navigation.getParam('tower')
     if (newTower != this.state.tower.id) {
       this.setState({tower: towers.filter(tower => newTower == tower.id)[0]})
-      this.state.getTowerCubes(tower.id)
+      this.props.getTowerCubes(newTower.id)
     }
   }
 

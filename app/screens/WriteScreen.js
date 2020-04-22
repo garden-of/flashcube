@@ -152,7 +152,6 @@ class WriteScreen extends React.Component {
       }
     }),
 
-    this.fetchCubes = this.fetchCubes.bind(this)
     this.getCategoryNameFromId = this.getCategoryNameFromId.bind(this)
     this.getRelativeRotation = this.getRelativeRotation.bind(this)
     this.renderCards = this.renderCards.bind(this)
@@ -167,8 +166,26 @@ class WriteScreen extends React.Component {
     }
   }
 
-  fetchCubes(towerId) {
-    this.props.getTowerCubes(this.state.tower.id)
+  componentDidMount() {
+    this.props.navigation.setParams({ toggleSubscription: this.toggleSubscription})
+
+    // fetch relevant store data
+    const { categories, currentTower } = this.props.tower
+    const { profile } = this.props.user
+
+    if (!categories.fetching && !categories.fetched) this.props.getCategories()
+    if (!currentTower.fetching && !currentTower.fetched) this.props.getTowerCubes(this.state.tower.id)
+    if (!profile.fetching && !profile.fetched) this.props.getUser()
+  }
+
+  componentDidUpdate(prevProps) {
+    const { towers } = this.props.tower.towers
+    const newTower = this.props.navigation.getParam('tower')
+
+    if (newTower.id != this.state.tower.id) {
+      this.setState({tower: towers.filter(tower => newTower == tower.id)[0]})
+      this.props.getTowerCubes(newTower.id)
+    }
   }
 
   getCategoryNameFromId(categoryId) {
@@ -341,20 +358,6 @@ class WriteScreen extends React.Component {
 
     const { currentTower } = this.props.tower
 
-    // default state
-    if (!currentTower.fetched && !currentTower.fetching && !currentTower.error) {
-      this.fetchCubes()
-    }
-
-    // state when we need to replace the current tower
-    else if (currentTower.tower != this.state.tower.id) {
-      this.fetchCubes()
-      return <ActivityIndicator />
-    }
-
-    // state when tower cubes are being fetched
-    if (currentTower.fetching) return <ActivityIndicator />
-
     return [
       <View style={styles.progressContainer} key={0}>
         <Progress.Bar
@@ -457,6 +460,35 @@ class WriteScreen extends React.Component {
   }
 
   render() {
+
+    // requires the following reducers to be loaded:
+    // - tower.categories
+    // - tower.currentTower
+    // - user.profile
+    const { categories, currentTower } = this.props.tower
+    const { profile } = this.props.user
+
+    // default state when no fetch attempt has been made
+    if ((!categories.fetched && !categories.error) || (!currentTower.fetched && !currentTower.error) || 
+        (!profile.fetched && !profile.error)) {
+      return <View style={styles.container}>
+        <ActivityIndicator size='large'/>
+      </View>
+    }
+
+    // default state when loading
+    if (categories.fetching || currentTower.fetching || profile.fetching) {
+      return <View style={styles.container}>
+        <ActivityIndicator size='large'/>
+      </View>
+    }
+    
+    // show error if loading fails
+    if (categories.error || currentTower.error || profile.error) {
+      return <View style={styles.container}>
+        <Icon name='error' color={Colors.gray4} size={50} />
+      </View>
+    }
 
     return (
       <View style={styles.container}>

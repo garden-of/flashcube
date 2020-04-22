@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux'
 import * as userActions from '../actions/user'
 import * as towerActions from '../actions/tower'
 
-import { View, ScrollView, FlatList, StyleSheet, ImageBackground, ActivityIndicator, Modal, Text } from 'react-native'
+import { View, FlatList, StyleSheet, ActivityIndicator, Modal, Text } from 'react-native'
 import { Button } from 'react-native-elements'
 import LanguagePicker from '../components/LanguagePicker/LanguagePicker'
 import ListItem from '../components/ListItem/ListItem'
@@ -152,10 +152,9 @@ class HomeScreen extends React.Component {
     return <Modal
       animationType='slide'
       transparent={false}
-      presentationStyle='fullScreen'
+      presentationStyle='pageSheet'
       visible={true}
     >
-      <ImageBackground source={require('../assets/images/background.png')} style={styles.imgBackground}>
         <View style={Styles.modal}>
           <View style={{ flexBasis: '7%' }}>
             <Text style={{ ...Styles.display2, ...Styles.shadow, color: Colors.white }}>Tell us about yourself</Text>
@@ -163,7 +162,6 @@ class HomeScreen extends React.Component {
           <View style={{ ...styles.selector, flexBasis: '25%' }}>
             <LanguagePicker 
               title='What language do you speak?'
-              subtitle='This will be your base language.'
               options={categories}
               onOptionChange={this.handleBaseCategoryChange}
               selectedValue={preferences.baseCategory}
@@ -172,7 +170,6 @@ class HomeScreen extends React.Component {
           <View style={{ ...styles.selector, flexBasis: '50%' }}>
             <PreferenceSelector
               title='What do you want to learn?'
-              subtitle='This is the content you will see.'
               options={categories}
               learning={preferences.learningCategories}
               fluent={preferences.fluentCategories}
@@ -189,7 +186,6 @@ class HomeScreen extends React.Component {
             />
           </View>
         </View>
-      </ImageBackground>
     </Modal>
   }
 
@@ -232,15 +228,14 @@ class HomeScreen extends React.Component {
     return <Modal
       animationType='slide'
       transparent={false}
-      presentationStyle='fullScreen'
+      presentationStyle='pageSheet'
       visible={true}
     >
-      <ImageBackground source={require('../assets/images/background.png')} style={styles.imgBackground}>
         <View style={Styles.modal}>
           <View style={{ flexBasis: '7%' }}>
             <Text style={{ ...Styles.display2, ...Styles.shadow, color: Colors.white }}>Pick some sets to learn</Text>
           </View>
-          <View style={{ ...styles.selector, flexBasis: '75%' }}>
+          <View style={{ ...styles.selector, flexBasis: '75%', backgroundColor: Colors.white }}>
             <FlatList 
               keyExtractor={(item, index) => index.toString()}
               data={this.props.tower.towers.towers}
@@ -257,7 +252,6 @@ class HomeScreen extends React.Component {
             />
           </View>
         </View>
-      </ImageBackground>
     </Modal>
   }
 
@@ -340,9 +334,7 @@ class HomeScreen extends React.Component {
   }
 
   renderLoader() {
-    return <View style={styles.loaderContainer}>
-      <ActivityIndicator color={Colors.black} size='large'/>
-    </View>
+    return <ActivityIndicator size='large'/>
   }
 
   renderHomeContent() {
@@ -365,11 +357,9 @@ class HomeScreen extends React.Component {
   }
 
   render() {
-    return <View>
-          <View style={styles.container}>
-            {this.renderHomeContent()}
-          </View>
-      </View>
+    return <View style={styles.container}>
+      {this.renderHomeContent()}
+    </View>
     }
 }
 
@@ -380,13 +370,17 @@ const styles = StyleSheet.create({
   },
   container: {
     width: '100%',
-    height: '100%',
+    flex: 1,
     display: 'flex',
     flexDirection: 'column',
     backgroundColor: Colors.white,
+    justifyContent: 'center',
+    alignContent: 'center'
   },
   mainViewContainer: {
-    paddingTop: 70
+    paddingTop: 70,
+    flex: 1,
+    width: '100%'
   },
   loaderContainer: {
     width: '100%',

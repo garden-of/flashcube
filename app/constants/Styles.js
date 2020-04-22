@@ -78,8 +78,8 @@ export default StyleSheet.create({
         flexDirection: 'column',
         width: '100%',
         height: '100%',
-        marginTop: 40,
-        padding: 15
+        padding: 15,
+        backgroundColor: Colors.primary
     },
     transparentButtonStyle: {
         backgroundColor: 'rgba(256, 256, 256, 0.2)',
