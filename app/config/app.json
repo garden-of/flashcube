@@ -3,7 +3,6 @@
     "name": "Boqu",
     "slug": "Boqu",
     "privacy": "public",
-    "sdkVersion": "36.0.0",
     "platforms": [
       "ios"
     ],
@@ -23,13 +22,12 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.gardenof.boqu",
-      "buildNumber": "1",
+      "buildNumber": "3",
       "icon": "./assets/icons/icon-ios-1024@1x.png"
     },
     "description": "",
     "facebookAppId": "468157980709865",
     "facebookAutoInitEnabled": true,
     "facebookAutoLogAppEventsEnabled": true
-
   }
 }

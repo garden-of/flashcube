@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
         height: 80
     },
     listItemTitleLanguages: {
-        ...Styles.xsmallTagCaps,
+        ...Styles.xxsmallTagCaps,
         color: Colors.primary,
     },
     listItemTitleTitle: {

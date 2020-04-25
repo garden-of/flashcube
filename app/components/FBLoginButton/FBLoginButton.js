@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet } from 'react-native'
+import { StyleSheet, Alert } from 'react-native'
 import { Button, Icon } from 'react-native-elements'
 import * as Facebook from 'expo-facebook'
 import PropTypes from 'prop-types'
@@ -19,11 +19,14 @@ export default class FBLoginButton extends React.Component {
             const response = await Facebook.logInWithReadPermissionsAsync({ permissions: ['public_profile'] })
             if (response.type === 'success') {
                 this.props.onLoginSuccess(response)
-            } else {
-                this.props.onLoginFail(response)
+            } 
+            // cancelled
+            else {
+                return
             }
         }
         catch({ message }) {
+            Alert.alert('error', message)
             this.props.onLoginFail(message)
         }
     }

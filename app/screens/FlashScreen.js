@@ -37,10 +37,9 @@ class FlashScreen extends React.Component {
     this.state = {
       tower: this.props.navigation.getParam('tower'),
       activeCube: 0,
-      activeFace: this.props.user.profile.preferences.baseCategory,
+      activeFace: null,
       pan: new Animated.Value(0)
     }
-
 
     this.fetchCubes = this.fetchCubes.bind(this)
     this.getCategoryNameFromId = this.getCategoryNameFromId.bind(this)
@@ -56,13 +55,38 @@ class FlashScreen extends React.Component {
     }
   }
 
+  componentDidMount() {
+    this.props.navigation.setParams({ toggleSubscription: this.toggleSubscription})
+
+    // fetch relevant store data
+    const { categories, currentTower } = this.props.tower
+    const { profile } = this.props.user
+
+    if (!categories.fetching && !categories.fetched) this.props.getCategories()
+    if (!currentTower.fetching && !currentTower.fetched) this.props.getTowerCubes(this.state.tower.id)
+    if (!profile.fetching && !profile.fetched) this.props.getUser()
+  }
+
+  componentDidUpdate(prevProps) {
+    const { towers } = this.props.tower.towers
+    const newTower = this.props.navigation.getParam('tower')
+
+    if (newTower.id != this.state.tower.id) {
+      this.setState({tower: towers.filter(tower => newTower == tower.id)[0]})
+      this.props.getTowerCubes(newTower.id)
+    }
+  }
+
   fetchCubes(towerId) {
     this.props.getTowerCubes(this.state.tower.id)
   }
 
   getCategoryNameFromId(categoryId) {
     let { categories } = this.props.tower.categories
-    return categories.find(c => c.id == categoryId).category
+
+    let category = categories.find(c => c.id == categoryId)
+    if (category) return category.category
+    else return 'unknown'
   }
 
   getRelativeIndex(len, current, index) {
@@ -101,7 +125,7 @@ class FlashScreen extends React.Component {
     return cube.face_set
         .filter(face => learningCategories.includes(face.category) || baseCategory == face.category)
         .sort((a,b) => {
-          if (a.category = baseCategory) return -1
+          if (a.category == baseCategory) return -1
           let aName = this.getCategoryNameFromId(a.category)
           let bName = this.getCategoryNameFromId(b.category)
           if (aName > bName) return 1
@@ -117,9 +141,16 @@ class FlashScreen extends React.Component {
                 }]}
               key={index}
             >
-                <Text style={[Styles.mediumSemiBold, styles.cubeValue]}>
-                    {face.value}
-                </Text>
+                <View style={styles.cardTitle}>
+                  <Text style={[Styles.mediumSemiBold, styles.cubeCategory]}>
+                      {this.getCategoryNameFromId(face.category)}
+                  </Text>
+                </View>
+                <View style={styles.cardBody}>
+                  <Text style={[Styles.display2, styles.cubeValue]}>
+                      {face.value}
+                  </Text>
+                </View>
             </View>
         })
   }
@@ -171,7 +202,7 @@ class FlashScreen extends React.Component {
         <CubeNavigationHorizontal 
           loop 
           relativeIndex={relativeIndex} 
-          height={300} 
+          height={500} 
           width={350}
           callBackAfterSwipe={this.handleCubeSwipe}
         >
@@ -185,7 +216,6 @@ class FlashScreen extends React.Component {
   renderCardStack() {
 
     const { currentTower } = this.props.tower
-
     // default state
     if (!currentTower.fetched && !currentTower.fetching && !currentTower.error) {
       this.fetchCubes()
@@ -196,9 +226,6 @@ class FlashScreen extends React.Component {
       this.fetchCubes()
       return <ActivityIndicator />
     }
-
-    // state when tower cubes are being fetched
-    if (currentTower.fetching) return <ActivityIndicator />
 
     return [
       <View key={0} style={{zIndex: 1000}}>
@@ -221,7 +248,7 @@ class FlashScreen extends React.Component {
           <View
             style={styles.currentFace}
           >
-            {this.renderCategories()}
+            
           </View>
         </LinearGradient>
       </View>,
@@ -240,7 +267,7 @@ class FlashScreen extends React.Component {
         >
           <Icon 
             type='ionicon'
-            name='ios-arrow-up'
+            name='ios-arrow-down'
             color={Colors.gray1}
             onPress={() => this.setState({
               activeCube: Math.max(this.state.activeCube - 1, 0),
@@ -257,7 +284,7 @@ class FlashScreen extends React.Component {
           />
           <Icon 
             type='ionicon'
-            name='ios-arrow-down'
+            name='ios-arrow-up'
             color={Colors.gray1}
             onPress={() => {
               Animated.timing( this.state.pan, {
@@ -279,6 +306,35 @@ class FlashScreen extends React.Component {
 
   render() {
 
+    // requires the following reducers to be loaded:
+    // - tower.categories
+    // - tower.currentTower
+    // - user.profile
+    const { categories, currentTower } = this.props.tower
+    const { profile } = this.props.user
+
+    // default state when no fetch attempt has been made
+    if ((!categories.fetched && !categories.error) || (!currentTower.fetched && !currentTower.error) || 
+        (!profile.fetched && !profile.error)) {
+      return <View style={styles.container}>
+        <ActivityIndicator size='large'/>
+      </View>
+    }
+
+    // default state when loading
+    if (categories.fetching || currentTower.fetching || profile.fetching) {
+      return <View style={styles.container}>
+        <ActivityIndicator size='large'/>
+      </View>
+    }
+    
+    // show error if loading fails
+    if (categories.error || currentTower.error || profile.error) {
+      return <View style={styles.container}>
+        <Icon name='error' color={Colors.gray4} size={50} />
+      </View>
+    }
+
     return (
       <View style={styles.container}>
         {this.renderCardStack()}
@@ -293,6 +349,8 @@ const styles = StyleSheet.create({
       width: '100%',
       display: 'flex',
       flexDirection: 'column',
+      justifyContent: 'center',
+      alignContent: 'center'
     },
     progressContainer: {
       flexBasis: '15%',
@@ -326,6 +384,32 @@ const styles = StyleSheet.create({
       elevation: 3,
       borderBottomColor: Colors.gray6,
       borderBottomWidth: 1
+    },
+    cardTitle: {
+      flexBasis: '15%',
+      width: '100%',
+      borderBottomColor: Colors.gray5,
+      borderBottomWidth: 1,
+      paddingVertical: 10,
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignContent: 'center',
+      alignItems: 'center'
+    },
+    cardBody: {
+      flexBasis: '85%',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignContent: 'center'
+    },
+    cubeValue: {
+
+    },
+    cubeCategory: {
+      color: Colors.gray1
     },
     controlContainer: {
       flexBasis: '15%',
