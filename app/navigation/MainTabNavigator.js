@@ -9,7 +9,6 @@ import Colors from '../constants/Colors'
 import Styles from '../constants/Styles'
 import AuthLoading from '../screens/AuthLoading'
 import HomeScreen from '../screens/HomeScreen'
-import LoginScreen from '../screens/LoginScreen'
 import ProfileScreen from '../screens/ProfileScreen'
 import SignupScreen from '../screens/SignupScreen'
 import TowerScreen from '../screens/TowerScreen'
@@ -33,24 +32,9 @@ const AuthStack = createAnimatedSwitchNavigator(
   {
     AuthLoading: AuthLoading,
     Signup: SignupScreen,
-    Login: LoginScreen
   },
   {
     ...config,
-    transition: (
-      <Transition.Together>
-        <Transition.Out
-          type="slide-right"
-          durationMs={300}
-          interpolation="easeIn"
-        />
-        <Transition.In
-          type="slide-left"
-          durationMs={300}
-          interpolation="easeIn"
-        />
-      </Transition.Together>
-    )
   }
 )
 

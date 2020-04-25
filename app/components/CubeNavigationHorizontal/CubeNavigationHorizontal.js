@@ -217,7 +217,7 @@ export default class CubeNavigationHorizontal extends React.Component {
     const { width, height, relativeIndex } = this.props
 
     let expandStyle = { 
-        top: (height * relativeIndex) - height/1.2 + (7 * relativeIndex), 
+        top: (height * relativeIndex) - height/1.8 + (7 * relativeIndex), 
         left: -width/2, 
         width, 
         height

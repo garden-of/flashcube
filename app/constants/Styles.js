@@ -78,16 +78,32 @@ export default StyleSheet.create({
         flexDirection: 'column',
         width: '100%',
         height: '100%',
-        marginTop: 40,
-        padding: 15
+        padding: 15,
+        backgroundColor: Colors.primary
     },
     transparentButtonStyle: {
-        backgroundColor: 'rgba(256, 256, 256, 0.35)',
-        borderRadius: 3,
+        backgroundColor: 'rgba(256, 256, 256, 0.2)',
+        borderRadius: 2,
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        borderColor: 'rgba(0, 0, 0, 0.1)',
+    },
+    transparentButtonDisabledStyle: {
+        backgroundColor: 'rgba(256, 256, 256, 0.15)',
+        borderRadius: 2,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderColor: 'rgba(0, 0, 0, 0.1)',
+    },
+    transparentButtonDisabledTitleStyle: {
+        ...small,
+        ...semibold,
+        color: Colors.gray5,
+        paddingLeft: 10
     },
     outlineButtonStyle: {
         backgroundColor: 'transparent',
