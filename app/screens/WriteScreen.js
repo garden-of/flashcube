@@ -5,7 +5,9 @@ import { bindActionCreators } from 'redux'
 import * as userActions from '../actions/user'
 import * as towerActions from '../actions/tower'
 
-import { View, StyleSheet, Animated, PanResponder, Dimensions, ActivityIndicator } from 'react-native'
+import { View, StyleSheet, Animated, PanResponder, Dimensions, 
+         ActivityIndicator, TouchableWithoutFeedback, Keyboard,
+         KeyboardAvoidingView } from 'react-native'
 import { Card, Input, Button, Icon } from 'react-native-elements'
 import * as Progress from 'react-native-progress'
 
@@ -88,13 +90,15 @@ class WriteScreen extends React.Component {
       topCard: new Animated.Value(0),
       secondCard: new Animated.Value(0),
       backCard: new Animated.Value(0),
+      keyboardVisible: false
     }
 
     this.panResponder = PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onStartShouldSetPanResponderCapture: () => true,
-      onMoveShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponderCapture: () => true,
+
+      // only allow swipes if the keyboard is not visible
+      onStartShouldSetPanResponder: ( event, gestureState ) => {
+        return !this.state.keyboardVisible
+      },
       onPanResponderMove: ( event, gestureState ) => {
         this.state.pan.setValue(
           { x: gestureState.dx, y: gestureState.dy }
@@ -157,6 +161,7 @@ class WriteScreen extends React.Component {
     this.renderCards = this.renderCards.bind(this)
     this.renderFaceInputs = this.renderFaceInputs.bind(this)
     this.getZIndexRange = this.getZIndexRange.bind(this)
+    this._toggleKeyboardState = this._toggleKeyboardState.bind(this)
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -166,12 +171,22 @@ class WriteScreen extends React.Component {
     }
   }
 
+  _toggleKeyboardState() {
+    this.setState({
+      keyboardVisible: !this.state.keyboardVisible
+    })
+  }
+
   componentDidMount() {
     this.props.navigation.setParams({ toggleSubscription: this.toggleSubscription})
 
     // fetch relevant store data
     const { categories, currentTower } = this.props.tower
     const { profile } = this.props.user
+
+    // store the state of the keyboard, important for animations
+    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._toggleKeyboardState)
+    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._toggleKeyboardState)
 
     if (!categories.fetching && !categories.fetched) this.props.getCategories()
     if (!currentTower.fetching && !currentTower.fetched) this.props.getTowerCubes(this.state.tower.id)
@@ -186,6 +201,11 @@ class WriteScreen extends React.Component {
       this.setState({tower: towers.filter(tower => newTower == tower.id)[0]})
       this.props.getTowerCubes(newTower.id)
     }
+  }
+
+  componentWillUnmount() {
+    this.keyboardDidHideListener.remove()
+    this.keyboardDidShowListener.remove()
   }
 
   getCategoryNameFromId(categoryId) {
@@ -491,9 +511,13 @@ class WriteScreen extends React.Component {
     }
 
     return (
-      <View style={styles.container}>
-        {this.renderCardStack()}
-      </View>
+      <KeyboardAvoidingView style={styles.container} behavior='padding'>
+        <TouchableWithoutFeedback onPressIn={Keyboard.dismiss}>
+          <View style={styles.innerContainer}>
+            {this.renderCardStack()}
+          </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     )
   }
 }
@@ -512,16 +536,17 @@ const styles = StyleSheet.create({
       paddingTop: 25
     },
     cardContainer: {
-      flexBasis: '83%',
+      flexBasis: '85%',
+      flex: 1,
       display: 'flex',
       flexDirection: 'column',
     },
     controlContainer: {
-      flexBasis: '12%',
+      flexBasis: '10%',
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'center',
-      alignItems: 'center',
+      alignItems: 'baseline',
       zIndex: -1,
     },  
     cardView: {
