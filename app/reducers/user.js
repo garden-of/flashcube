@@ -105,7 +105,14 @@ export default function reducer(state=defaultStore, action) {
                 }
             }
         case actions.GET_USER_FAIL: 
-            return handleApiError(action.error)
+            return {
+                ...defaultStore,
+                profile: {
+                    fetching: false,
+                    fetched: false,
+                    error: false
+                }
+            }
         case actions.GET_USER_PREFERENCES:
             return {
                 ...state,

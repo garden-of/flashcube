@@ -61,11 +61,18 @@ class TowerDetailScreen extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
+    const { currentTower } = this.props.tower
     const { towers } = this.props.tower.towers
-    const newTower = this.props.navigation.getParam('tower')
-    if (newTower != this.state.tower.id) {
-      this.setState({tower: towers.filter(tower => newTower == tower.id)[0]})
-      this.props.getTowerCubes(newTower.id)
+
+    const newTowerId = this.props.navigation.getParam('tower', false)
+
+    if (newTowerId != this.state.tower.id) {
+      this.setState({
+        tower: towers.filter(tower => newTowerId == tower.id)[0]
+      })
+    }
+    else if (!currentTower.fetching && (currentTower.tower != this.state.tower.id)) {
+      this.props.getTowerCubes(this.state.tower.id)
     }
   }
 
@@ -292,6 +299,7 @@ class TowerDetailScreen extends React.Component {
     // - user.profile
     const { categories, currentTower } = this.props.tower
     const { profile, subscriptions } = this.props.user
+    const { navigation } = this.props
 
     // default state when no fetch attempt has been made
     if ((!categories.fetched && !categories.error) || (!currentTower.fetched && !currentTower.error) || 
@@ -308,6 +316,19 @@ class TowerDetailScreen extends React.Component {
       </View>
     }
     
+    // if we need to update the current tower, show the loader
+    // this prevents some flashing
+    if (navigation.getParam('tower', false) != this.state.tower.id) {
+      return <View style={styles.container}>
+        <ActivityIndicator size='large'/>
+      </View>
+    }
+    else if (currentTower.tower != this.state.tower.id) {
+      return <View style={styles.container}>
+        <ActivityIndicator size='large'/>
+      </View>
+    }
+
     // show error if loading fails
     if (categories.error || currentTower.error || profile.error || subscriptions.error) {
       return <View style={styles.container}>

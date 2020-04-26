@@ -67,6 +67,12 @@ class HomeScreen extends React.Component {
     }
   }
 
+  componentDidUpdate() {
+    const { profile } = this.props.user
+
+    if (profile.error) this.props.navigation.navigate('Signup')
+  }
+
   handleBaseCategoryChange(selected) {
     const { preferences } = this.props.user.profile
 
