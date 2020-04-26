@@ -167,7 +167,7 @@ class HomeScreen extends React.Component {
           </View>
           <View style={{ ...styles.selector, flexBasis: '25%' }}>
             <LanguagePicker 
-              title='What language do you speak?'
+              title='Whats your main language?'
               options={categories}
               onOptionChange={this.handleBaseCategoryChange}
               selectedValue={preferences.baseCategory}
