@@ -41,7 +41,7 @@ export default class FBLoginButton extends React.Component {
                 color='white'
                 />
             }
-            buttonStyle={Styles.outlineButtonStyle} 
+            buttonStyle={[Styles.outlineButtonStyle, {borderWidth: 0}]} 
             titleStyle={Styles.outlineButtonTextStyle} 
             containerStyle={styles.buttonContainer} 
             title='Facebook'

@@ -28,6 +28,8 @@ router.register(r'user_preferences', views.UserPreferencesViewSet, 'UserPreferen
 router.register(r'user_subscription', views.UserSubscriptionViewSet, 'UserSubscription')
 
 urlpatterns = [
+    path('jet/', include('jet.urls', 'jet')),
+    path('jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
     path('admin/', admin.site.urls),
     path('auth/', include('rest_framework_social_oauth2.urls')),
     path('register/', views.CreateUser.as_view()),
