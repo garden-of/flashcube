@@ -32,7 +32,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'towers.apps.TowersConfig',
-    'suit',
+    'jet.dashboard',
+    'jet',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     'social_django',
     'rest_framework_social_oauth2',
     'guardian',
+    'import_export',
     'flashcube'
 ]
 

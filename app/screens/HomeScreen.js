@@ -250,7 +250,7 @@ class HomeScreen extends React.Component {
           </View>
           <View style={{ ...styles.selector, flexBasis: '18%' }}>
             <Button 
-              title='All set? Start learning!'
+              title='Start Learning!'
               buttonStyle={Styles.transparentButtonStyle} 
               titleStyle={Styles.outlineButtonTextStyle} 
               containerStyle={styles.buttonContainer}

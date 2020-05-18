@@ -11,7 +11,6 @@ import Styles from '../../constants/Styles'
 class ListItemTitle extends React.Component {
     render() {
         return <View>
-            <Text style={styles.listItemTitleLanguages}>{this.props.languages}</Text>
             <Text style={styles.listItemTitleTitle}>{this.props.title}</Text>
             <Text style={styles.listItemTitleDetail}>{this.props.subtitle}</Text>
         </View>
@@ -64,7 +63,6 @@ class ListItem extends React.Component {
         return <RNListItem 
             title={<ListItemTitle 
                 title={this.abbreviateString(this.props.title)}
-                languages={this.abbreviateString(this.props.languages.join(' / '))}
                 subtitle={this.abbreviateString(this.props.subtitle)}
             />}
             leftAvatar={{ 

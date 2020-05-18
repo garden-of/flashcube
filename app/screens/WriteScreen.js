@@ -7,9 +7,10 @@ import * as towerActions from '../actions/tower'
 
 import { View, StyleSheet, Animated, PanResponder, Dimensions, 
          ActivityIndicator, TouchableWithoutFeedback, Keyboard,
-         KeyboardAvoidingView } from 'react-native'
+         KeyboardAvoidingView, Text } from 'react-native'
 import { Card, Input, Button, Icon } from 'react-native-elements'
-import * as Progress from 'react-native-progress'
+
+import SegmentedProgressBar from '../components/SegmentedProgressBar/SegmentedProgressBar'
 
 import Styles from '../constants/Styles'
 import Colors from '../constants/Colors'
@@ -65,6 +66,8 @@ const stringSimilarity = (a, b) => {
   return matrix[b.length][a.length]
 }
 
+function debounce(a,b,c) {var d,e;return function(){function h(){d=null,c||(e=a.apply(f,g))}var f=this,g=arguments;return clearTimeout(d),d=setTimeout(h,b),c&&!d&&(e=a.apply(f,g)),e}}
+
 class WriteScreen extends React.Component {
 
   constructor(props) {
@@ -82,15 +85,20 @@ class WriteScreen extends React.Component {
       }, {})
 
     this.state = {
-      tower: this.props.navigation.getParam('tower'),
       activeCube: 0,
+      backCard: new Animated.Value(0),
       cubeValues: defaultCubeFields,
       hideAnswers: true,
+      inputFocused: null,
+      inputFocusIndex: 0,
+      keyboardVisible: false,
+      learnedCards: [],
       pan: new Animated.ValueXY(),
-      topCard: new Animated.Value(0),
       secondCard: new Animated.Value(0),
-      backCard: new Animated.Value(0),
-      keyboardVisible: false
+      stillLearningCards: [],
+      toast: new Animated.Value(0),
+      topCard: new Animated.Value(0),
+      tower: this.props.navigation.getParam('tower'),
     }
 
     this.panResponder = PanResponder.create({
@@ -103,13 +111,27 @@ class WriteScreen extends React.Component {
         this.state.pan.setValue(
           { x: gestureState.dx, y: gestureState.dy }
         )
+        this.state.toast.setValue(gestureState.dx)
       },
       onPanResponderTerminationRequest: () => false,
       onPanResponderRelease: ( event, gestureState ) => {
         
 
+        // fade out the toast
+        Animated.timing( this.state.toast, {
+          toValue: 0,
+          duration: 150
+        }).start()
+
         // go to the next face if threshold is reached
         if ( (Math.abs(gestureState.dx / SCREENWIDTH) > 0.40) ) {
+
+          // add the cube to the appropriate list
+          if (gestureState.dx > 0) {
+            this.setState({learnedCards: [...this.state.learnedCards, this.state.activeCube]})
+          } else {
+            this.setState({stillLearningCards: [...this.state.stillLearningCards, this.state.activeCube]})
+          }
 
           // bring the translationX back to 0 quickly
           Animated.timing( this.state.pan, {
@@ -158,10 +180,12 @@ class WriteScreen extends React.Component {
 
     this.getCategoryNameFromId = this.getCategoryNameFromId.bind(this)
     this.getRelativeRotation = this.getRelativeRotation.bind(this)
+    this.getZIndexRange = this.getZIndexRange.bind(this)
     this.renderCards = this.renderCards.bind(this)
     this.renderFaceInputs = this.renderFaceInputs.bind(this)
-    this.getZIndexRange = this.getZIndexRange.bind(this)
-    this._toggleKeyboardState = this._toggleKeyboardState.bind(this)
+    this.renderSummary = this.renderSummary.bind(this)
+    this.setAccuracy = this.setAccuracy.bind(this)
+    this.toggleKeyboardState = this.toggleKeyboardState.bind(this)
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -171,7 +195,7 @@ class WriteScreen extends React.Component {
     }
   }
 
-  _toggleKeyboardState() {
+  toggleKeyboardState() {
     this.setState({
       keyboardVisible: !this.state.keyboardVisible
     })
@@ -185,8 +209,8 @@ class WriteScreen extends React.Component {
     const { profile } = this.props.user
 
     // store the state of the keyboard, important for animations
-    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._toggleKeyboardState)
-    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._toggleKeyboardState)
+    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.toggleKeyboardState)
+    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.toggleKeyboardState)
 
     if (!categories.fetching && !categories.fetched) this.props.getCategories()
     if (!currentTower.fetching && !currentTower.fetched) this.props.getTowerCubes(this.state.tower.id)
@@ -214,21 +238,30 @@ class WriteScreen extends React.Component {
   }
 
   getFaceStatusIndicator(cubeId, faceId) {
-    const accuracy = this.state.cubeValues[cubeId][faceId].accuracy
+    const { accuracy, value, currentValue } = this.state.cubeValues[cubeId][faceId]
+
+    if (!currentValue) return 'ios-radio-button-off'
+    if (currentValue.length / value.length < 0.3) return 'ios-radio-button-off'
+
+    const pctAccurate = (value.length - accuracy) / value.length
 
     if (accuracy == null) return 'ios-radio-button-off'
     if (accuracy == 0) return 'ios-checkmark-circle'
-    if (accuracy < 3) return 'ios-alert'
+    if (pctAccurate >= 0.85) return 'ios-alert'
     return 'ios-close-circle'
 
   }
 
   getFaceStatusColor(cubeId, faceId) {
-    const accuracy = this.state.cubeValues[cubeId][faceId].accuracy
+    const { accuracy, value, currentValue } = this.state.cubeValues[cubeId][faceId]
+
+    const pctAccurate = (value.length - accuracy) / value.length
 
     if (accuracy == null) return Colors.gray5
+    if (currentValue.length / value.length < 0.3) return Colors.gray5
+
     if (accuracy == 0) return Colors.primary
-    if (accuracy < 3) return Colors.secondary
+    if (pctAccurate >= 0.85) return Colors.primary
     return Colors.red
 
   }
@@ -319,8 +352,7 @@ class WriteScreen extends React.Component {
     })
   }
 
-  
-  handleInputChange(cubeId, faceId, text) {
+  setAccuracy(cubeId, faceId) {
     this.setState({
       cubeValues: {
         ...this.state.cubeValues,
@@ -328,12 +360,70 @@ class WriteScreen extends React.Component {
           ...this.state.cubeValues[cubeId],
           [faceId]: {
             ...this.state.cubeValues[cubeId][faceId],
-            currentValue: text,
-            accuracy: stringSimilarity(this.state.cubeValues[cubeId][faceId].value, text)
+            accuracy: stringSimilarity(
+              this.state.cubeValues[cubeId][faceId].value, 
+              this.state.cubeValues[cubeId][faceId].currentValue)
           }
         }
       }
     })
+  }
+
+  handleInputChange(cubeId, faceId, text) {
+
+    // if we are 100% accurate, skip the debounce
+    if (text === this.state.cubeValues[cubeId][faceId].value) {
+      this.setState({
+        cubeValues: {
+          ...this.state.cubeValues,
+          [cubeId]: {
+            ...this.state.cubeValues[cubeId],
+            [faceId]: {
+              ...this.state.cubeValues[cubeId][faceId],
+              currentValue: text,
+              accuracy: 0
+            }
+          }
+        }
+      })
+    } 
+    
+    // if we were at 100% accuracy and there is a change,
+    // set the accuracy to one and debounce
+    else if (this.state.cubeValues[cubeId][faceId].accuracy === 0) {
+      this.setState({
+        cubeValues: {
+          ...this.state.cubeValues,
+          [cubeId]: {
+            ...this.state.cubeValues[cubeId],
+            [faceId]: {
+              ...this.state.cubeValues[cubeId][faceId],
+              currentValue: text,
+              accuracy: 1
+            }
+          }
+        }
+        }, debounce(() => this.setAccuracy(cubeId, faceId), 2000)
+      )
+    }
+
+    // in all other scenarios, just set the text value and
+    // debounce the accuracy change
+    else {
+      this.setState({
+        cubeValues: {
+          ...this.state.cubeValues,
+          [cubeId]: {
+            ...this.state.cubeValues[cubeId],
+            [faceId]: {
+              ...this.state.cubeValues[cubeId][faceId],
+              currentValue: text,
+            }
+          }
+        }
+      }, debounce(() => this.setAccuracy(cubeId, faceId), 2000)
+    )
+    }
   }
 
   renderCards(cubes) {
@@ -365,7 +455,12 @@ class WriteScreen extends React.Component {
       >
         <Card
           title={cube.name}
-          containerStyle={styles.cube}
+          containerStyle={[
+            styles.cube,
+            {
+              height: '94%'
+            }
+          ]}
         >
           {this.renderFaceInputs(cube)}
         </Card>
@@ -378,83 +473,186 @@ class WriteScreen extends React.Component {
 
     const { currentTower } = this.props.tower
 
+    let leftToastOpacity = this.state.toast.interpolate({
+      inputRange: [-225, 0],
+      outputRange: [0.85, 0.0],
+      extrapolate: 'clamp'
+    })
+
+    let leftToastZ = this.state.toast.interpolate({
+      inputRange: [-1, 0],
+      outputRange: [10000, -10000],
+      extrapolate: 'clamp'
+    })
+
+    let rightToastOpacity = this.state.toast.interpolate({
+      inputRange: [0, 225],
+      outputRange: [0.0, 0.85],
+      extrapolate: 'clamp'
+    })
+
+    let rightToastZ = this.state.toast.interpolate({
+      inputRange: [0, 1],
+      outputRange: [-10000, 10000],
+      extrapolate: 'clamp'
+    })
+
     return [
       <View style={styles.progressContainer} key={0}>
-        <Progress.Bar
-          progress={(this.state.activeCube + 1) / currentTower.cubes.length}
-          borderRadius={1}
-          width={null}
-          height={7}
-          borderWidth={0}
-          color={Colors.primary}
-          unfilledColor={Colors.gray6}
-        />
+        <Text style={styles.progressText}>{this.state.activeCube+1}</Text>
+        <View style={styles.progressBar}>
+          <SegmentedProgressBar 
+            learning={this.state.stillLearningCards.length}
+            learned={this.state.learnedCards.length}
+            total={currentTower.cubes.length}
+          />
+        </View>
+        <Text style={styles.progressText}>{currentTower.cubes.length}</Text>
       </View>,
       <View style={styles.cardContainer} key={1}>
         {this.renderCards(currentTower.cubes)}
       </View>,
-      <View style={styles.controlContainer} key={2}>
+
+      <KeyboardAvoidingView behavior='position' key={2} keyboardVerticalOffset={80}>
+        <View style={styles.controlContainer}>
+          <Icon 
+            type='ionicon'
+            name='ios-arrow-back'
+            containerStyle={styles.controlIconContainer}
+            color={this.state.activeCube === 0 ? Colors.gray4 : Colors.gray1}
+            onPress={() => this.setState({
+              learnedCards: this.state.learnedCards.filter( card => card != this.state.activeCube ),
+              stillLearningCards: this.state.stillLearningCards.filter( card => card != this.state.activeCube ),
+              activeCube: Math.max(this.state.activeCube - 1, 0),
+              hideAnswers: true
+            })}
+            disabled={this.state.activeCube === 0}
+            disabledStyle={styles.disabledIconButtonStyle}
+            raised
+          />
+          <Icon 
+            type='ionicon'
+            containerStyle={styles.controlIconContainer}
+            name={this.state.hideAnswers ? 'ios-eye-off' : 'ios-eye'}
+            color={Colors.gray1}
+            onPress={() => this.setState({hideAnswers: !this.state.hideAnswers})}
+            raised
+          />
+          <Icon 
+            type='ionicon'
+            name='ios-refresh'
+            containerStyle={styles.controlIconContainer}
+            color={this.state.activeCube === 0 ? Colors.gray3 : Colors.gray1}
+            onPress={() => this.setState({
+              activeCube: 0,
+              hideAnswers: true,
+              learnedCards: [],
+              stillLearningCards: []
+            })}
+            disabled={this.state.activeCube === 0}
+            disabledStyle={styles.disabledIconButtonStyle}
+            raised
+          />
+          <Icon 
+            type='ionicon'
+            name='ios-arrow-forward'
+            containerStyle={styles.controlIconContainer}
+            color={this.state.activeCube === currentTower.cubes.length ? Colors.gray3 : Colors.gray1}
+            onPress={() => this.setState({
+              activeCube: Math.min(this.state.activeCube + 1, currentTower.cubes.length),
+              hideAnswers: true,
+              stillLearningCards: [...this.state.stillLearningCards, this.state.activeCube]
+            })}
+            disabled={this.state.activeCube === currentTower.cubes.length}
+            disabledStyle={styles.disabledIconButtonStyle}
+            raised
+          />
+        </View>
+      </KeyboardAvoidingView>,
+
+      <Animated.View 
+        style={[
+          styles.toast, 
+          styles.rightActionToast,
+          {
+            opacity: rightToastOpacity,
+            zIndex: rightToastZ
+          }
+        ]} 
+        key={3}
+      >
         <Icon 
           type='ionicon'
-          name='ios-arrow-back'
-          color={Colors.gray1}
-          onPress={() => this.setState({
-            activeCube: Math.max(this.state.activeCube - 1, 0),
-            hideAnswers: true
-          })}
-          raised
+          name='ios-checkmark-circle'
+          size={70}
+          color={Colors.white}
         />
+        <Text style={{...Styles.regularText, color: Colors.white}}>I've got it</Text>
+      </Animated.View>,
+      <Animated.View 
+        style={[
+          styles.toast,
+          styles.leftActionToast,
+          {
+            opacity: leftToastOpacity,
+            zIndex: leftToastZ
+          }
+        ]} 
+        key={4}
+      >
         <Icon 
           type='ionicon'
-          name={this.state.hideAnswers ? 'ios-eye' : 'ios-eye-off'}
-          color={Colors.gray1}
-          onPress={() => this.setState({hideAnswers: !this.state.hideAnswers})}
-          raised
+          name='ios-alert'
+          size={70}
+          color={Colors.white}
         />
-        <Icon 
-          type='ionicon'
-          name='ios-refresh'
-          color={Colors.gray1}
-          onPress={() => this.setState({
-            activeCube: 0,
-            hideAnswers: true
-          })}
-          raised
-        />
-        <Icon 
-          type='ionicon'
-          name='ios-arrow-forward'
-          color={Colors.gray1}
-          onPress={() => this.setState({
-            activeCube: Math.min(this.state.activeCube + 1, currentTower.cubes.length),
-            hideAnswers: true
-          })}
-          raised
-        />
-      </View>
+        <Text style={{...Styles.regularText, color: Colors.white}}>I'm still learning</Text>
+      </Animated.View>
     ]
   }
 
   renderFaceInputs(cube) {
-    
     const { baseCategory, learningCategories } = this.props.user.profile.preferences
 
+    let inputArray = []
+    const faces = cube.face_set
+    .filter(face => face.category != baseCategory)
+    .filter(face => learningCategories.includes(face.category))
+    .sort((a, b) => {
+      let aName = this.getCategoryNameFromId(a.category)
+      let bName = this.getCategoryNameFromId(b.category)
+      if (aName > bName) return 1
+      if (aName < bName) return -1
+      return 0
+    } )
 
-    return cube.face_set
-      .filter(face => face.category != baseCategory)
-      .filter(face => learningCategories.includes(face.category))
-      .sort((a, b) => {
-        let aName = this.getCategoryNameFromId(a.category)
-        let bName = this.getCategoryNameFromId(b.category)
-        if (aName > bName) return 1
-        if (aName < bName) return -1
-        return 0
-      } )
-      .map((face, index) => {
+    return faces.map((face, index) => {
+        let label = <View style={styles.faceInputLabel}>
+          <Text
+            style={{
+              ...Styles.xsmallText,
+              color: Colors.gray3,
+              textTransform: 'uppercase',
+              flexBasis: '40%'
+            }}
+          >{this.getCategoryNameFromId(face.category)}</Text>
+          <Text
+            style={{
+              ...Styles.xsmallText,
+              color: Colors.gray2,
+              flexBasis: '60%',
+              textAlign: 'right'
+            }}
+          >
+            {this.state.hideAnswers ? null : this.state.cubeValues[cube.id][face.id].value }
+          </Text>
+        </View>
+
         return <View style={styles.faceContianer} key={index}>
           <View style={styles.faceInputContainer}>
             <Input 
-              label={this.getCategoryNameFromId(face.category)}
+              ref={ input => inputArray[index] = input}
+              label={label}
               autoCapitalize='none' 
               labelStyle={{
                 ...Styles.xsmallText,
@@ -463,8 +661,12 @@ class WriteScreen extends React.Component {
               }}
               key={index}
               value={this.state.cubeValues[cube.id][face.id].currentValue}
-              placeholder={this.state.hideAnswers ? null : this.state.cubeValues[cube.id][face.id].value }
               onChangeText={(text) => this.handleInputChange(cube.id, face.id, text)}
+              blurOnSubmit={false}
+              onSubmitEditing={index === faces.length-1
+                ? null
+                : () => inputArray[index+1].focus()
+              }
               rightIcon={this.state.cubeValues[cube.id][face.id].currentValue 
                 ? {
                   name: this.getFaceStatusIndicator(cube.id, face.id),
@@ -477,6 +679,88 @@ class WriteScreen extends React.Component {
         </View>
         }
       )
+  }
+
+  renderSummary() {
+
+    Animated.timing( this.state.toast, {
+      toValue: 0,
+      duration: 0
+    }).start()
+
+    return <Animated.View style={styles.summaryContainer}>
+      <View style={styles.summaryTitle}>
+        <Text style={Styles.display2}>Good Work!</Text>
+      </View>
+      <View style={styles.summaryScores}>
+        <View style={styles.summaryScoresRow}>
+          <View style={styles.summaryScoresRowIcon}>
+            <Icon 
+              type='ionicon'
+              name='ios-checkmark-circle'
+              size={40}
+              color={Colors.primary}
+            />
+          </View>
+          <View style={styles.summaryScoresRowText}>
+            <Text>
+              <Text style={Styles.smallText}>
+                You've mastered
+              </Text>
+              <Text style={Styles.regularSemiBold}>
+                {` ${this.state.learnedCards.length} `}
+              </Text>
+              <Text style={Styles.smallText}>
+                terms.
+              </Text>
+            </Text>
+          </View>
+        </View>
+        <View style={styles.summaryScoresRow}>
+          <View style={styles.summaryScoresRowIcon}>
+            <Icon 
+              type='ionicon'
+              name='ios-alert'
+              size={40}
+              color={Colors.secondary}
+            />
+          </View>
+          <View style={styles.summaryScoresRowText}>
+          <Text>
+              <Text style={Styles.smallText}>
+                You're still learning
+              </Text>
+              <Text style={Styles.regularSemiBold}>
+                {` ${this.state.stillLearningCards.length} `}
+              </Text>
+              <Text style={Styles.smallText}>
+                terms.
+              </Text>
+            </Text>
+          </View>
+        </View>
+      </View>
+      <View style={styles.summaryActions}>
+        <Button 
+          title='Study Again'
+          onPress={() => this.setState({
+            activeCube: 0,
+            hideAnswers: true,
+            learnedCards: [],
+            stillLearningCards: []
+          })}
+          buttonStyle={Styles.buttonStyle}
+          titleStyle={Styles.buttonTextStyle}
+          containerStyle={{ marginBottom: 15 }}
+        />
+        <Button 
+          title='Go Home'
+          onPress={() => this.props.navigation.navigate('Home')}
+          buttonStyle={Styles.outlineButtonStyle}
+          titleStyle={[Styles.outlineButtonTextStyle, {color: Colors.primary}]}
+        />
+      </View>
+    </Animated.View>
   }
 
   render() {
@@ -509,31 +793,52 @@ class WriteScreen extends React.Component {
         <Icon name='error' color={Colors.gray4} size={50} />
       </View>
     }
-
     return (
-      <KeyboardAvoidingView style={styles.container} behavior='padding'>
+      <View
+        style={styles.container} 
+      >
         <TouchableWithoutFeedback onPressIn={Keyboard.dismiss}>
           <View style={styles.innerContainer}>
-            {this.renderCardStack()}
+            {this.state.activeCube === currentTower.cubes.length
+              ? this.renderSummary()
+              : this.renderCardStack()
+            }
           </View>
         </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
+      </View>
     )
   }
 }
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
       width: '100%',
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'center',
+      justifyContent: 'flex-end',
+    },
+    innerContainer: {
+      height: '100%'
     },
     progressContainer: {
       flexBasis: '5%',
-      paddingHorizontal: 20,
-      paddingTop: 25
+      paddingHorizontal: 10,
+      paddingTop: 15,
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignContent: 'space-between'
+    },
+    progressBar: {
+      flexBasis: '82%',
+      paddingRight: 3
+    },
+    progressText: {
+      ...Styles.xsmallText,
+      color: Colors.gray2,
+      flexBasis: '8%',
+      textAlign: 'center'
     },
     cardContainer: {
       flexBasis: '85%',
@@ -542,12 +847,13 @@ const styles = StyleSheet.create({
       flexDirection: 'column',
     },
     controlContainer: {
-      flexBasis: '10%',
+      width: '100%',
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'center',
-      alignItems: 'baseline',
-      zIndex: -1,
+      paddingBottom: 15
+    },
+    controlIconContainer: {
     },  
     cardView: {
       height: '100%',
@@ -560,7 +866,6 @@ const styles = StyleSheet.create({
       backgroundColor: Colors.gray6,
       borderColor: Colors.gray6,
       width: '93%',
-      height: '94%'
     },
     faceContianer: {
       display: 'flex',
@@ -573,6 +878,77 @@ const styles = StyleSheet.create({
     faceInputContainer: {
       flexBasis: '100%'
     },
+    faceInputLabel: {
+      display: 'flex',
+      flexDirection: 'row',
+      width: '100%',
+      alignContent: 'space-between',
+  
+    },
+    disabledIconButtonStyle: {
+      backgroundColor: Colors.white
+    },
+    toast: {
+      ...Styles.shadow,
+      opacity: 0.9,
+      position: 'absolute',
+      zIndex: 10000,
+      width: '33%',
+      height: 110,
+      top: '45%',
+      display: 'flex',
+      flexDirection: 'column',
+      color: Colors.white,
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignContent: 'space-around'
+    },
+    leftActionToast: {
+      backgroundColor: Colors.secondary,
+      left: 0,
+    },
+    rightActionToast: {
+      backgroundColor: Colors.primary,
+      right: 0,
+    },
+    summaryContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      alignContent: 'center'
+    },
+    summaryScores: {
+      paddingVertical: '5%'
+    },
+    summaryScoresRow: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignContent: 'center',
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    summaryScoresRowText: {
+      display: 'flex',
+      flexDirection: 'row'
+    }, 
+    summaryScoresRowIcon: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      flexBasis: '30%',
+      paddingRight: '5%'
+    },
+    summaryScoresRowText: {
+      flexBasis: '70%',
+      alignContent: 'flex-start',
+    },
+    summaryActions: {
+      display: 'flex',
+      flexDirection: 'column',
+      width: '100%',
+      paddingHorizontal: '15%'
+    }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(WriteScreen)

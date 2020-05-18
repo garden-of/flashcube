@@ -81,9 +81,9 @@ class TowerDetailScreen extends React.Component {
       headerRight: <Button 
             icon={
               <Icon
-              name={navigation.getParam('subscribed', false) ? 'ios-heart' : 'ios-heart-empty'}
+              name={navigation.getParam('subscribed', false) ? 'ios-checkmark' : 'ios-add'}
               type='ionicon'
-              size={25}
+              size={40}
               color={Colors.primary}
               />
             }
@@ -342,7 +342,6 @@ class TowerDetailScreen extends React.Component {
           <Text style={Styles.display2}>{this.state.tower.name}</Text>
         </View>
         <View style={styles.categoryManager}>
-          <View style={styles.categories}>{this.renderTowerCategories()}</View>
         </View>
         <View style={styles.progress}>
          

@@ -83,7 +83,7 @@ export default StyleSheet.create({
     },
     transparentButtonStyle: {
         backgroundColor: 'rgba(256, 256, 256, 0.2)',
-        borderRadius: 2,
+        borderRadius: 3,
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
@@ -105,19 +105,26 @@ export default StyleSheet.create({
         color: Colors.gray5,
         paddingLeft: 10
     },
+    buttonStyle: {
+        backgroundColor: Colors.primary,
+        borderColor: Colors.primary,
+        borderRadius: 3
+    },
+    buttonTextStyle: {
+        ...small,
+        ...semibold,
+        color: Colors.white,
+    },
     outlineButtonStyle: {
         backgroundColor: 'transparent',
-        borderRadius: 10,
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center'
+        borderColor: Colors.primary,
+        borderRadius: 3,
+        borderWidth: 1
     },
     outlineButtonTextStyle: {
         ...small,
         ...semibold,
         color: Colors.white,
-        paddingLeft: 10
     },
     buttonContainerStyle: {
     },
