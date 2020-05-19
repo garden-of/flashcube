@@ -54,8 +54,12 @@ class Face(models.Model):
 class List(models.Model):
 
     user = models.OneToOneField(to=User, on_delete=models.CASCADE)
-    name = models.TextField(max_length=200, null=True, blank=True)
+    name = models.CharField(max_length=200, null=True, blank=True)
     cubes = models.ManyToManyField('Cube', related_name='list_cubes')
+    is_default = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ['user', 'is_default']
 
     def __str__(self):
         return '{} -> {}'.format(self.user, self.name)
@@ -67,7 +71,7 @@ class Tower(models.Model):
         ('I', 'Intermediate'),
         ('E', 'Expert'),
     )
-    
+
     name = models.CharField(max_length=200)
     categories = models.ManyToManyField('Category', related_name='tower_categories')
     image = models.ImageField(blank=True, null=True)
@@ -88,6 +92,11 @@ class Tower(models.Model):
 class UserLearnEvent(models.Model):
 
     user = models.OneToOneField(to=User, on_delete=models.CASCADE)
+    face = models.ForeignKey(to=Face, on_delete=models.CASCADE)
+    event_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return '{user} -> {face}'.format(user=str(self.user), face=self.face)
 
 
 class UserPreferences(models.Model):
@@ -103,7 +112,7 @@ class UserPreferences(models.Model):
     fluentCategories = models.ManyToManyField(to='Category', related_name='fluent_categories', blank=True)
 
     def __str__(self):
-        return self.user
+        return str(self.user)
 
 
 class UserSubscription(models.Model):
@@ -117,4 +126,4 @@ class UserSubscription(models.Model):
         unique_together = ['user', 'tower']
     
     def __str__(self):
-        return '{user} -> {tower}'.format(user=self.user, tower=self.tower)
+        return '{user} -> {tower}'.format(user=str(self.user), tower=self.tower)

@@ -45,7 +45,6 @@ class TowerAdmin(ImportExportActionModelAdmin):
     resource_class = TowerResource
 
 
-
 admin.site.register(models.Category, CategoryAdmin)
 admin.site.register(models.Cube, CubeAdmin)
 admin.site.register(models.Face, FaceAdmin)
@@ -53,5 +52,6 @@ admin.site.register(models.List, ListAdmin)
 admin.site.register(models.Tower, TowerAdmin)
 
 # these dont need bulk actions
+admin.site.register(models.UserLearnEvent)
 admin.site.register(models.UserPreferences)
 admin.site.register(models.UserSubscription)
