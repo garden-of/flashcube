@@ -5,7 +5,7 @@ from rest_framework.generics import get_object_or_404
 
 from django.contrib.auth.models import User
 
-from towers.models import Category, Cube, Face, Tower, UserPreferences, UserSubscription
+from towers.models import Category, Cube, List, Face, Tower, UserPreferences, UserSubscription
 from towers import serializers
 
 
@@ -18,8 +18,13 @@ class CreateUser(views.APIView):
         if serializer.is_valid():
             user = serializer.save()
             if user:
+
+                # create a default list for the user
+                default_list = List(user=user, is_default=True)
+                default_list.save()
+
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -70,8 +75,11 @@ class UserPreferencesViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         # this will lazy create the preferences object if it doesnt exist
         # every user needs a preference object for the app to function
-        print(self.request.user)
-        userPreference, created = UserPreferences.objects.get_or_create(user=self.request.user)
+        user_preference, created = UserPreferences.objects.get_or_create(user=self.request.user)
+
+        # this will make sure the user has a default list
+        # doing it here makes sure that it exists before the user is done onboarding
+        default_list, created = List.objects.get_or_create(user=self.request.user, is_default=True)
 
         # this creates another query, but is an easy way to return a queryset
         return UserPreferences.objects.filter(user__exact=self.request.user)
@@ -81,5 +89,36 @@ class UserSubscriptionViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.UserSubscriptionSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
+    def get_queryset(self, *args, **kwargs):
         return UserSubscription.objects.filter(user__exact=self.request.user)
+    
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+    
+        # whenever a user subscribes to a tower, automatically add those cubes to their default list
+        cubes = Cube.objects.filter(tower=response.data['tower'])
+        default_list, created = List.objects.get_or_create(user=self.request.user, is_default=True)
+        for cube in cubes:
+            default_list.cubes.add(cube)
+
+        return response
+    
+    def destroy(self, request, *args, **kwargs):
+
+        # we need the tower later, but it must be
+        # retreived before the delete happens
+        subscription = self.get_object()
+        tower = subscription.tower
+
+        response = super().destroy(request, *args, **kwargs)
+
+        # whenever a user unsubscribes from a tower, automatically remove those 
+        # cubes from their default list
+        if response.status_code == 204:
+            cubes = Cube.objects.filter(tower=tower)
+            default_list, created = List.objects.get_or_create(user=self.request.user, is_default=True)
+            for cube in cubes:
+                default_list.cubes.remove(cube)
+
+        return response
+

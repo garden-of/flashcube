@@ -474,7 +474,7 @@ class WriteScreen extends React.Component {
     const { currentTower } = this.props.tower
 
     let leftToastOpacity = this.state.toast.interpolate({
-      inputRange: [-225, 0],
+      inputRange: [-125, 0],
       outputRange: [0.85, 0.0],
       extrapolate: 'clamp'
     })
@@ -486,7 +486,7 @@ class WriteScreen extends React.Component {
     })
 
     let rightToastOpacity = this.state.toast.interpolate({
-      inputRange: [0, 225],
+      inputRange: [0, 125],
       outputRange: [0.0, 0.85],
       extrapolate: 'clamp'
     })
