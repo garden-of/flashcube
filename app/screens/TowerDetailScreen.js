@@ -52,12 +52,13 @@ class TowerDetailScreen extends React.Component {
 
     // fetch relevant store data
     const { categories, currentTower } = this.props.tower
-    const { profile, subscriptions } = this.props.user
+    const { profile, subscriptions, defaultList } = this.props.user
 
     if (!categories.fetching && !categories.fetched) this.props.getCategories()
     if (!currentTower.fetching && !currentTower.fetched) this.props.getTowerCubes(this.state.tower.id)
     if (!profile.fetching && !profile.fetched) this.props.getUser()
     if (!subscriptions.fetching && !subscriptions.fetched) this.props.getUserSubscriptions()
+    if (!defaultList.fetching && !defaultList.fetched) this.props.getDefaultList()
   }
 
   componentDidUpdate(prevProps) {
@@ -196,14 +197,18 @@ class TowerDetailScreen extends React.Component {
   }
 
   renderCubeFaces(cube, i) {
+
+    const { defaultList } = this.props.user.defaultList
+
     return <View key={i}>
       <ListItem 
         title={cube.name}
         key={0}
         rightIcon={{
-          name:'arrow-drop-up',
+          name:'star',
           type:'ionicons',
-          color: Colors.gray2
+          color: defaultList.cubes.includes(cube.id) ? Colors.primary : Colors.gray3,
+          onPress: () => toggleCubeList(cube.id)
         }}
         onPress={() => this.toggleActiveCube(null)}
         containerStyle={styles.highlightedListItem}
@@ -240,6 +245,7 @@ class TowerDetailScreen extends React.Component {
 
   renderCubeList() {
       const { currentTower } = this.props.tower
+      const { defaultList } = this.props.user.defaultList
 
       return currentTower.cubes
         .filter(cube => this.cubeMatchesSearch(cube.name))
@@ -251,14 +257,25 @@ class TowerDetailScreen extends React.Component {
             title={cube.name} 
             key={index}
             rightIcon={{
-              name:'arrow-drop-down',
+              name:'star',
               type:'ionicons',
-              color: Colors.gray2
+              color: defaultList.cubes.includes(cube.id) ? Colors.primary : Colors.gray3,
+              onPress: () => this.toggleCubeList(cube.id)
             }}
             onPress={() => this.toggleActiveCube(cube.id)}
             bottomDivider
           />
         })
+  }
+
+  toggleCubeList(cube) {
+    const { defaultList } = this.props.user.defaultList
+
+    if (defaultList.cubes.includes(cube)) {
+      this.props.removeCubeFromList(cube, defaultList.id)
+    } else {
+      this.props.addCubeToList(cube, defaultList.id)
+    }
   }
 
   toggleActiveCube(activeCube) {

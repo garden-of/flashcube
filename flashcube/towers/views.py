@@ -1,8 +1,8 @@
 from rest_framework import viewsets, views, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.generics import get_object_or_404
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 
 from towers.models import Category, Cube, List, Face, Tower, UserPreferences, UserSubscription
@@ -36,6 +36,43 @@ class GetUser(views.APIView):
         return Response(serializer.data)
 
 
+class ListAddRemove(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, *args, **kwargs):
+
+        # get the list that needs to be edited
+        listId = request.data.get('list', None)
+        try:
+            requestedList = List.objects.get(pk=listId)
+        except ObjectDoesNotExist as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST, exception=e)
+        
+        # get the action that needs to be taken
+        action = request.data.get('action', None)
+        if not action or action not in ('add', 'remove'):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        # get the cube id that needs to be modified
+        cubeId = request.data.get('cube', None)
+        if not cubeId:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        try:
+            cube = Cube.objects.get(pk=cubeId)
+        except ObjectDoesNotExist as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST, exception=e)
+
+        if action == 'add':
+            requestedList.cubes.add(cube)
+        elif action == 'remove':
+            requestedList.cubes.remove(cube)
+
+        serializer = serializers.ListSerializer(requestedList)
+
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = serializers.CategorySerializer
@@ -66,6 +103,14 @@ class TowerViewSet(viewsets.ModelViewSet):
     queryset = Tower.objects.all()
     serializer_class = serializers.TowerSerializer
     permission_classes = [IsAuthenticated]
+
+
+class ListViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.ListSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self, *args, **kwargs):
+        return List.objects.filter(user=self.request.user, is_default=True)
 
 
 class UserPreferencesViewSet(viewsets.ModelViewSet):

@@ -98,7 +98,7 @@ class TowerScreen extends React.Component {
       languages={categories.filter(category => item.categories.includes(category.id)).map(category => category.category)}
       title={towers.filter(tower => item.tower == tower.id).map(tower => tower.name)}
       subtitle={`${towers.filter(tower => item.tower == tower.id).map(tower => tower.num_cubes)} cubes | ${mapDifficulty()}`}
-      image={item.image}
+      image={towers.filter(tower => item.tower == tower.id).map(tower => tower.image)[0]}
       onTap={() => this.props.navigation.navigate('TowerDetailScreen', {tower: item.tower, subscribed })}
       rightItem={{
         type: 'chevron'

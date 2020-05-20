@@ -2,9 +2,10 @@ import * as actions from '../actions/user'
 
 const defaultStore = {
     auth: {},
-    registration: { isRegeitering: true },  // show the registration screen by default, change to show login instead
+    registration: { isRegistering: true },  // show the registration screen by default, change to show login instead
     profile: {},
-    subscriptions: {}
+    subscriptions: {},
+    defaultList: {}
 }
 
 const handleApiError = error => {
@@ -15,7 +16,28 @@ const handleApiError = error => {
 
 export default function reducer(state=defaultStore, action) {
     switch (action.type) {
-        case actions.CLEAR_AUTH_ERRORS: {
+        case actions.ADD_CUBE_TO_LIST:
+            return {
+                ...state,
+                defaultList: {
+                    ...state.defaultList,
+                    updating: true,
+                    defaultList: {
+                        ...state.defaultList.defaultList,
+                        cubes: [...state.defaultList.defaultList.cubes, action.payload.cube]
+                    }
+                }
+            }
+        case actions.ADD_CUBE_TO_LIST_SUCCESS:
+            return {
+                ...state,
+                defaultList: {
+                    ...state.defaultList,
+                    updating: false,
+                    defaultList: action.payload.data
+                }
+            }
+        case actions.CLEAR_AUTH_ERRORS:
             return {
                 ...state,
                 auth: {
@@ -23,7 +45,6 @@ export default function reducer(state=defaultStore, action) {
                     error: false
                 }
             }
-        }
         case actions.CREATE_USER_SUBSCRIPTION: {
 
             let newSubscriptions = []
@@ -63,8 +84,7 @@ export default function reducer(state=defaultStore, action) {
                 }
             }
         }
-        case actions.CREATE_USER_SUBSCRIPTION_FAIL: {
-
+        case actions.CREATE_USER_SUBSCRIPTION_FAIL:
             return {
                 ...state,
                 subscriptions: {
@@ -73,8 +93,7 @@ export default function reducer(state=defaultStore, action) {
                     error: true
                 }
             }
-        }
-        case actions.DELETE_USER_SUBSCRIPTION: {
+        case actions.DELETE_USER_SUBSCRIPTION:
             return {
                 ...state,
                 subscriptions: {
@@ -82,7 +101,37 @@ export default function reducer(state=defaultStore, action) {
                     subscriptions: state.subscriptions.subscriptions.filter(s => s.id !== action.payload.id)
                 }
             }
-        }
+        case actions.GET_DEFAULT_LIST:
+            return {
+                ...state,
+                defaultList: {
+                    ...state.defaultList,
+                    fetching: true,
+                    fetched: false,
+                    error: false
+                }
+            }
+        case actions.GET_DEFAULT_LIST_SUCCESS:
+            return {
+                ...state,
+                defaultList: {
+                    ...state.defaultList,
+                    fetching: false,
+                    fetched: true,
+                    error: false,
+                    defaultList: action.payload.data.results[0]
+                }
+            }
+        case actions.GET_DEFAULT_LIST_FAIL:
+            return {
+                ...state,
+                defaultList: {
+                    ...state.defaultList,
+                    fetching: false,
+                    fetched: false,
+                    error: true,
+                }
+            }
         case actions.GET_USER:
             return {
                 ...state,
@@ -108,6 +157,7 @@ export default function reducer(state=defaultStore, action) {
             return {
                 ...defaultStore,
                 profile: {
+                    ...state.profile.social,
                     fetching: false,
                     fetched: false,
                     error: false
@@ -192,6 +242,12 @@ export default function reducer(state=defaultStore, action) {
                     isLoggingIn: true,
                     isLoggedIn: false,
                     provider: action.payload.provider
+                },
+                profile: {
+                    ...state.profile,
+                    social: {
+                        ...action.payload.social
+                    }
                 }
             }
         case actions.LOGIN_SUCCESS:
@@ -266,6 +322,27 @@ export default function reducer(state=defaultStore, action) {
                     isRegistered: false,
                     isRegestering: false,
                     error: true
+                }
+            }
+        case actions.REMOVE_CUBE_FROM_LIST:
+            return {
+                ...state,
+                defaultList: {
+                    ...state.defaultList,
+                    updating: true,
+                    defaultList: {
+                        ...state.defaultList.defaultList,
+                        cubes: state.defaultList.defaultList.cubes.filter( cube => cube != action.payload.cube )
+                    }
+                }
+            }
+        case actions.REMOVE_CUBE_FROM_LIST_SUCCESS:
+            return {
+                ...state,
+                defaultList: {
+                    ...state.defaultList,
+                    updating: false,
+                    defaultList: action.payload.data
                 }
             }
         case actions.SIGN_OUT:

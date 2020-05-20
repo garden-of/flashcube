@@ -173,16 +173,10 @@ AUTHENTICATION_BACKENDS = (
 
 # Social Auth Settings
 # These are for local DEV
-SOCIAL_AUTH_FACEBOOK_KEY = '468157980709865'
-SOCIAL_AUTH_FACEBOOK_SECRET = '9956a3add342c10d8ca41f403b8a9fcc'
-SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
   'fields': 'id, name, email, age_range'
 }
 SOCIAL_AUTH_FACEBOOK_API_VERSION = '2.10'
-
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '498982492232-14fjiq7gc2rjaq4668q8jnnqncpqht98.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'vLALpmtKcH0HN91aMD9c3HLj'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile',

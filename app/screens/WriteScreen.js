@@ -428,6 +428,8 @@ class WriteScreen extends React.Component {
 
   renderCards(cubes) {
 
+    const { defaultList } = this.props.user.defaultList
+
     return cubes.map( (cube, index) => {
 
       let relativeIndex = this.getRelativeIndex(cubes.length, this.state.activeCube, index)
@@ -454,7 +456,17 @@ class WriteScreen extends React.Component {
         ]}
       >
         <Card
-          title={cube.name}
+          title={<View style={styles.cardTitle}>
+            <View style={styles.cardTitlePadLeft}></View>
+            <Text style={styles.cardTitleText}>{cube.name}</Text>
+            <Icon
+              containerStyle={styles.cardTitleIcon}
+              name='star'
+              type='ionicons'
+              color={defaultList.cubes.includes(cube.id) ? Colors.primary : Colors.gray3}
+              onPress={() => this.toggleCubeList(cube.id)}
+            />
+          </View>}
           containerStyle={[
             styles.cube,
             {
@@ -763,6 +775,16 @@ class WriteScreen extends React.Component {
     </Animated.View>
   }
 
+  toggleCubeList(cube) {
+    const { defaultList } = this.props.user.defaultList
+
+    if (defaultList.cubes.includes(cube)) {
+      this.props.removeCubeFromList(cube, defaultList.id)
+    } else {
+      this.props.addCubeToList(cube, defaultList.id)
+    }
+  }
+
   render() {
 
     // requires the following reducers to be loaded:
@@ -845,6 +867,26 @@ const styles = StyleSheet.create({
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
+    },
+    cardTitle: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingBottom: 10,
+      marginBottom: 20,
+      borderBottomWidth: 1,
+      borderBottomColor: Colors.gray3
+    },
+    cardTitlePadLeft: {
+      flexBasis: '7%'
+    },
+    cardTitleText: {
+      ...Styles.mediumSemiBold,
+      textAlign: 'center',
+      flexBasis: '86%'
+    },
+    cardTitleIcon: {
+      flexBasis: '7%'
     },
     controlContainer: {
       width: '100%',

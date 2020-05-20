@@ -2,6 +2,10 @@ import getEnvVars from '../environment/environment'
 
 const envVars = getEnvVars()
 
+export const ADD_CUBE_TO_LIST = 'ADD_CUBE_TO_LIST'
+export const ADD_CUBE_TO_LIST_SUCCESS = 'ADD_CUBE_TO_LIST_SUCCESS'
+export const ADD_CUBE_TO_LIST_FAIL = 'ADD_CUBE_TO_LIST_FAIL'
+
 export const CLEAR_AUTH_ERRORS = 'CLEAR_AUTH_ERRORS'
 
 export const CREATE_USER_SUBSCRIPTION = 'CREATE_USER_SUBSCRIPTION'
@@ -11,6 +15,10 @@ export const CREATE_USER_SUBSCRIPTION_FAIL = 'CREATE_USER_SUBSCRIPTION_FAIL'
 export const DELETE_USER_SUBSCRIPTION = 'DELETE_USER_SUBSCRIPTION'
 export const DELETE_USER_SUBSCRIPTION_SUCCESS = 'DELETE_USER_SUBSCRIPTION_SUCCESS'
 export const DELETE_USER_SUBSCRIPTION_FAIL = 'DELETE_USER_SUBSCRIPTION_FAIL'
+
+export const GET_DEFAULT_LIST = 'GET_DEFAULT_LIST'
+export const GET_DEFAULT_LIST_SUCCESS = 'GET_DEFAULT_LIST_SUCCESS'
+export const GET_DEFAULT_LIST_FAIL = 'GET_DEFAULT_LIST_FAIL'
 
 export const GET_USER = 'GET_USER'
 export const GET_USER_SUCCESS = 'GET_USER_SUCCESS'
@@ -32,6 +40,10 @@ export const REGISTER_USER = 'REGISTER_USER'
 export const REGISTER_USER_SUCCESS = 'REGISTER_USER_SUCCESS'
 export const REGISTER_USER_FAIL = 'REGISTER_USER_FAIL'
 
+export const REMOVE_CUBE_FROM_LIST = 'REMOVE_CUBE_FROM_LIST'
+export const REMOVE_CUBE_FROM_LIST_SUCCESS = 'REMOVE_CUBE_FROM_LIST_SUCCESS'
+export const REMOVE_CUBE_FROM_LIST_FAIL = 'REMOVE_CUBE_FROM_LIST_FAIL'
+
 export const SIGN_OUT = 'SIGN_OUT'
 
 export const TOGGLE_REGISTRATION = 'TOGGLE_REGISTRATION'
@@ -43,6 +55,25 @@ export const UPDATE_USER_PREFERENCES_FAIL = 'UPDATE_USER_PREFERENCES_FAIL'
 const INTERNAL_CLIENT_ID = envVars.internalClientId
 const INTERNAL_CLIENT_SECRET = envVars.internalClientSecret
 
+
+export function addCubeToList(cubeId, listId) {
+    return {
+        type: ADD_CUBE_TO_LIST,
+        payload: {
+            cube: cubeId,
+            request: {
+                url: `/api/editlist/`,
+                method: 'PATCH',
+                data: {
+                    action: 'add',
+                    cube: cubeId,
+                    list: listId
+                }
+            }
+        }
+    }
+}
+
 export function clearAuthErrors() {
     return {
         type: CLEAR_AUTH_ERRORS,
@@ -51,18 +82,22 @@ export function clearAuthErrors() {
 }
 
 export function convertToken(provider, response) {
-    
-    let token = null
+
+    let token, social = null
     if (provider === 'facebook') {
         token = response.token
     } else if (provider === 'google-oauth2') {
         token = response.accessToken
+        social = {
+            photoUrl: response.user.photoUrl
+        }
     }
 
     return {
         type: LOGIN,
         payload: {
             provider,
+            social,
             request: {
                 url: `/auth/convert-token/`,
                 method: 'POST',
@@ -104,6 +139,17 @@ export function deleteUserSubscription(subscription) {
                 method: 'DELETE'
             },
             id: subscription.id
+        }
+    }
+}
+
+export function getDefaultList() {
+    return {
+        type: GET_DEFAULT_LIST,
+        payload: {
+            request: {
+                url: `/api/list/`
+            }
         }
     }
 }
@@ -172,6 +218,24 @@ export function registerUser(email, password) {
                     username: email,
                     email: email,
                     password: password
+                }
+            }
+        }
+    }
+}
+
+export function removeCubeFromList(cubeId, listId) {
+    return {
+        type: REMOVE_CUBE_FROM_LIST,
+        payload: {
+            cube: cubeId,
+            request: {
+                url: `/api/editlist/`,
+                method: 'PATCH',
+                data: {
+                    action: 'remove',
+                    cube: cubeId,
+                    list: listId
                 }
             }
         }
