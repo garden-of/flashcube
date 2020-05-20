@@ -74,7 +74,7 @@ class Tower(models.Model):
 
     name = models.CharField(max_length=200)
     categories = models.ManyToManyField('Category', related_name='tower_categories')
-    image = models.ImageField(blank=True, null=True)
+    image = models.ImageField(blank=True, null=True, upload_to='towers')
     primary_category = models.ForeignKey('Category', on_delete=models.CASCADE)
     difficulty = models.CharField(max_length=1, choices=CHOICES, default='B')
 

@@ -211,6 +211,8 @@ class HomeScreen extends React.Component {
       .filter(category => profile.preferences.learningCategories.includes(category.id))
       .map(category => category.category)
 
+    const avatar = profile.social ? profile.social.photoUrl : null
+
     return <View style={styles.mainViewContainer}>
       <ProfileHeader
         name={profile.username}
@@ -218,6 +220,7 @@ class HomeScreen extends React.Component {
         learning={learningCategories}
         numSubscriptions={subscriptions.subscriptions.length}
         cubesMastered={0}
+        avatarUri={avatar}
       />
       <View style={styles.subscribedTowerList}>
         <Text style={Styles.headline}>Your Towers</Text>
@@ -284,7 +287,7 @@ class HomeScreen extends React.Component {
       languages={categories.filter(category => item.categories.includes(category.id)).map(category => category.category)}
       title={towers.filter(tower => item.tower == tower.id).map(tower => tower.name)}
       subtitle={`${towers.filter(tower => item.tower == tower.id).map(tower => tower.num_cubes)} cubes | ${mapDifficulty()}`}
-      image={item.image}
+      image={towers.filter(tower => item.tower == tower.id).map(tower => tower.image)[0]}
       onTap={() => this.props.navigation.navigate('TowerDetailScreen', {tower: item.tower, subscribed: true })}
       rightItem={{
         type: 'chevron'
@@ -363,6 +366,7 @@ class HomeScreen extends React.Component {
   }
 
   render() {
+
     return <View style={styles.container}>
       {this.renderHomeContent()}
     </View>

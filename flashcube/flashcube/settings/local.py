@@ -1,5 +1,14 @@
 from .base import *
 
+MEDIA_URL = '{}/media/'.format(BASE_DIR)
+MEDIA_ROOT = '{}/media'.format(BASE_DIR)
+
+SOCIAL_AUTH_FACEBOOK_KEY = '468157980709865'
+SOCIAL_AUTH_FACEBOOK_SECRET = '768569f75055b9375cdf36035e896155'
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '498982492232-14fjiq7gc2rjaq4668q8jnnqncpqht98.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'vLALpmtKcH0HN91aMD9c3HLj'
+
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 DATABASES = {
