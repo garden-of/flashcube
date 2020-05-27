@@ -16,6 +16,7 @@ import TowerDetailScreen from '../screens/TowerDetailScreen'
 //import StorybookScreen from '../screens/StorybookScreen'
 import WriteScreen from '../screens/WriteScreen'
 import FlashScreen from '../screens/FlashScreen'
+import RevealScreen from '../screens/RevealScreen'
 
 import i18n from '../localization/translations'
 
@@ -72,6 +73,7 @@ const TowerStack = createStackNavigator(
     TowerDetailScreen: TowerDetailScreen,
     WriteScreen: WriteScreen,
     FlashScreen: FlashScreen,
+    RevealScreen: RevealScreen
   },
   {
     ...config,
