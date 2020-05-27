@@ -39,6 +39,7 @@ class TowerDetailScreen extends React.Component {
     this.handleSearchChange = this.handleSearchChange.bind(this)
     this.handleFlashLearnAction = this.handleFlashLearnAction.bind(this)
     this.handleWriteLearnAction = this.handleWriteLearnAction.bind(this)
+    this.handleRevealLearnAction = this.handleRevealLearnAction.bind(this)
     this.getCategoryNameFromId = this.getCategoryNameFromId.bind(this)
     this.isSubscribedFace = this.isSubscribedFace.bind(this)
     this.isSubscribedTower = this.isSubscribedTower.bind(this)
@@ -112,6 +113,10 @@ class TowerDetailScreen extends React.Component {
     this.props.navigation.navigate('WriteScreen', {tower: this.state.tower })
   }
 
+  handleRevealLearnAction() {
+    this.props.navigation.navigate('RevealScreen', {tower: this.state.tower })
+  }
+
   getCategoryNameFromId(categoryId) {
     let { categories } = this.props.tower.categories
     return categories.find(c => c.id == categoryId).category
@@ -161,7 +166,7 @@ class TowerDetailScreen extends React.Component {
             <Icon
             name='ios-cube'
             type='ionicon'
-            size={60}
+            size={40}
             color={Colors.white}
             />
           }
@@ -180,19 +185,39 @@ class TowerDetailScreen extends React.Component {
             <Icon
               name='ios-create'
               type='ionicon'
-              size={60}
+              size={40}
               color={Colors.white}
             />
           }
           title='WRITE'
           buttonStyle={styles.learnActionButton} 
           titleStyle={styles.learnActionTitle} 
-          containerStyle={styles.learnActionContainerWrite}
+          containerStyle={styles.learnActionContainerFlash}
           iconContainerStyle={styles.learnActionIconContainer}
           onPress={this.handleWriteLearnAction}
           key={2}
         />
+      </View>,
+      <View style={styles.learnActionsAction} key={3}>
+        <Button
+          icon={
+            <Icon
+              name='ios-eye'
+              type='ionicon'
+              size={40}
+              color={Colors.white}
+            />
+          }
+          title='REVEAL'
+          buttonStyle={styles.learnActionButton} 
+          titleStyle={styles.learnActionTitle} 
+          containerStyle={styles.learnActionContainerFlash}
+          iconContainerStyle={styles.learnActionIconContainer}
+          onPress={this.handleRevealLearnAction}
+          key={3}
+        />
       </View>
+
       ]
   }
 
@@ -247,9 +272,9 @@ class TowerDetailScreen extends React.Component {
 
   renderCubeList() {
       const { currentTower } = this.props.tower
-      const { defaultList } = this.props.user.defaultList
+      const { defaultList } = this.props.user
 
-      if (!defaultList.fetched) return null
+      if (!defaultList.fetched) return <ActivityIndicator />
 
       return currentTower.cubes
         .filter(cube => this.cubeMatchesSearch(cube.name))
@@ -263,7 +288,7 @@ class TowerDetailScreen extends React.Component {
             rightIcon={{
               name:'star',
               type:'ionicons',
-              color: defaultList.cubes.includes(cube.id) ? Colors.primary : Colors.gray3,
+              color: defaultList.defaultList.cubes.includes(cube.id) ? Colors.primary : Colors.gray3,
               onPress: () => this.toggleCubeList(cube.id)
             }}
             onPress={() => this.toggleActiveCube(cube.id)}
@@ -414,7 +439,7 @@ const styles = StyleSheet.create({
     paddingBottom: 0
   },
   learnActionsAction: {
-    flexBasis: '50%',
+    flexBasis: '33%',
     padding: 5
   },
   learnActionTitle: {
