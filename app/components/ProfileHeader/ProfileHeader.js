@@ -7,6 +7,8 @@ import { Avatar } from 'react-native-elements'
 import Colors from '../../constants/Colors'
 import Styles from '../../constants/Styles'
 
+import i18n from '../../localization/translations'
+
 class ProfileHeader extends React.Component {
 
 
@@ -35,7 +37,7 @@ class ProfileHeader extends React.Component {
                 </View>
                 <View style={styles.statContainer}>
                     <View style={styles.statLabel}>
-                        <Text style={Styles.xsmallSemiBold}>FLUENT IN</Text>
+                <Text style={[Styles.xsmallSemiBold, {textTransform: 'uppercase'}]}>{i18n.t('profile.fluent_in')}</Text>
                     </View>
                     <View style={styles.statValue}>
                         <Text style={{...Styles.xsmallText, ...Styles.uppercase, color: Colors.gray2}}>{this.joinAndShorten(this.props.fluent)}</Text>
@@ -43,7 +45,7 @@ class ProfileHeader extends React.Component {
                 </View>
                 <View style={styles.statContainer}>
                     <View style={styles.statLabel}>
-                        <Text style={Styles.xsmallSemiBold}>LEARNING</Text>
+                        <Text style={[Styles.xsmallSemiBold, {textTransform: 'uppercase'}]}>{i18n.t('profile.learning')}</Text>
                     </View>
                     <View style={styles.statValue}>
                         <Text style={{...Styles.xsmallText, ...Styles.uppercase, color: Colors.gray2}}>{this.joinAndShorten(this.props.learning)}</Text>
@@ -51,7 +53,7 @@ class ProfileHeader extends React.Component {
                 </View>
                 <View style={styles.statContainer}>
                     <View style={styles.statLabel}>
-                        <Text style={Styles.xsmallSemiBold}>SETS</Text>
+                        <Text style={[Styles.xsmallSemiBold, {textTransform: 'uppercase'}]}>{i18n.t('profile.sets')}</Text>
                     </View>
                     <View style={styles.statValue}>
                         <Text style={{...Styles.xsmallText, ...Styles.uppercase, color: Colors.gray2}}>{this.props.numSubscriptions} SETS</Text>
@@ -59,7 +61,7 @@ class ProfileHeader extends React.Component {
                 </View>
                 <View style={styles.statContainer}>
                     <View style={styles.statLabel}>
-                        <Text style={Styles.xsmallSemiBold}>WORDS MASTERED</Text>
+                        <Text style={[Styles.xsmallSemiBold, {textTransform: 'uppercase'}]}>{i18n.t('profile.words_mastered')}</Text>
                     </View>
                     <View style={styles.statValue}>
                         <Text style={{...Styles.xsmallText, ...Styles.uppercase, color: Colors.gray2}}>{this.props.cubesMastered}</Text>

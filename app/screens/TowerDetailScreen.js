@@ -200,6 +200,8 @@ class TowerDetailScreen extends React.Component {
 
     const { defaultList } = this.props.user.defaultList
 
+    if (!defaultList.fetched) return null
+
     return <View key={i}>
       <ListItem 
         title={cube.name}
@@ -208,7 +210,7 @@ class TowerDetailScreen extends React.Component {
           name:'star',
           type:'ionicons',
           color: defaultList.cubes.includes(cube.id) ? Colors.primary : Colors.gray3,
-          onPress: () => toggleCubeList(cube.id)
+          onPress: () => this.toggleCubeList(cube.id)
         }}
         onPress={() => this.toggleActiveCube(null)}
         containerStyle={styles.highlightedListItem}
@@ -232,7 +234,7 @@ class TowerDetailScreen extends React.Component {
   renderCubeSearch() {
     return <SearchBar 
       platform='ios'
-      containerStyle={styles.searchBarContainer}
+      containerStyle={Styles.searchBarContainer}
       placeholder='search'
       onChangeText={this.handleSearchChange}
       onClear={() => this.handleSearchChange('')}
@@ -246,6 +248,8 @@ class TowerDetailScreen extends React.Component {
   renderCubeList() {
       const { currentTower } = this.props.tower
       const { defaultList } = this.props.user.defaultList
+
+      if (!defaultList.fetched) return null
 
       return currentTower.cubes
         .filter(cube => this.cubeMatchesSearch(cube.name))
@@ -437,9 +441,6 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 10,
     padding: Styles.containerPadding
-  },
-  searchBarContainer: {
-    backgroundColor: 'transparent'
   },
   categoryLabelHighlighted: {
     ...Styles.xxsmallText,

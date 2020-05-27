@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 
 
 class Category(models.Model):
+    '''
+    A category equates to a language.  We call it a category for arbitrary reasons.
+    '''
     category = models.CharField(max_length=200)
     abbreviation = models.CharField(max_length=2, blank=True, null=True)
 
@@ -14,6 +17,9 @@ class Category(models.Model):
 
 
 class CategoryStatus(models.Model):
+    '''
+    DEPRECATED
+    '''
     CHOICES = (
         ('DL', 'Don\'t Learn'),
         ('LN', 'Learn Now'),
@@ -29,6 +35,10 @@ class CategoryStatus(models.Model):
 
 
 class Cube(models.Model):
+    '''
+    A Cube makes up one entry in a tower.  A cube should be able to exist
+    in the context of multiple towers.
+    '''
     name = models.CharField(max_length=200)
     tower = models.ForeignKey('Tower', on_delete=models.CASCADE)
 
@@ -39,7 +49,20 @@ class Cube(models.Model):
         return '{tower} -> {id}'.format(tower=self.tower, id=self.name)
 
 
+class Collection(models.Model):
+    '''
+    A collection is a set of towers that share some common characteristic.
+    This is mostly used for curation
+    '''
+
+    name = models.CharField(max_length=255)
+    towers = models.ManyToManyField(to='Tower', blank=True, related_name='collection_towers')
+
+
 class Face(models.Model):
+    '''
+    A face makes up one entry in a cube.
+    '''
     value = models.CharField(max_length=200)
     cube = models.ForeignKey('Cube', on_delete=models.CASCADE)
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
@@ -52,6 +75,10 @@ class Face(models.Model):
 
 
 class List(models.Model):
+    '''
+    A list is similar to a tower, but is owned by a specific user.  Every
+    user has a default list.
+    '''
 
     user = models.OneToOneField(to=User, on_delete=models.CASCADE)
     name = models.CharField(max_length=200, null=True, blank=True)
@@ -63,6 +90,14 @@ class List(models.Model):
 
     def __str__(self):
         return '{} -> {}'.format(self.user, self.name)
+
+
+class Locale(models.Model):
+    language = models.ForeignKey(to=Category, on_delete=models.CASCADE)
+    locale = models.CharField(max_length=5)
+
+    def __str__(self):
+        return self.locale
 
 
 class Tower(models.Model):
@@ -87,6 +122,16 @@ class Tower(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class UserFaceStatus(models.Model):
+
+    user = models.OneToOneField(to=User, on_delete=models.CASCADE)
+    face = models.ForeignKey(to=Face, on_delete=models.CASCADE)
+    level = models.IntegerField(default=0)
+
+    def __str__(self):
+        return '{user} -> {face}'.format(user=str(self.user), face=self.face)
 
 
 class UserLearnEvent(models.Model):

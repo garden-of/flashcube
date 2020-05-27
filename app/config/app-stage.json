@@ -23,8 +23,11 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.gardenof.boqu",
-      "buildNumber": "7",
-      "icon": "./assets/icons/icon-ios-1024@1x.png"
+      "buildNumber": "8",
+      "icon": "./assets/icons/icon-ios-1024@1x.png",
+      "infoPlist": {
+        "CFBundleAllowMixedLocalizations": true
+      }
     },
       "description": "",
       "facebookScheme": "fb1234567890",

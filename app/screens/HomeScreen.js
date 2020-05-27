@@ -2,13 +2,17 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
+import * as configActions from '../actions/config'
 import * as userActions from '../actions/user'
 import * as towerActions from '../actions/tower'
 
-import { View, FlatList, StyleSheet, ActivityIndicator, Modal, Text } from 'react-native'
-import { Button } from 'react-native-elements'
+import { View, FlatList, StyleSheet, ActivityIndicator, Modal, Text, Dimensions, Switch } from 'react-native'
+import { Button, ListItem, SearchBar } from 'react-native-elements'
+import Carousel from 'react-native-snap-carousel'
 import LanguagePicker from '../components/LanguagePicker/LanguagePicker'
-import ListItem from '../components/ListItem/ListItem'
+import FCListItem from '../components/ListItem/ListItem'
+
+import i18n, { cleanLocale } from '../localization/translations'
 
 import Colors from '../constants/Colors'
 import Styles from '../constants/Styles'
@@ -23,7 +27,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => {
   return bindActionCreators({
     ...userActions,
-    ...towerActions
+    ...towerActions,
+    ...configActions,
   }, dispatch)
 }
 
@@ -31,6 +36,12 @@ class HomeScreen extends React.Component {
 
   constructor(props) {
     super(props)
+
+    this.state = {
+      onboardingCategories: [],
+      onboardingSets: [],
+      categorySearch: ''
+    }
 
     this.handleBaseCategoryChange = this.handleBaseCategoryChange.bind(this)
     this.handleLearningCategoryChange = this.handleLearningCategoryChange.bind(this)
@@ -40,6 +51,9 @@ class HomeScreen extends React.Component {
     this.renderSetOnboardingFlow = this.renderSetOnboardingFlow.bind(this)
     this.renderSetListItem = this.renderSetListItem.bind(this)
     this.renderSubscriptionItem = this.renderSubscriptionItem.bind(this)
+    this.renderCarosel = this.renderCarosel.bind(this)
+    this.renderCaroselCard = this.renderCaroselCard.bind(this)
+    this.renderCategorySelector = this.renderCategorySelector.bind(this)
   }
 
   componentDidMount() {
@@ -51,19 +65,26 @@ class HomeScreen extends React.Component {
     // TODO: this can probably be refactored
     if (!user.profile.fetched && !user.profile.fetching) {
       this.props.getUser()
+        .then(() => this.props.getDefaultList())
         .then(() => this.props.getUserPreferences())
         .then(() => this.props.getCategories())
         .then(() => this.props.listTowers())
         .then(() => this.props.getUserSubscriptions())
+        .then(() => this.props.getUserSubscriptions())
+        .then(() => this.props.getLocales())
     } else if (!user.profile.preferences.fetched && !user.profile.preferences.fetching) {
       this.props.getUserPreferences()
+        .then(() => this.props.getDefaultList())
         .then(() => this.props.getCategories())
         .then(() => this.props.listTowers())
         .then(() => this.props.getUserSubscriptions())
+        .then(() => this.props.getLocales())
     } else if (user.profile.fetched && !categories.fetched) {
       this.props.getCategories()
+        .then(() => this.props.getDefaultList())
         .then(() => this.props.listTowers())
         .then(() => this.props.getUserSubscriptions())
+        .then(() => this.props.getLocales())
     }
   }
 
@@ -84,30 +105,16 @@ class HomeScreen extends React.Component {
     })
   }
 
-  handleLearningCategoryChange(selected, option) {
-    const { preferences } = this.props.user.profile
-
-    let learning = preferences.learningCategories
-    let fluent = preferences.fluentCategories
-    if (option === 0) {
-      learning = learning.filter(item => item != selected.id)
-      fluent = fluent.filter(item => item != selected.id)
-    } else if (option === 1) {
-      learning.push(selected.id)
-      learning = [...new Set(learning)]
-      fluent = fluent.filter(item => item != selected.id)
-    } else if (option === 2) {
-      fluent.push(selected.id)
-      fluent = [...new Set(fluent)]
-      learning = learning.filter(item => item != selected.id)
+  handleLearningCategoryChange(category) {
+    if (this.state.onboardingCategories.includes(category)) {
+      this.setState({
+        onboardingCategories: this.state.onboardingCategories.filter( c => c !== category )
+      })
+    } else {
+      this.setState({
+        onboardingCategories: [...this.state.onboardingCategories, category]
+      })
     }
-
-    this.props.updateUserPreferences({
-      id: preferences.id,
-      baseCategory: preferences.baseCategory,
-      learningCategories: learning,
-      fluentCategories: fluent
-    })
   }
 
   handleDeleteSubscription(subscriptionId) {
@@ -118,10 +125,19 @@ class HomeScreen extends React.Component {
   handleFinalizeCategories() {
     const { preferences } = this.props.user.profile
     const { towers } = this.props.tower
+    const { locales } = this.props.config.locales
+
+    let myLocale = locales.find( l => l.locale == cleanLocale )
+    
+    // default to english
+    if (!myLocale) myLocale = { language: 3 }  
 
     this.props.updateUserPreferences({
       id: preferences.id,
-      categoriesOnboarded: true
+      categoriesOnboarded: true,
+      learningCategories: this.state.onboardingCategories.map(c => c.id),
+      baseCategory: myLocale.language,
+      fluentCategories: [myLocale.language]
     }).then(() => {
       if (!towers.fetched) return this.props.listTowers()
     })
@@ -150,6 +166,20 @@ class HomeScreen extends React.Component {
     this.props.createUserSubscription(setId, profile.id, subscriptionCategories)
   }
 
+  renderCategorySelector(item) {
+    const category = item.item
+    return <ListItem 
+      containerStyle={Styles.listItemContainer}
+      title={category.category}
+      titleStyle={Styles.regularText}
+      switch={{
+        trackColor: {true: Colors.primary},
+        value: this.state.onboardingCategories.includes(category),
+        onChange: () => this.handleLearningCategoryChange(category)
+      }}
+    />
+  }
+
   renderCategoryOnboardingFlow() {
 
     const { categories } = this.props.tower.categories
@@ -158,41 +188,80 @@ class HomeScreen extends React.Component {
     return <Modal
       animationType='slide'
       transparent={false}
-      presentationStyle='pageSheet'
+      presentationStyle='fullScreen'
       visible={true}
     >
         <View style={Styles.modal}>
-          <View style={{ flexBasis: '7%' }}>
-            <Text style={{ ...Styles.display2, ...Styles.shadow, color: Colors.white }}>Tell us about yourself</Text>
-          </View>
-          <View style={{ ...styles.selector, flexBasis: '25%' }}>
-            <LanguagePicker 
-              title='Whats your main language?'
-              options={categories}
-              onOptionChange={this.handleBaseCategoryChange}
-              selectedValue={preferences.baseCategory}
-            />
-          </View>
-          <View style={{ ...styles.selector, flexBasis: '50%' }}>
-            <PreferenceSelector
-              title='What do you want to learn?'
-              options={categories}
-              learning={preferences.learningCategories}
-              fluent={preferences.fluentCategories}
-              onOptionChange={this.handleLearningCategoryChange}
-            />
-          </View>
-          <View style={{ ...styles.selector, flexBasis: '18%' }}>
-            <Button 
-              title='Ready? Pick some sets to get started.'
-              buttonStyle={Styles.transparentButtonStyle} 
-              titleStyle={Styles.outlineButtonTextStyle} 
-              containerStyle={styles.buttonContainer}
-              onPress={this.handleFinalizeCategories}
-            />
-          </View>
+          <Text style={Styles.mediumSemiBold}>{i18n.t('home.select_languages')}</Text>
+          <Text style={[Styles.xsmallTagCaps, Styles.verticalPad]}>
+            {this.state.onboardingCategories.map( c => c.category).join(', ')}
+          </Text>
+          <SearchBar 
+            platform='ios'
+            placeholder='search'
+            containerStyle={Styles.searchBarContainer}
+            cancelButtonProps={{
+              color: Colors.primary
+            }}
+            value={this.state.categorySearch}
+            onChangeText={t => this.setState({categorySearch: t})}
+          />
+          <FlatList 
+            keyExtractor={(item, index) => index.toString()}
+            data={categories.filter( c => c.category.toLowerCase().includes(this.state.categorySearch.toLowerCase()))}
+            renderItem={this.renderCategorySelector}
+          />
+          <Button 
+            title='Ready'
+            buttonStyle={Styles.buttonStyle} 
+            titleStyle={Styles.buttonTextStyle} 
+            containerStyle={Styles.buttonContainerStyle}
+            onPress={this.handleFinalizeCategories}
+            disabled={this.state.onboardingCategories.length > 0 ? false : true}
+          />
         </View>
     </Modal>
+  }
+
+  renderCaroselCard({item, index}) {
+    return <View style={styles.caroselCardInner} key={index}>
+        <Text style={[Styles.mediumSemiBold, {color: Colors.white}]}>{item.title}</Text>
+        <Text style={[Styles.mediumText, {color: Colors.gray6}]}>{item.subtitle}</Text>
+        <Button 
+          title={item.cta}
+          onPress={() => console.log('pressed')}
+          buttonStyle={Styles.invertedButtonStyle}
+          titleStyle={Styles.invertedButtonTextStyle}
+        />
+      </View>
+  }
+
+  renderCarosel() {
+    const { defaultList } = this.props.user
+
+    if (defaultList.fetching && !defaultList.fetched) return this.renderLoader()
+    if (!defaultList.fetching && !defaultList.fetched && defaultList.error) return null
+    if (!defaultList.fetching && !defaultList.fetched) return this.renderLoader()
+
+    return <Carousel 
+        sliderWidth={Dimensions.get('window').width}
+        itemWidth={Dimensions.get('window').width-40}
+        activeSlideAlignment={'start'}
+        renderItem={this.renderCaroselCard}
+        slideStyle={Styles.caroselCard}
+        data={[
+          {
+            title: 'Test Your Progress',
+            subtitle: 'Take a short daily quiz to see how what you\'ve learned',
+            cta: 'Study Today\'s Set'
+          },
+          { 
+            title: `Review Your List`,
+            subtitle: `You're currently learning 10 cards.`,
+            cta: 'Review All Your Cards'
+          },
+        ]}
+      />
   }
 
   renderMainFlow() {
@@ -222,8 +291,11 @@ class HomeScreen extends React.Component {
         cubesMastered={0}
         avatarUri={avatar}
       />
+      <View style={styles.myList}>
+        {this.renderCarosel()}
+      </View>
       <View style={styles.subscribedTowerList}>
-        <Text style={Styles.headline}>Your Towers</Text>
+  <Text style={Styles.headline}>{i18n.t('home.your_towers')}</Text>
         <FlatList 
           keyExtractor={(item, index) => index.toString()}
           data={subscriptions.subscriptions}
@@ -237,29 +309,24 @@ class HomeScreen extends React.Component {
     return <Modal
       animationType='slide'
       transparent={false}
-      presentationStyle='pageSheet'
+      presentationStyle='fullScreen'
       visible={true}
     >
         <View style={Styles.modal}>
-          <View style={{ flexBasis: '7%' }}>
-            <Text style={{ ...Styles.display2, ...Styles.shadow, color: Colors.white }}>Pick some sets to learn</Text>
-          </View>
-          <View style={{ ...styles.selector, flexBasis: '75%', backgroundColor: Colors.white }}>
+            <Text style={Styles.mediumSemiBold}>{i18n.t('home.select_sets')}</Text>
             <FlatList 
               keyExtractor={(item, index) => index.toString()}
               data={this.props.tower.towers.towers}
               renderItem={this.renderSetListItem}
             />
-          </View>
-          <View style={{ ...styles.selector, flexBasis: '18%' }}>
             <Button 
-              title='Start Learning!'
-              buttonStyle={Styles.transparentButtonStyle} 
-              titleStyle={Styles.outlineButtonTextStyle} 
-              containerStyle={styles.buttonContainer}
+              title='Start Learning'
+              buttonStyle={Styles.buttonStyle} 
+              titleStyle={Styles.buttonTextStyle} 
+              containerStyle={Styles.buttonContainerStyle}
               onPress={this.handleFinalizeSets}
+              disabled={this.props.user.subscriptions.subscriptions.length == 0}
             />
-          </View>
         </View>
     </Modal>
   }
@@ -283,7 +350,7 @@ class HomeScreen extends React.Component {
       }
     }
 
-    return <ListItem 
+    return <FCListItem 
       languages={categories.filter(category => item.categories.includes(category.id)).map(category => category.category)}
       title={towers.filter(tower => item.tower == tower.id).map(tower => tower.name)}
       subtitle={`${towers.filter(tower => item.tower == tower.id).map(tower => tower.num_cubes)} cubes | ${mapDifficulty()}`}
@@ -329,7 +396,7 @@ class HomeScreen extends React.Component {
       return () => this.handleSetSubscription(towerId)
     }
 
-    return <ListItem 
+    return <FCListItem 
       languages={categories.filter(category => item.categories.includes(category.id)).map(category => category.category)}
       title={item.name}
       subtitle={`${item.num_cubes} cubes | ${mapDifficulty()}`}
@@ -392,6 +459,10 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%'
   },
+  myList: {
+    paddingVertical: 20,
+    paddingHorizontal: 10
+  },
   loaderContainer: {
     width: '100%',
     height: '100%',
@@ -413,6 +484,13 @@ const styles = StyleSheet.create({
   subscribedTowerList: {
     paddingTop: 20,
     paddingHorizontal: 10
+  },
+  caroselCardInner: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    height: '100%',
   }
 })
 

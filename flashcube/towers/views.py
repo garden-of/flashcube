@@ -5,7 +5,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 
-from towers.models import Category, Cube, List, Face, Tower, UserPreferences, UserSubscription
+from towers.models import (Category, Collection, Cube, List, Locale, 
+                           Face, Tower, UserPreferences, UserSubscription)
 from towers import serializers
 
 
@@ -72,10 +73,15 @@ class ListAddRemove(views.APIView):
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
-
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = serializers.CategorySerializer
+    permission_classes = [IsAuthenticated]
+
+
+class CollectionViewSet(viewsets.ModelViewSet):
+    queryset = Collection.objects.all()
+    serializer_class = serializers.CollectionSerializer
     permission_classes = [IsAuthenticated]
 
 
@@ -111,6 +117,20 @@ class ListViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self, *args, **kwargs):
         return List.objects.filter(user=self.request.user, is_default=True)
+
+
+class LocaleViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.LocaleSerializer
+    queryset = Locale.objects.all()
+    permission_classes = [IsAuthenticated]
+
+
+class UserFaceStatusViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.UserFaceStatusSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return UserFaceStatus.objects.filter(user__exact=self.request.user)
 
 
 class UserPreferencesViewSet(viewsets.ModelViewSet):
@@ -166,4 +186,3 @@ class UserSubscriptionViewSet(viewsets.ModelViewSet):
                 default_list.cubes.remove(cube)
 
         return response
-

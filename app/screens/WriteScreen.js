@@ -893,7 +893,7 @@ const styles = StyleSheet.create({
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'center',
-      paddingBottom: 15
+      paddingBottom: 25
     },
     controlIconContainer: {
     },  
@@ -958,7 +958,8 @@ const styles = StyleSheet.create({
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      alignContent: 'center'
+      alignContent: 'center',
+      flex: 1
     },
     summaryScores: {
       paddingVertical: '5%'

@@ -23,7 +23,10 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.gardenof.boqu",
       "buildNumber": "3",
-      "icon": "./assets/icons/icon-ios-1024@1x.png"
+      "icon": "./assets/icons/icon-ios-1024@1x.png",
+      "infoPlist": {
+        "CFBundleAllowMixedLocalizations": true
+      }
     },
     "description": "",
     "facebookAppId": "468157980709865",

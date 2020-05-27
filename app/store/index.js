@@ -18,10 +18,10 @@ UNAUTHED_URLS = [
     '/register/',
 ]
 
-const envVars = getEnvVars()
+const env = getEnvVars()
 
 let isRefreshing = false
-let failQueue = []
+let failedQueue = []
 
 const processQueue = (error, token=null) => {
     failedQueue.forEach(prom => {
@@ -38,35 +38,34 @@ const processQueue = (error, token=null) => {
 const axiosMiddlewareConfig = {
     interceptors: {
         request: [{
-          success: ({getState, dispatch, getSourceAction}, req) => {
-            
-            const token = getState().user.auth.access_token
-            
-            // special case for when we are refreshing token:
-            if (UNAUTHED_URLS.includes(req.url)) {
-                return req
-            } else {
-                return {
-                    ...req,
-                    headers: {
-                        ...req.headers,
-                        Authorization: `Bearer ${token}`
+            success: ({getState, dispatch, getSourceAction}, req) => {
+                
+                const token = getState().user.auth.access_token
+                
+                // special case for when we are refreshing token:
+                if (UNAUTHED_URLS.includes(req.url)) {
+                    return req
+                } else {
+                    return {
+                        ...req,
+                        headers: {
+                            ...req.headers,
+                            Authorization: `Bearer ${token}`
+                        }
                     }
                 }
+            },
+            error: ({getState, dispatch, getSourceAction}, error) => {
+                //...
+                return error
             }
-          },
-          error: ({getState, dispatch, getSourceAction}, error) => {
-            //...
-            return error
-          }
         }],
-        response: {
+        response: [{
             success: ({getState, dispatch, getSourceAction}, res) => {
                 return Promise.resolve(res)
             },
             error: async ({getState, dispatch, getSourceAction}, error) => {
 
-                console.log(error)
                 const originalRequest = error.config
 
                 if (error.response.status === 401 && !originalRequest._retry) {
@@ -87,15 +86,31 @@ const axiosMiddlewareConfig = {
                     originalRequest._retry = true
                     isRefreshing = true
 
-                    const refreshToken = getState().user.auth.refresh_token
+                    let refreshToken = getState().user.auth.refresh_token
+                    let provider = getState().user.auth.provider
+
+                    let clientId = env.internalClientId
+                    let clientSecret = env.internalClientSecret
+                    if (provider == 'google-oauth2') {
+                        clientId = env.internalGoogleClientId,
+                        clientSecret = env.internalGoogleClientSecret
+                    }
+                    if (provider == 'facebook') {
+                        clientId = env.internalFacebookClientId,
+                        clientSecret = env.internalFacebookClientSecret
+                    }
+
+                    let postData = {
+                        grant_type: 'refresh_token',
+                        client_id: clientId,
+                        client_secret: clientSecret,
+                        refresh_token: refreshToken
+                    }
+
                     return new Promise( (resolve, reject) => {
-                        axios.post(`${env.apiUrl}/auth/token/`, {
-                            grant_type: 'refresh_token',
-                            client_id: env.internalClientId,
-                            client_secret: env.internalClientSecret,
-                            refresh_token: refreshToken
-                        }).then( (data) => {
-                            console.log(data)
+                        axios.post(`${env.apiUrl}/auth/token/`, postData)
+                        .then( (data) => {
+                            dispatch(userActions.refreshTokenSuccess(data))
                         }).catch( err => {
                             processQueue(err, null)
                             reject(err)
@@ -106,7 +121,7 @@ const axiosMiddlewareConfig = {
                 }
 
             }
-        }
+        }]
     }
 }
 
@@ -115,6 +130,7 @@ const client = axios.create({
     baseURL: apiUrl,
     responseType: 'json'
 })
+
 
 export const store = createStore(createRootReducer(), applyMiddleware(axiosMiddleware(client, axiosMiddlewareConfig), logger))
 export const persistor = persistStore(store)

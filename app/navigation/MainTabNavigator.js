@@ -17,6 +17,8 @@ import TowerDetailScreen from '../screens/TowerDetailScreen'
 import WriteScreen from '../screens/WriteScreen'
 import FlashScreen from '../screens/FlashScreen'
 
+import i18n from '../localization/translations'
+
 const config = {
   web: { headerMode: 'screen' },
   default: {},
@@ -49,7 +51,7 @@ const HomeStack = createStackNavigator(
 )
 
 HomeStack.navigationOptions = {
-  tabBarLabel: 'Home',
+  tabBarLabel: i18n.t('nav.home'),
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -84,7 +86,7 @@ const TowerStack = createStackNavigator(
 )
 
 TowerStack.navigationOptions = {
-  tabBarLabel: 'Towers',
+  tabBarLabel: i18n.t('nav.towers'),
   tabBarIcon: ({ focused }) => (
     <TabBarIcon focused={focused} name={'logo-buffer'} />
   ),
@@ -100,7 +102,7 @@ const ProfileStack = createStackNavigator(
 )
 
 ProfileStack.navigationOptions = {
-  tabBarLabel: 'Profile',
+  tabBarLabel: i18n.t('nav.profile'),
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}

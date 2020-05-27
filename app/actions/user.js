@@ -52,9 +52,6 @@ export const UPDATE_USER_PREFERENCES = 'UPDATE_USER_PREFERENCES'
 export const UPDATE_USER_PREFERENCES_SUCCESS = 'UPDATE_USER_PREFERENCES_SUCCESS'
 export const UPDATE_USER_PREFERENCES_FAIL = 'UPDATE_USER_PREFERENCES_FAIL'
 
-const INTERNAL_CLIENT_ID = envVars.internalClientId
-const INTERNAL_CLIENT_SECRET = envVars.internalClientSecret
-
 
 export function addCubeToList(cubeId, listId) {
     return {
@@ -83,15 +80,20 @@ export function clearAuthErrors() {
 
 export function convertToken(provider, response) {
 
-    let token, social = null
+    let token, social, clientId, clientSecret = null
     if (provider === 'facebook') {
         token = response.token
+        clientId = envVars.internalFacebookClientId
+        clientSecret = envVars.internalFacebookClientSecret
     } else if (provider === 'google-oauth2') {
         token = response.accessToken
         social = {
             photoUrl: response.user.photoUrl
         }
+        clientId = envVars.internalGoogleClientId
+        clientSecret = envVars.internalGoogleClientSecret
     }
+
 
     return {
         type: LOGIN,
@@ -103,8 +105,8 @@ export function convertToken(provider, response) {
                 method: 'POST',
                 data: {
                     grant_type: 'convert_token',
-                    client_id: INTERNAL_CLIENT_ID,
-                    client_secret: INTERNAL_CLIENT_SECRET,
+                    client_id: clientId ,
+                    client_secret: clientSecret,
                     backend: provider,
                     token
                 }
@@ -198,8 +200,8 @@ export function loginUser(username, password) {
                 data: {
                     username,
                     password,
-                    client_id: INTERNAL_CLIENT_ID,
-                    client_secret: INTERNAL_CLIENT_SECRET,
+                    client_id: envVars.internalClientId,
+                    client_secret: envVars.internalClientSecret,
                     grant_type: 'password'
                 }
             }
@@ -238,6 +240,15 @@ export function removeCubeFromList(cubeId, listId) {
                     list: listId
                 }
             }
+        }
+    }
+}
+
+export function refreshTokenSuccess(data) {
+    return {
+        type: LOGIN_SUCCESS,
+        payload: {
+            data
         }
     }
 }
