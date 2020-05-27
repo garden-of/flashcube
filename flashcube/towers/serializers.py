@@ -3,8 +3,16 @@ from django.core.validators import EmailValidator
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
-from towers.models import Category, Cube, Face, List, Tower, UserPreferences, UserSubscription
+from towers.models import (Category, Cube, Collection, Face, List, Locale, Tower,
+                          UserFaceStatus, UserPreferences, UserSubscription)
 from django.contrib.auth.models import User
+
+
+class UserFaceStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserFaceStatus
+        fields = '__all__'
+
 
 class UserSerializer(serializers.ModelSerializer):
     
@@ -40,6 +48,12 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CollectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Collection
+        fields = '__all__'
+
+
 class FaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Face
@@ -49,6 +63,12 @@ class FaceSerializer(serializers.ModelSerializer):
 class ListSerializer(serializers.ModelSerializer):
     class Meta:
         model = List
+        fields = '__all__'
+
+
+class LocaleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Locale
         fields = '__all__'
 
 

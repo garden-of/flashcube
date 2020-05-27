@@ -4,6 +4,12 @@ INSTALLED_APPS = INSTALLED_APPS + [
     'storages'
 ]
 
+MEDIA_URL = '{}/media/'.format(BASE_DIR)
+MEDIA_ROOT = '{}/media'.format(BASE_DIR)
+
+STATIC_URL = '{}/static/'.format(BASE_DIR)
+STATIC_ROOT = '{}/static'.format(BASE_DIR)
+
 ALLOWED_HOSTS = ['*']
 
 AWS_S3_OBJECT_PARAMETERS = {

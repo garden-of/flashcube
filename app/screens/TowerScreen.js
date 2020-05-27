@@ -8,6 +8,8 @@ import * as towerActions from '../actions/tower'
 import { View, StyleSheet, Text, FlatList } from 'react-native'
 import { ActivityIndicator } from 'react-native-elements'
 
+import i18n from '../localization/translations'
+
 import ListItem from '../components/ListItem/ListItem'
 
 import Styles from '../constants/Styles'
@@ -131,7 +133,7 @@ class TowerScreen extends React.Component {
 
     return <View style={styles.container}>
       <View style={styles.subscribedTowerList}>
-        <Text style={Styles.headline}>Your Towers</Text>
+        <Text style={Styles.headline}>{i18n.t('tower.your_towers')}</Text>
         <FlatList 
           keyExtractor={(item, index) => index.toString()}
           data={subscriptions.subscriptions}
@@ -139,7 +141,7 @@ class TowerScreen extends React.Component {
         />
       </View>
       <View style={styles.newTowerList}>
-        <Text style={Styles.headline}>Find New Towers</Text>
+        <Text style={Styles.headline}>{i18n.t('tower.find_new_towers')}</Text>
         <FlatList 
           keyExtractor={(item, index) => index.toString()}
           data={this.getAllTowersData()}

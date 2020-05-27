@@ -61,25 +61,35 @@ export default StyleSheet.create({
     // spacing
     containerPadding: 10,
 
-    headerStyle: {
-        backgroundColor: Colors.white
+    verticalPad: {
+        paddingVertical: 10
     },
-    headerTitleStyle: {
-        color: Colors.primary
-    },
-    headerLeftStyle: {
-        color: Colors.primary
-    },
-    headerRightStyle: {
-        color: Colors.primary
-    },
+
+    // layout components
     modal: {
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
-        height: '100%',
-        padding: 15,
-        backgroundColor: Colors.primary
+        flex: 1,
+        paddingHorizontal: 15,
+        paddingTop: 70,
+        paddingBottom: 35,
+        backgroundColor: Colors.white
+    },
+
+    // buttons
+    buttonStyle: {
+        backgroundColor: Colors.primary,
+        borderColor: Colors.primary,
+        borderRadius: 3
+    },
+    buttonContainerStyle:{
+
+    },
+    buttonTextStyle: {
+        ...small,
+        ...semibold,
+        color: Colors.white,
     },
     transparentButtonStyle: {
         backgroundColor: 'rgba(256, 256, 256, 0.2)',
@@ -105,15 +115,15 @@ export default StyleSheet.create({
         color: Colors.gray5,
         paddingLeft: 10
     },
-    buttonStyle: {
-        backgroundColor: Colors.primary,
-        borderColor: Colors.primary,
+    invertedButtonStyle: {
+        backgroundColor: Colors.white,
+        borderColor: Colors.white,
         borderRadius: 3
     },
-    buttonTextStyle: {
+    invertedButtonTextStyle: {
         ...small,
         ...semibold,
-        color: Colors.white,
+        color: Colors.primary,
     },
     outlineButtonStyle: {
         backgroundColor: 'transparent',
@@ -125,8 +135,6 @@ export default StyleSheet.create({
         ...small,
         ...semibold,
         color: Colors.white,
-    },
-    buttonContainerStyle: {
     },
     iconButtonStyle: {
         backgroundColor: 'transparent',
@@ -145,6 +153,15 @@ export default StyleSheet.create({
         fontWeight: '600',
         textDecorationLine: 'underline'
     },
+    
+    caroselCard: {
+        backgroundColor: Colors.primary,
+        borderColor: Colors.primary,
+        borderWidth: 1,
+        borderRadius: 5,
+        height: 160,
+        padding: 10
+    },  
     inputInputContainerStyles: {
         borderColor: Colors.white,
         backgroundColor: Colors.white,
@@ -178,8 +195,27 @@ export default StyleSheet.create({
         paddingVertical: 5,
         paddingHorizontal: 10,
     },
+    listItemContainer: {
+        paddingRight: 15
+    },
+
+    searchBarContainer: {
+        backgroundColor: 'transparent'
+    },
 
     // TYPOGRAPHY
+    headerStyle: {
+        backgroundColor: Colors.white
+    },
+    headerTitleStyle: {
+        color: Colors.primary
+    },
+    headerLeftStyle: {
+        color: Colors.primary
+    },
+    headerRightStyle: {
+        color: Colors.primary
+    },
     uppercase: {
         textTransform: 'uppercase'
     },
