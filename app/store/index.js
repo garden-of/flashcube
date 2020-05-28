@@ -110,7 +110,14 @@ const axiosMiddlewareConfig = {
                     return new Promise( (resolve, reject) => {
                         axios.post(`${env.apiUrl}/auth/token/`, postData)
                         .then( (data) => {
+                            
+                            // update the store to have the correct token
                             dispatch(userActions.refreshTokenSuccess(data))
+
+                            originalRequest.headers['Authorization'] = 'Bearer ' + data.data.access_token
+                            processQueue(null, data.data.access_token)
+                            resolve(axios(originalRequest))
+                            
                         }).catch( err => {
                             processQueue(err, null)
                             reject(err)

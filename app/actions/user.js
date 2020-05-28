@@ -248,7 +248,7 @@ export function refreshTokenSuccess(data) {
     return {
         type: LOGIN_SUCCESS,
         payload: {
-            data
+            data: data.data
         }
     }
 }
