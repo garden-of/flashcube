@@ -12,6 +12,8 @@ import { Card, Input, Button, Icon } from 'react-native-elements'
 
 import SegmentedProgressBar from '../components/SegmentedProgressBar/SegmentedProgressBar'
 
+import { speak } from '../utils/utils'
+
 import Styles from '../constants/Styles'
 import Colors from '../constants/Colors'
 
@@ -179,6 +181,7 @@ class WriteScreen extends React.Component {
     }),
 
     this.getCategoryNameFromId = this.getCategoryNameFromId.bind(this)
+    this.getCategoryCodeFromId = this.getCategoryCodeFromId.bind(this)
     this.getRelativeRotation = this.getRelativeRotation.bind(this)
     this.getZIndexRange = this.getZIndexRange.bind(this)
     this.renderCards = this.renderCards.bind(this)
@@ -235,6 +238,11 @@ class WriteScreen extends React.Component {
   getCategoryNameFromId(categoryId) {
     let { categories } = this.props.tower.categories
     return categories.find(c => c.id == categoryId).category
+  }
+
+  getCategoryCodeFromId(categoryId) {
+    let { categories } = this.props.tower.categories
+    return categories.find(c => c.id == categoryId).abbreviation
   }
 
   getFaceStatusIndicator(cubeId, faceId) {
@@ -658,6 +666,14 @@ class WriteScreen extends React.Component {
           >
             {this.state.hideAnswers ? null : this.state.cubeValues[cube.id][face.id].value }
           </Text>
+          <Icon 
+            type='ionicons'
+            name='volume-down'
+            containerStyle={styles.cardTitleRight}
+            onPress={()=> speak(face.value, this.getCategoryCodeFromId(face.category))}
+            underlayColor={Colors.gray5}
+            color={Colors.gray2}
+          />
         </View>
 
         return <View style={styles.faceContianer} key={index}>
@@ -925,7 +941,7 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       width: '100%',
       alignContent: 'space-between',
-  
+      alignItems: 'center'
     },
     disabledIconButtonStyle: {
       backgroundColor: Colors.white

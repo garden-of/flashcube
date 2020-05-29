@@ -12,6 +12,8 @@ import * as Progress from 'react-native-progress'
 
 import CubeNavigationHorizontal from '../components/CubeNavigationHorizontal/CubeNavigationHorizontal'
 
+import { speak } from '../utils/utils'
+
 import Styles from '../constants/Styles'
 import Colors from '../constants/Colors'
 
@@ -43,6 +45,7 @@ class FlashScreen extends React.Component {
 
     this.fetchCubes = this.fetchCubes.bind(this)
     this.getCategoryNameFromId = this.getCategoryNameFromId.bind(this)
+    this.getCategoryCodeFromId = this.getCategoryCodeFromId.bind(this)
     this.handleCubeSwipe = this.handleCubeSwipe.bind(this)
     this.renderCards = this.renderCubes.bind(this)
     this.renderCubeFaces = this.renderCubeFaces.bind(this)
@@ -87,6 +90,11 @@ class FlashScreen extends React.Component {
     let category = categories.find(c => c.id == categoryId)
     if (category) return category.category
     else return 'unknown'
+  }
+
+  getCategoryCodeFromId(categoryId) {
+    let { categories } = this.props.tower.categories
+    return categories.find(c => c.id == categoryId).abbreviation
   }
 
   getRelativeIndex(len, current, index) {
@@ -142,9 +150,18 @@ class FlashScreen extends React.Component {
               key={index}
             >
                 <View style={styles.cardTitle}>
+                  <View style={styles.cardTitleLeft}/>
                   <Text style={[Styles.mediumSemiBold, styles.cubeCategory]}>
-                      {this.getCategoryNameFromId(face.category)}
+                    {this.getCategoryNameFromId(face.category)}
                   </Text>
+                  <Icon 
+                    type='ionicons'
+                    name='volume-down'
+                    containerStyle={styles.cardTitleRight}
+                    onPress={()=> speak(face.value, this.getCategoryCodeFromId(face.category))}
+                    underlayColor={Colors.gray5}
+                    color={Colors.gray2}
+                  />
                 </View>
                 <View style={styles.cardBody}>
                   <Text style={[Styles.display2, styles.cubeValue]}>
@@ -202,7 +219,7 @@ class FlashScreen extends React.Component {
         <CubeNavigationHorizontal 
           loop 
           relativeIndex={relativeIndex} 
-          height={500} 
+          height={400} 
           width={350}
           callBackAfterSwipe={this.handleCubeSwipe}
         >
@@ -393,9 +410,16 @@ const styles = StyleSheet.create({
       paddingVertical: 10,
       display: 'flex',
       flexDirection: 'row',
-      justifyContent: 'center',
+      justifyContent: 'space-between',
       alignContent: 'center',
       alignItems: 'center'
+    },
+    cardTitleLeft: {
+      flexBasis: '10%'
+    },
+    cardTitleRight: {
+      flexBasis: '10%',
+      alignContent: 'flex-end'
     },
     cardBody: {
       flexBasis: '85%',
