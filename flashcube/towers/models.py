@@ -39,8 +39,22 @@ class Cube(models.Model):
     A Cube makes up one entry in a tower.  A cube should be able to exist
     in the context of multiple towers.
     '''
+
+    PART_OF_SPEECH = (
+        ('NN', 'NOUN'),
+        ('PN', 'PRONOUN'),
+        ('VB', 'VERB'),
+        ('AJ', 'ADJECTIVE'),
+        ('AD', 'ADVERB'),
+        ('PR', 'PREPOSITION'),
+        ('CJ', 'CONJUNCTION'),
+        ('IJ', 'INTERJECTION'),
+    )
+
     name = models.CharField(max_length=200)
     tower = models.ForeignKey('Tower', on_delete=models.CASCADE)
+    part_of_speech = models.CharField(max_length=2, choices=PART_OF_SPEECH)
+    image = models.ImageField(blank=True, null=True, upload_to='cubes')
 
     class Meta:
         ordering = ('tower', 'pk')
@@ -63,9 +77,18 @@ class Face(models.Model):
     '''
     A face makes up one entry in a cube.
     '''
+
+    GENDERS = (
+        ('M', 'MALE'),
+        ('F', 'FEMALE'),
+    )
+
     value = models.CharField(max_length=200)
     cube = models.ForeignKey('Cube', on_delete=models.CASCADE)
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
+    gender = models.CharField(max_length=2, choices=GENDERS, blank=True, null=True)
+    audio = models.FileField(upload_to='face_audio', null=True)
+    phonetic_spelling = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
         ordering = ('cube', 'value')

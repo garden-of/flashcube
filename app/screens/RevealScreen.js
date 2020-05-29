@@ -142,6 +142,7 @@ class RevealScreen extends React.Component {
     }),
 
     this.getCategoryNameFromId = this.getCategoryNameFromId.bind(this)
+    this.getCategoryCodeFromId = this.getCategoryCodeFromId.bind(this)
     this.getRelativeRotation = this.getRelativeRotation.bind(this)
     this.getZIndexRange = this.getZIndexRange.bind(this)
     this.renderCards = this.renderCards.bind(this)
@@ -190,6 +191,11 @@ class RevealScreen extends React.Component {
   getCategoryNameFromId(categoryId) {
     let { categories } = this.props.tower.categories
     return categories.find(c => c.id == categoryId).category
+  }
+
+  getCategoryCodeFromId(categoryId) {
+    let { categories } = this.props.tower.categories
+    return categories.find(c => c.id == categoryId).abbreviation
   }
 
   getFaceStatusIndicator(cubeId, faceId) {
@@ -522,6 +528,7 @@ class RevealScreen extends React.Component {
         <FlipCard 
             frontText={this.getCategoryNameFromId(face.category)}
             backText={face.value}
+            languageCode={this.getCategoryCodeFromId(face.category)}
         />
     </View>)
   }

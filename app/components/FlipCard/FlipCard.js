@@ -2,6 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import { View, StyleSheet, Text, Animated, TouchableOpacity } from 'react-native'
+import { Icon } from 'react-native-elements'
+
+import { speak } from '../../utils/utils'
 
 import Colors from '../../constants/Colors'
 import Styles from '../../constants/Styles'
@@ -72,7 +75,15 @@ class FlipCard extends React.Component {
                 <Text style={Styles.regularText}>{this.props.frontText}</Text>
             </Animated.View>
             <Animated.View style={[styles.flipCard, styles.flipCardBack, backAnimatedStyle]}>
-                <Text style={Styles.regularText}>{this.props.backText}</Text>
+                <Text style={[Styles.regularText, styles.cardBackLeft]}>{this.props.backText}</Text>
+                <Icon 
+                   type='ionicons'
+                   name='volume-down'
+                   containerStyle={styles.cardBackRight}
+                   onPress={()=> speak(this.props.backText, this.props.languageCode)}
+                   underlayColor={Colors.gray5}
+                   color={Colors.gray2}
+                />
             </Animated.View>
         </TouchableOpacity>
     }
@@ -80,7 +91,8 @@ class FlipCard extends React.Component {
 
 FlipCard.proptypes = {
     frontText: PropTypes.string,
-    backText: PropTypes.string
+    backText: PropTypes.string,
+    languageCode: PropTypes.string
 }
 
 const styles = StyleSheet.create({
@@ -96,11 +108,20 @@ const styles = StyleSheet.create({
        justifyContent: 'center',
        backgroundColor: Colors.gray4,
        backfaceVisibility: 'hidden',
+       display: 'flex',
+       flexDirection: 'row'
    },
    flipCardBack: {
        backgroundColor: Colors.gray5,
        position: 'absolute',
        top: 0
+   },
+   cardBackLeft: {
+       flexBasis: '90%',
+       padding: 10
+   },
+   cardBackRight: {
+       flexBasis: '10%'
    }
 })
 
