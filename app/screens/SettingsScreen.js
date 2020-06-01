@@ -1,5 +1,6 @@
 import React from 'react'
 import { ExpoConfigView } from '@expo/samples'
+import * as Analytics from 'expo-firebase-analytics'
 
 export default function SettingsScreen() {
   /**

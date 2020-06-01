@@ -4,7 +4,8 @@
     "slug": "Boqu",
     "privacy": "public",
     "platforms": [
-      "ios"
+      "ios",
+      "web"
     ],
     "version": "0.0.1",
     "orientation": "portrait",
@@ -23,9 +24,24 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.gardenof.boqu",
       "buildNumber": "3",
+      "googleServicesFile": "./config/GoogleService-Info-Dev.plist",
       "icon": "./assets/icons/icon-ios-1024@1x.png",
       "infoPlist": {
         "CFBundleAllowMixedLocalizations": true
+      }
+    },
+    "web": {
+      "config": {
+        "firebase": {
+          "apiKey": "AIzaSyDA27GX0ARxbsa7bXISiWTC4sG4wY-B24Q",
+          "authDomain": "flashcube-dev.firebaseapp.com",
+          "databaseURL": "https://flashcube-dev.firebaseio.com",
+          "projectId": "flashcube-dev",
+          "storageBucket": "flashcube-dev.appspot.com",
+          "messagingSenderId": "932758764136",
+          "appId": "1:932758764136:web:3ce4008f47f3d8ddfe59dd",
+          "measurementId": "G-L3S3F8PD46"
+        }
       }
     },
     "description": "",

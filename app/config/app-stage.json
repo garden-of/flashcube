@@ -23,7 +23,8 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.gardenof.boqu",
-      "buildNumber": "2",
+      "buildNumber": "4",
+      "googleServicesFile": "./GoogleService-Info-Stage.plist",
       "icon": "./assets/icons/icon-ios-1024@1x.png",
       "infoPlist": {
         "CFBundleAllowMixedLocalizations": true

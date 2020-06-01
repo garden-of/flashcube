@@ -1,9 +1,12 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import * as Analytics from 'expo-firebase-analytics'
 
 import * as userActions from '../actions/user'
 import * as towerActions from '../actions/tower'
+
+import events from '../config/events'
 
 import { View, StyleSheet, Animated, PanResponder, Dimensions, 
          ActivityIndicator, TouchableWithoutFeedback, Keyboard,
@@ -131,8 +134,10 @@ class WriteScreen extends React.Component {
           // add the cube to the appropriate list
           if (gestureState.dx > 0) {
             this.setState({learnedCards: [...this.state.learnedCards, this.state.activeCube]})
+            Analytics.logEvent(events.learn_mark_learned)
           } else {
             this.setState({stillLearningCards: [...this.state.stillLearningCards, this.state.activeCube]})
+            Analytics.logEvent(events.learn_mark_learning)
           }
 
           // bring the translationX back to 0 quickly
@@ -796,8 +801,10 @@ class WriteScreen extends React.Component {
 
     if (defaultList.cubes.includes(cube)) {
       this.props.removeCubeFromList(cube, defaultList.id)
+      Analytics.logEvent(events.learn_unstar_term)
     } else {
       this.props.addCubeToList(cube, defaultList.id)
+      Analytics.logEvent(events.learn_star_term)
     }
   }
 

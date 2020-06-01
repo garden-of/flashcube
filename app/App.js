@@ -4,6 +4,9 @@ import { Provider } from 'react-redux'
 import { store, persistor } from './store/index'
 import { PersistGate } from 'redux-persist/integration/react'
 
+// Firebase
+import * as firebase from 'firebase'
+
 // Navigation
 import { createAppContainer } from 'react-navigation'
 import switchNavigator from './navigation/MainTabNavigator'

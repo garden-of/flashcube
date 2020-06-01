@@ -41,6 +41,9 @@ class SignupScreen extends React.Component {
     this.navigateTo = this.navigateTo.bind(this)
   }
 
+  componentDidMount() {
+  }
+
   emailIsValid(email) {
 
     if (email == undefined) return false
