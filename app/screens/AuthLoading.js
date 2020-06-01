@@ -18,6 +18,7 @@ const mapDispatchToProps = dispatch => {
 
 class AuthLoading extends React.Component {
     
+
     componentDidMount() {
         this._bootstrapAsync()
     }

@@ -158,6 +158,7 @@ class RevealScreen extends React.Component {
   }
 
   componentDidMount() {
+
     this.props.navigation.setParams({ toggleSubscription: this.toggleSubscription})
 
     // fetch relevant store data
