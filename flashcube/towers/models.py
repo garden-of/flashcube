@@ -171,6 +171,9 @@ class UserPreferences(models.Model):
     
     user = models.OneToOneField(to=User, on_delete=models.CASCADE)
 
+    push_notifications = models.BooleanField(default=True)
+    analytics = models.BooleanField(default=True)
+
     categoriesOnboarded = models.BooleanField(default=False)
     setsOnboarded = models.BooleanField(default=False)
     onboardingSkipped = models.BooleanField(default=False)

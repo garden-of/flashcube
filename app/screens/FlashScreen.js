@@ -2,6 +2,9 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
+import * as Analytics from 'expo-firebase-analytics'
+import events from '../config/events'
+
 import * as userActions from '../actions/user'
 import * as towerActions from '../actions/tower'
 

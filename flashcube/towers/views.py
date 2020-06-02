@@ -35,7 +35,13 @@ class GetUser(views.APIView):
     def get(self, request, format='json'):
         serializer = serializers.UserSerializer(request.user)
         return Response(serializer.data)
-
+    
+    def patch(self, request):
+        serializer = serializers.UserSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 class ListAddRemove(views.APIView):
     permission_classes = [IsAuthenticated]

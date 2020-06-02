@@ -2,6 +2,9 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
+import * as Analytics from 'expo-firebase-analytics'
+import events from '../config/events'
+
 import * as userActions from '../actions/user'
 import * as towerActions from '../actions/tower'
 
@@ -621,8 +624,10 @@ class RevealScreen extends React.Component {
 
     if (defaultList.cubes.includes(cube)) {
       this.props.removeCubeFromList(cube, defaultList.id)
+      Analytics.logEvent(events.learn_unstar_term)
     } else {
       this.props.addCubeToList(cube, defaultList.id)
+      Analytics.logEvent(events.learn_star_term)
     }
   }
 

@@ -48,6 +48,10 @@ export const SIGN_OUT = 'SIGN_OUT'
 
 export const TOGGLE_REGISTRATION = 'TOGGLE_REGISTRATION'
 
+export const UPDATE_USER_PROFILE = 'UPDATE_USER_PROFILE'
+export const UPDATE_USER_PROFILE_SUCCESS = 'UPDATE_USER_PROFILE_SUCCESS'
+export const UPDATE_USER_PROFILE_FAIL = 'UPDATE_USER_PROFILE_FAIL'
+
 export const UPDATE_USER_PREFERENCES = 'UPDATE_USER_PREFERENCES'
 export const UPDATE_USER_PREFERENCES_SUCCESS = 'UPDATE_USER_PREFERENCES_SUCCESS'
 export const UPDATE_USER_PREFERENCES_FAIL = 'UPDATE_USER_PREFERENCES_FAIL'
@@ -264,6 +268,21 @@ export function toggleRegistration() {
     return {
         type: TOGGLE_REGISTRATION,
         payload: {}
+    }
+}
+
+export function updateUserProfile(profile) {
+    return {
+        type: UPDATE_USER_PROFILE,
+        payload: {
+            request: {
+                url: `/api/user/`,
+                method: 'PATCH',
+                data: {
+                    ...profile
+                }
+            }
+        }
     }
 }
 

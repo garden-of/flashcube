@@ -368,6 +368,27 @@ export default function reducer(state=defaultStore, action) {
                     isRegistering: !state.registration.isRegistering
                 }
             }
+        case actions.UPDATE_USER_PROFILE_SUCCESS:
+            return {
+                ...state,
+                profile: {
+                    ...state.profile,
+                    ...action.payload.data,
+                    fetching: false,
+                    fetched: true,
+                    error: false
+                }
+            }
+        case actions.UPDATE_USER_PROFILE_FAIL:
+            return {
+                ...state,
+                profile: {
+                    ...state.profile,
+                    fetching: false,
+                    fetched: false,
+                    error: true
+                }
+            }
         case actions.UPDATE_USER_PREFERENCES_SUCCESS:
             return {
                 ...state,
