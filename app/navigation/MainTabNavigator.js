@@ -10,6 +10,7 @@ import Styles from '../constants/Styles'
 import AuthLoading from '../screens/AuthLoading'
 import HomeScreen from '../screens/HomeScreen'
 import ProfileScreen from '../screens/ProfileScreen'
+import ProfileEditScreen from '../screens/ProfileEditScreen'
 import SignupScreen from '../screens/SignupScreen'
 import TowerScreen from '../screens/TowerScreen'
 import TowerDetailScreen from '../screens/TowerDetailScreen'
@@ -98,9 +99,18 @@ TowerStack.path = ''
 
 const ProfileStack = createStackNavigator(
   { 
-    Profile: ProfileScreen
+    Profile: ProfileScreen,
+    ProfileEdit: ProfileEditScreen
   },
-  config
+  {
+    ...config,
+    tabBarOptions: {
+      safeAreaInset: {
+        bottom: 'always',
+        top: 'always'
+      }
+    }
+  }
 )
 
 ProfileStack.navigationOptions = {
@@ -116,30 +126,6 @@ ProfileStack.navigationOptions = {
     />
   ),
 }
-
-/*const StorybookStack = createStackNavigator(
-  { 
-    Storybooks: StorybookScreen 
-  },
-  config
-)
-
-StorybookStack.navigationOptions = {
-  tabBarLabel: 'Storybook',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      color={focused ? Colors.primary : Colors.gray3}
-      name={
-        Platform.OS === 'ios'
-          ? `ios-book`
-          : 'md-book'
-      }
-    />
-  ),
-}
-
-StorybookStack.path = ''*/
 
 const tabNavigator = createBottomTabNavigator(
   {

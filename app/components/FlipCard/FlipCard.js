@@ -4,6 +4,9 @@ import PropTypes from 'prop-types'
 import { View, StyleSheet, Text, Animated, TouchableOpacity } from 'react-native'
 import { Icon } from 'react-native-elements'
 
+import * as Analytics from 'expo-firebase-analytics'
+import events from '../../config/events'
+
 import { speak } from '../../utils/utils'
 
 import Colors from '../../constants/Colors'
@@ -39,6 +42,7 @@ class FlipCard extends React.Component {
                 tension: 10
             }).start()
         } else {
+            Analytics.logEvent(events.learn_reveal_face)
             Animated.spring(this.state.animatedValue, {
                 toValue: 180,
                 friction: 4,

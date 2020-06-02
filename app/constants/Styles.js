@@ -76,7 +76,10 @@ export default StyleSheet.create({
         paddingBottom: 35,
         backgroundColor: Colors.white
     },
-
+    modalInner: {
+        padding: 10
+    },
+    
     // buttons
     buttonStyle: {
         backgroundColor: Colors.primary,
@@ -195,10 +198,15 @@ export default StyleSheet.create({
         paddingVertical: 5,
         paddingHorizontal: 10,
     },
+
+    // shared components
+    avatarStyle: {
+        borderWidth: 2,
+        borderColor: Colors.primary,
+    },
     listItemContainer: {
         paddingRight: 15
     },
-
     searchBarContainer: {
         backgroundColor: 'transparent'
     },

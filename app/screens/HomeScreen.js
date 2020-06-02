@@ -295,7 +295,7 @@ class HomeScreen extends React.Component {
         {this.renderCarosel()}
       </View>
       <View style={styles.subscribedTowerList}>
-  <Text style={Styles.headline}>{i18n.t('home.your_towers')}</Text>
+        <Text style={Styles.headline}>{i18n.t('home.your_towers')}</Text>
         <FlatList 
           keyExtractor={(item, index) => index.toString()}
           data={subscriptions.subscriptions}

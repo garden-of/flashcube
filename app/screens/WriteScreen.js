@@ -1,12 +1,12 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+
 import * as Analytics from 'expo-firebase-analytics'
+import events from '../config/events'
 
 import * as userActions from '../actions/user'
 import * as towerActions from '../actions/tower'
-
-import events from '../config/events'
 
 import { View, StyleSheet, Animated, PanResponder, Dimensions, 
          ActivityIndicator, TouchableWithoutFeedback, Keyboard,
@@ -194,6 +194,7 @@ class WriteScreen extends React.Component {
     this.renderSummary = this.renderSummary.bind(this)
     this.setAccuracy = this.setAccuracy.bind(this)
     this.toggleKeyboardState = this.toggleKeyboardState.bind(this)
+    this.logAccuracy = this.logAccuracy.bind(this)
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -365,7 +366,28 @@ class WriteScreen extends React.Component {
     })
   }
 
+  logAccuracy(accuracy) {
+    const { value, currentValue } = this.state.cubeValues[cubeId][faceId]
+
+    const pctAccurate = (value.length - accuracy) / value.length
+
+    if (accuracy == null) return
+    if (currentValue.length / value.length < 0.3) return
+
+    if (accuracy == 0) Analytics.logEvent(events.learn_face_correct)
+    if (pctAccurate >= 0.85) Analytics.logEvent(events.learn_face_close)
+    Analytics.logEvent(events.learn_face_incorrect)
+  }
+
   setAccuracy(cubeId, faceId) {
+
+    const accuracy = stringSimilarity(
+      this.state.cubeValues[cubeId][faceId].value, 
+      this.state.cubeValues[cubeId][faceId].currentValue
+    )
+
+    this.logAccuracy(accuracy)
+
     this.setState({
       cubeValues: {
         ...this.state.cubeValues,
@@ -373,9 +395,7 @@ class WriteScreen extends React.Component {
           ...this.state.cubeValues[cubeId],
           [faceId]: {
             ...this.state.cubeValues[cubeId][faceId],
-            accuracy: stringSimilarity(
-              this.state.cubeValues[cubeId][faceId].value, 
-              this.state.cubeValues[cubeId][faceId].currentValue)
+            accuracy
           }
         }
       }

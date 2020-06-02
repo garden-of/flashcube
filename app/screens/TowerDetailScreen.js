@@ -2,6 +2,9 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
+import * as Analytics from 'expo-firebase-analytics'
+import events from '../config/events'
+
 import * as userActions from '../actions/user'
 import * as towerActions from '../actions/tower'
 
@@ -106,14 +109,17 @@ class TowerDetailScreen extends React.Component {
   }
 
   handleFlashLearnAction() {
+    Analytics.logEvent(events.learn_click_learn_action, {learn_mode: 'flash'})
     this.props.navigation.navigate('FlashScreen', {tower: this.state.tower })
   }
 
   handleWriteLearnAction() {
+    Analytics.logEvent(events.learn_click_learn_action, {learn_mode: 'write'})
     this.props.navigation.navigate('WriteScreen', {tower: this.state.tower })
   }
 
   handleRevealLearnAction() {
+    Analytics.logEvent(events.learn_click_learn_action, {learn_mode: 'reveal'})
     this.props.navigation.navigate('RevealScreen', {tower: this.state.tower })
   }
 
@@ -302,8 +308,10 @@ class TowerDetailScreen extends React.Component {
 
     if (defaultList.cubes.includes(cube)) {
       this.props.removeCubeFromList(cube, defaultList.id)
+      Analytics.logEvent(events.learn_unstar_term)
     } else {
       this.props.addCubeToList(cube, defaultList.id)
+      Analytics.logEvent(events.learn_star_term)
     }
   }
 
@@ -324,6 +332,7 @@ class TowerDetailScreen extends React.Component {
   
       this.props.createUserSubscription(this.state.tower.id, profile.id, subscriptionCategories)
       this.props.navigation.setParams({ subscribed: true})
+      Analytics.logEvent(events.tower_subscribe)
     } 
     
     // handle unsubscription
@@ -334,6 +343,7 @@ class TowerDetailScreen extends React.Component {
       this.props.deleteUserSubscription(subscription).then(() => 
         this.props.navigation.setParams({ subscribed: false})
       )
+      Analytics.logEvent(events.tower_unsubscribe)
     }
   }
 
