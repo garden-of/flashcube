@@ -6,10 +6,9 @@ import * as configActions from '../actions/config'
 import * as userActions from '../actions/user'
 import * as towerActions from '../actions/tower'
 
-import { View, FlatList, StyleSheet, ActivityIndicator, Modal, Text, Dimensions, Switch } from 'react-native'
+import { View, FlatList, StyleSheet, ActivityIndicator, Modal, Text, Dimensions } from 'react-native'
 import { Button, ListItem, SearchBar } from 'react-native-elements'
 import Carousel from 'react-native-snap-carousel'
-import LanguagePicker from '../components/LanguagePicker/LanguagePicker'
 import FCListItem from '../components/ListItem/ListItem'
 
 import i18n, { cleanLocale } from '../localization/translations'
@@ -280,8 +279,6 @@ class HomeScreen extends React.Component {
       .filter(category => profile.preferences.learningCategories.includes(category.id))
       .map(category => category.category)
 
-    const avatar = profile.social ? profile.social.photoUrl : null
-
     return <View style={styles.mainViewContainer}>
       <ProfileHeader
         name={profile.username}
@@ -289,7 +286,7 @@ class HomeScreen extends React.Component {
         learning={learningCategories}
         numSubscriptions={subscriptions.subscriptions.length}
         cubesMastered={0}
-        avatarUri={avatar}
+        avatarUri={profile.preferences.profile_image}
       />
       <View style={styles.myList}>
         {this.renderCarosel()}

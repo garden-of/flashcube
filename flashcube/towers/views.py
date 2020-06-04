@@ -41,7 +41,8 @@ class GetUser(views.APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ListAddRemove(views.APIView):
     permission_classes = [IsAuthenticated]
@@ -77,6 +78,14 @@ class ListAddRemove(views.APIView):
         serializer = serializers.ListSerializer(requestedList)
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+class UploadProfileImage(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        print(request.data)
+
 
 
 class CategoryViewSet(viewsets.ModelViewSet):

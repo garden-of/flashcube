@@ -66,7 +66,6 @@ const axiosMiddlewareConfig = {
             },
             error: async ({getState, dispatch, getSourceAction}, error) => {
 
-                const originalRequest = error.config
 
                 if (error.response.status === 401 && !originalRequest._retry) {
 
@@ -125,6 +124,8 @@ const axiosMiddlewareConfig = {
                             isRefreshing = false
                         })
                     })
+                } else if (error.response.status === 400) {
+                    return Promise.reject(error)
                 }
 
             }

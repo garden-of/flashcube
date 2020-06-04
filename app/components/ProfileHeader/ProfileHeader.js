@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import { View, StyleSheet, Text } from 'react-native'
+import { View, StyleSheet, Text, Image } from 'react-native'
 import { Avatar } from 'react-native-elements'
 
 import Colors from '../../constants/Colors'
@@ -29,19 +29,12 @@ class ProfileHeader extends React.Component {
                         uri: this.props.avatarUri ? this.props.avatarUri : 'http://s3.amazonaws.com/37assets/svn/765-default-avatar.png'
                     }}
                     size='large'
+                    overlayContainerStyle={Styles.avatarStyle}
                 />
             </View>
             <View style={styles.textContainer}>
                 <View style={styles.userName}>
                     <Text style={Styles.mediumSemiBold}>{this.props.name}</Text>
-                </View>
-                <View style={styles.statContainer}>
-                    <View style={styles.statLabel}>
-                <Text style={[Styles.xsmallSemiBold, {textTransform: 'uppercase'}]}>{i18n.t('profile.fluent_in')}</Text>
-                    </View>
-                    <View style={styles.statValue}>
-                        <Text style={{...Styles.xsmallText, ...Styles.uppercase, color: Colors.gray2}}>{this.joinAndShorten(this.props.fluent)}</Text>
-                    </View>
                 </View>
                 <View style={styles.statContainer}>
                     <View style={styles.statLabel}>
@@ -92,7 +85,12 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     avatarContainer: {
-        flexBasis: '25%'
+        flexBasis: '25%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        alignContent: 'center'
     },
     textContainer: {
         flexBasis: '75%',

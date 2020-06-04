@@ -47,6 +47,7 @@ urlpatterns = [
     # REST api
     path('api/', include(router.urls)),
     path('api/user/', views.GetUser.as_view()),
+    path('api/user_image/', views.UploadProfileImage.as_view()),
     path('api/editlist/', views.ListAddRemove.as_view())
 ]
 
