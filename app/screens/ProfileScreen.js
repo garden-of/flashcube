@@ -60,7 +60,7 @@ class ProfileScreen extends React.Component {
     if (categories == undefined) return null
     if (subscriptions.subscriptions == undefined) return null
 
-    const avatar = profile.social ? profile.social.photoUrl : null
+    const avatar = profile.preferences.profile_image
 
     const fluentCategories = categories
       .filter(category => profile.preferences.fluentCategories.includes(category.id))
@@ -78,10 +78,15 @@ class ProfileScreen extends React.Component {
           accessory={{
             type: 'ionicons',
             name: 'edit',
-            color: Colors.gray5,
+            color: Colors.gray4,
+            underlayColor: Colors.gray2
           }}
-          underlayColor={Colors.red}
           showAccessory={true}
+          onAccessoryPress={() => this.props.navigation.navigate('ProfileEdit', {
+            module: 'preferences',
+            field: 'profile_image',
+            title: 'Profile Image'
+          })}
           title={`${profile.first_name.substring(0,1)}${profile.last_name.substring(0,1)}`}
           size={'large'}
           source={{
@@ -110,7 +115,7 @@ class ProfileScreen extends React.Component {
         onPress={() => this.props.navigation.navigate('ProfileEdit', {
           module: 'preferences',
           field: 'baseCategory',
-          input: 'picker'
+          title: 'Base Language'
         })}
         chevron
       />
@@ -119,6 +124,11 @@ class ProfileScreen extends React.Component {
         titleStyle={Styles.regularText}
         rightTitleStyle={{...Styles.smallText, ...styles.rightTitleTextStyle}}
         rightTitle={preferences.learningCategories.map( c => this.getCategoryNameFromId(c)).join(', ')}
+        onPress={() => this.props.navigation.navigate('ProfileEdit', {
+          module: 'preferences',
+          field: 'learningCategories',
+          title: 'Learning Languages'
+        })}
         chevron
       />
     </View>
@@ -146,7 +156,8 @@ class ProfileScreen extends React.Component {
         rightTitle={profile.username}
         onPress={() => this.props.navigation.navigate('ProfileEdit', {
           module: 'profile',
-          field: 'username'
+          field: 'username',
+          title: 'Username'
         })}
         chevron
       />
@@ -157,7 +168,8 @@ class ProfileScreen extends React.Component {
         rightTitle={profile.first_name}
         onPress={() => this.props.navigation.navigate('ProfileEdit', {
           module: 'profile',
-          field: 'first_name'
+          field: 'first_name',
+          title: 'Fast Name'
         })}
         chevron
       />
@@ -168,7 +180,8 @@ class ProfileScreen extends React.Component {
         rightTitle={profile.last_name}
         onPress={() => this.props.navigation.navigate('ProfileEdit', {
           module: 'profile',
-          field: 'last_name'
+          field: 'last_name',
+          title: 'Last Name'
         })}
         chevron
       />

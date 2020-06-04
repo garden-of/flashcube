@@ -376,7 +376,8 @@ export default function reducer(state=defaultStore, action) {
                     ...action.payload.data,
                     fetching: false,
                     fetched: true,
-                    error: false
+                    updateError: false,
+                    updateEerrorMessage: null
                 }
             }
         case actions.UPDATE_USER_PROFILE_FAIL:
@@ -385,8 +386,9 @@ export default function reducer(state=defaultStore, action) {
                 profile: {
                     ...state.profile,
                     fetching: false,
-                    fetched: false,
-                    error: true
+                    fetched: true,
+                    updateError: true,
+                    updateErrorMessage: action.error.response.data
                 }
             }
         case actions.UPDATE_USER_PREFERENCES_SUCCESS:

@@ -171,6 +171,8 @@ class UserPreferences(models.Model):
     
     user = models.OneToOneField(to=User, on_delete=models.CASCADE)
 
+    profile_image = models.ImageField(blank=True, null=True, upload_to='profile_image')
+
     push_notifications = models.BooleanField(default=True)
     analytics = models.BooleanField(default=True)
 

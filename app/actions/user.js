@@ -56,6 +56,10 @@ export const UPDATE_USER_PREFERENCES = 'UPDATE_USER_PREFERENCES'
 export const UPDATE_USER_PREFERENCES_SUCCESS = 'UPDATE_USER_PREFERENCES_SUCCESS'
 export const UPDATE_USER_PREFERENCES_FAIL = 'UPDATE_USER_PREFERENCES_FAIL'
 
+export const UPLOAD_PROFILE_IMAGE = 'UPLOAD_PROFILE_IMAGE'
+export const UPLOAD_PROFILE_IMAGE_SUCCESS = 'UPLOAD_PROFILE_IMAGE_SUCCESS'
+export const UPLOAD_PROFILE_IMAGE_FAIL = 'UPLOAD_PROFILE_IMAGE_FAIL'
+
 
 export function addCubeToList(cubeId, listId) {
     return {
@@ -296,6 +300,23 @@ export function updateUserPreferences(preferences) {
                 data: {
                     ...preferences
                 }
+            }
+        }
+    }
+}
+
+export function uploadProfileImage(id, formData) {
+    return {
+        type: UPDATE_USER_PREFERENCES,
+        payload: {
+            request: {
+                url: `/api/user_preferences/${id}/`,
+                method: 'PATCH',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'multipart/form-data'
+                },
+                data: formData
             }
         }
     }
