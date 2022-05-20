@@ -21,11 +21,6 @@ resource "aws_ecs_task_definition" "app" {
   execution_role_arn    = aws_iam_role.ecs-execution-role.arn
   task_role_arn         = aws_iam_role.ecs-execution-role.arn
   depends_on            = [aws_db_instance.stage]
-  
-  volume {
-    name      = "static_volume"
-    host_path = "/usr/src/app/staticfiles/" 
-  }
 
   container_definitions = jsonencode([
     {
@@ -63,12 +58,6 @@ resource "aws_ecs_task_definition" "app" {
         {
           name  = "RDS_PORT"
           value = "5432"
-        }
-      ]
-      mountPoints = [
-        {
-          containerPath = "/usr/src/app/staticfiles"
-          sourceVolume  = "static_volume"
         }
       ]
       logConfiguration  = {
@@ -152,7 +141,7 @@ resource "aws_ecs_service" "stage" {
   launch_type     = "EC2" 
 
   deployment_maximum_percent         = 200
-  deployment_minimum_healthy_percent = 0
+  deployment_minimum_healthy_percent = 100
   desired_count   = var.app_count
   depends_on      = [aws_alb_listener.ecs-alb-http-listener, aws_iam_role_policy.ecs-service-role-policy]
 

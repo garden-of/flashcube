@@ -34,35 +34,6 @@ class CategoryStatus(models.Model):
         return '{user} -> {category}'.format(user=self.user, category=self.category)
 
 
-class Cube(models.Model):
-    '''
-    A Cube makes up one entry in a tower.  A cube should be able to exist
-    in the context of multiple towers.
-    '''
-
-    PART_OF_SPEECH = (
-        ('NN', 'NOUN'),
-        ('PN', 'PRONOUN'),
-        ('VB', 'VERB'),
-        ('AJ', 'ADJECTIVE'),
-        ('AD', 'ADVERB'),
-        ('PR', 'PREPOSITION'),
-        ('CJ', 'CONJUNCTION'),
-        ('IJ', 'INTERJECTION'),
-    )
-
-    name = models.CharField(max_length=200)
-
-    part_of_speech = models.CharField(max_length=2, choices=PART_OF_SPEECH)
-    image = models.ImageField(blank=True, null=True, upload_to='cubes')
-
-    class Meta:
-        ordering = ('tower', 'pk')
-
-    def __str__(self):
-        return '{tower} -> {id}'.format(tower=self.tower, id=self.name)
-
-
 class Collection(models.Model):
     '''
     A collection is a set of towers that share some common characteristic.
@@ -87,7 +58,7 @@ class Face(models.Model):
     cube = models.ForeignKey('Cube', on_delete=models.CASCADE)
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
     gender = models.CharField(max_length=2, choices=GENDERS, blank=True, null=True)
-    audio = models.FileField(upload_to='face_audio', null=True)
+    audio = models.FileField(upload_to='face_audio', blank=True, null=True)
     phonetic_spelling = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
@@ -114,7 +85,6 @@ class List(models.Model):
     def __str__(self):
         return '{} -> {}'.format(self.user, self.name)
 
-
 class Locale(models.Model):
     language = models.ForeignKey(to=Category, on_delete=models.CASCADE)
     locale = models.CharField(max_length=5)
@@ -139,6 +109,38 @@ class Tower(models.Model):
     @property
     def num_cubes(self):
         return len(Cube.objects.filter(tower__exact=self.pk))
+
+    class Meta:
+        ordering = ('name',)
+
+    def __str__(self):
+        return self.name
+
+
+class Cube(models.Model):
+    '''
+    A Cube makes up one entry in a tower.  A cube should be able to exist
+    in the context of multiple towers.
+    '''
+
+    PART_OF_SPEECH = (
+        ('NN', 'NOUN'),
+        ('PN', 'PRONOUN'),
+        ('VB', 'VERB'),
+        ('AJ', 'ADJECTIVE'),
+        ('AD', 'ADVERB'),
+        ('PR', 'PREPOSITION'),
+        ('CJ', 'CONJUNCTION'),
+        ('IJ', 'INTERJECTION'),
+        ('NB', 'NUMBER'),
+        ('AR', 'ARTICLE'),
+        ('DT', 'DETERMINER'),
+    )
+
+    name = models.CharField(max_length=200)
+    part_of_speech = models.CharField(max_length=2, choices=PART_OF_SPEECH)
+    image = models.ImageField(blank=True, null=True, upload_to='cubes')
+    towers = models.ManyToManyField(Tower)
 
     class Meta:
         ordering = ('name',)
