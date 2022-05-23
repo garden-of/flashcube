@@ -89,3 +89,9 @@ local_settings.py
 
 .env
 db.sqlite3
+
+# .tfstate files
+*.tfstate
+*.tfstate*
+*registry.terraform.io*
+terraform/.terraform/

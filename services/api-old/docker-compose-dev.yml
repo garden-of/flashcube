@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres
+    container_name: flashcube_db
+    environment:
+      - POSTGRES_DB=flashcube
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  api:
+    build: .
+    command: gunicorn --workers=3 --bind 0.0.0.0:8000 flashcube.wsgi:application
+    container_name: flashcube_api
+    environment:
+      - DATABASE_URL
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
