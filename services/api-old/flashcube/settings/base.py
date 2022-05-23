@@ -32,6 +32,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'towers.apps.TowersConfig',
+    'jet.dashboard',
+    'jet',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,8 +41,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+<<<<<<< HEAD:services/api-old/flashcube/settings/base.py
     'oauth2_provider',
     'social_django',
+=======
+    'rest_framework_swagger',
+    'oauth2_provider',
+    'social_django',
+    'rest_framework_social_oauth2',
+>>>>>>> master:services/api-old/flashcube/settings/settings/base.py
     'guardian',
     'import_export',
     'flashcube'
@@ -94,10 +103,21 @@ if 'RDS_DB_NAME' in os.environ:
         }
     }
 else:
+<<<<<<< HEAD:services/api-old/flashcube/settings/base.py
      DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+=======
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'flashcube',
+            'USER': 'flashcube',
+            'PASSWORD': 'flashcube',
+            'HOST': 'localhost',
+            'PORT': '',
+>>>>>>> master:services/api-old/flashcube/settings/settings/base.py
         }
     }
 
@@ -144,6 +164,10 @@ STATIC_URL = '/static/'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+<<<<<<< HEAD:services/api-old/flashcube/settings/base.py
+=======
+        'rest_framework_social_oauth2.authentication.SocialAuthentication',
+>>>>>>> master:services/api-old/flashcube/settings/settings/base.py
     ),
     'DEFAULT_FILTERING_BACKEND': 'flashcube.filters.AllDjangoFilterBackend',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -159,6 +183,10 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
 
     # OAuth2 Core
+<<<<<<< HEAD:services/api-old/flashcube/settings/base.py
+=======
+    'rest_framework_social_oauth2.backends.DjangoOAuth2',
+>>>>>>> master:services/api-old/flashcube/settings/settings/base.py
     'django.contrib.auth.backends.ModelBackend',
     'guardian.backends.ObjectPermissionBackend',
 )
@@ -178,6 +206,10 @@ OAUTH2_PROVIDER = {
     'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore',
 }
 
+<<<<<<< HEAD:services/api-old/flashcube/settings/base.py
 DATA_UPLOAD_MAX_MEMORY_SIZE = 20971520
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+=======
+DATA_UPLOAD_MAX_MEMORY_SIZE = 20971520
+>>>>>>> master:services/api-old/flashcube/settings/settings/base.py
