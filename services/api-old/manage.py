@@ -5,7 +5,11 @@ import sys
 
 
 def main():
+<<<<<<< HEAD:services/api-old/manage.py
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'flashcube.settings.base')
+=======
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'flashcube.settings.local')
+>>>>>>> 42d03479639db545cb8a5ad1e4d410abc5abf137:flashcube/manage.py
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
