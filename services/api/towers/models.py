@@ -94,7 +94,7 @@ class Locale(models.Model):
 
 
 class Tower(models.Model):
-    CHOICES = (
+    DIFFICULTIES = (
         ('B', 'Beginner'),
         ('I', 'Intermediate'),
         ('E', 'Expert'),
@@ -104,7 +104,7 @@ class Tower(models.Model):
     categories = models.ManyToManyField('Category', related_name='tower_categories')
     image = models.ImageField(blank=True, null=True, upload_to='towers')
     primary_category = models.ForeignKey('Category', on_delete=models.CASCADE)
-    difficulty = models.CharField(max_length=1, choices=CHOICES, default='B')
+    difficulty = models.CharField(max_length=1, choices=DIFFICULTIES, default='B')
 
     @property
     def num_cubes(self):
@@ -137,7 +137,13 @@ class Cube(models.Model):
         ('DT', 'DETERMINER'),
     )
 
+    GENDERS = (
+        ('M', 'MALE'),
+        ('F', 'FEMALE'),
+    )
+
     name = models.CharField(max_length=200)
+    gender = models.CharField(max_length=2, choices=GENDERS, blank=True, null=True)
     part_of_speech = models.CharField(max_length=2, choices=PART_OF_SPEECH)
     image = models.ImageField(blank=True, null=True, upload_to='cubes')
     towers = models.ManyToManyField(Tower)

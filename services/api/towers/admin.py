@@ -12,6 +12,9 @@ class CategoryResource(resources.ModelResource):
 
 class CategoryAdmin(ImportExportModelAdmin):
   resource_class = CategoryResource
+  list_display = ('id', 'abbreviation', 'category')
+  search_fields = ('abbreviation', 'category')
+
 
 admin.site.register(models.Category, CategoryAdmin)
 
@@ -23,6 +26,8 @@ class CollectionResource(resources.ModelResource):
 
 class CollectionAdmin(ImportExportModelAdmin):
   resource_class = CollectionResource
+  list_display = ('id', 'name')
+  search_fields = ('name',)
 
 admin.site.register(models.Collection, CollectionAdmin)
 
@@ -34,6 +39,12 @@ class CubeResource(resources.ModelResource):
 
 class CubeAdmin(ImportExportModelAdmin):
   resource_class = CubeResource
+  list_display = ('id', 'name', 'part_of_speech', 'gender')
+  search_fields = ('name', 'part_of_speech')
+  list_filter = ('part_of_speech', 'gender')
+
+  choices_part_of_speech = models.Cube.PART_OF_SPEECH
+  choices_gender = models.Cube.GENDERS
 
 admin.site.register(models.Cube, CubeAdmin)
 
@@ -45,6 +56,11 @@ class FaceResource(resources.ModelResource):
 
 class FaceAdmin(ImportExportModelAdmin):
   resource_class = FaceResource
+  list_display = ('id', 'value', 'cube', 'category', 'gender', 'phonetic_spelling')
+  search_fields = ('name', 'value', 'phonetic_spelling')
+  list_filter = ('gender', 'category')
+
+  choices_gender = models.Face.GENDERS
 
 admin.site.register(models.Face, FaceAdmin)
 
@@ -56,6 +72,11 @@ class TowerResource(resources.ModelResource):
 
 class TowerAdmin(ImportExportModelAdmin):
   resource_class = TowerResource
+  list_display = ('id', 'name', 'primary_category', 'difficulty')
+  search_fields = ('name',)
+  list_filter = ('primary_category', 'difficulty')
+
+  choices_difficulty = models.Tower.DIFFICULTIES
 
 admin.site.register(models.Tower, TowerAdmin)
 
