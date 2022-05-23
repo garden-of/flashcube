@@ -37,7 +37,7 @@ resource "aws_ecs_task_definition" "app" {
           protocol        = "tcp"
         }
       ]
-      command           = ["gunicorn", "-w", "3", "-b", ":8000", "api.wsgi:application"]
+      command           = ["gunicorn", "-w", "3", "-b", ":8000", "--timeout", "300", "api.wsgi:application"]
       environment       = [
         {
           name  = "RDS_DB_NAME"
