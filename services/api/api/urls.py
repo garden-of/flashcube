@@ -18,16 +18,16 @@ router.register(r'user_subscription', views.UserSubscriptionViewSet, 'UserSubscr
 
 urlpatterns = [
 
+    path('', include('drfpasswordless.urls')),
+    
     # admin UI urls
     path('admin/', admin.site.urls),
-
-    # authentication
-    #path('auth/', include('rest_framework_social_oauth2.urls')),
-    path('register/', views.CreateUser.as_view()),
 
     # REST api
     path('api/', include(router.urls)),
     path('api/user/', views.GetUser.as_view()),
     path('api/user_image/', views.UploadProfileImage.as_view()),
-    path('api/editlist/', views.ListAddRemove.as_view())
+    path('api/editlist/', views.ListAddRemove.as_view()),
+    
+
 ]

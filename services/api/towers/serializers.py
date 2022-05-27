@@ -74,7 +74,7 @@ class CubeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Cube
-        fields = ['id', 'name', 'tower', 'face_set']
+        fields = ['id', 'name', 'face_set']
 
 
 class TowerSerializer(serializers.ModelSerializer):

@@ -19,7 +19,7 @@ class CreateUser(views.APIView):
             if user:
 
                 # create a default list for the user
-                default_list = List(user=user, is_default=True)
+                default_list = models.List(user=user, is_default=True)
                 default_list.save()
 
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -104,13 +104,6 @@ class CubeViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = models.Cube.objects.all()
 
-    def get_queryset(self):
-        queryset = Cube.objects.all()
-        tower = self.request.query_params.get('tower', None)
-        if tower is not None:
-            queryset = queryset.filter(tower=tower)
-        return queryset
-
 
 class FaceViewSet(viewsets.ModelViewSet):
     queryset = models.Face.objects.all()
@@ -129,7 +122,7 @@ class ListViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self, *args, **kwargs):
-        return List.objects.filter(user=self.request.user, is_default=True)
+        return models.List.objects.filter(user=self.request.user, is_default=True)
 
 
 class LocaleViewSet(viewsets.ModelViewSet):

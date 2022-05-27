@@ -6,7 +6,7 @@ export default function () {
   return {
     logo: {
       uri:
-        'https://thecodingmachine.github.io/react-native-flashcube/img/TOM-small.png',
+        '',
     },
   }
 }
